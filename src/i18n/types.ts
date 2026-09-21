@@ -26,6 +26,7 @@ export interface UiText {
     scenario: string;
     learnerPrompt: string;
     themeAria: string;
+    backToTop: string;
     menuAria: string;
   };
   footer: {

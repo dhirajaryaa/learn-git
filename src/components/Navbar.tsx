@@ -135,7 +135,7 @@ export function Navbar() {
           </div>
 
           {/* learner mode */}
-          <div className="relative">
+          <div className="relative hidden md:block">
             <button
               onClick={() => {
                 setModeOpen((v) => !v);
@@ -244,6 +244,38 @@ export function Navbar() {
                   {l.label}
                 </Link>
               ))}
+
+              <p className="px-3 pb-1 pt-4 text-[10.5px] font-semibold uppercase tracking-wider text-muted">
+                {ui.nav.learnerPrompt}
+              </p>
+              <div className="flex flex-col gap-1">
+                {(Object.keys(modes) as Level[]).map((value) => {
+                  const Icon = LEVEL_ICONS[value];
+                  const m = modes[value];
+                  const active = value === level;
+                  return (
+                    <button
+                      key={value}
+                      onClick={() => setLevel(value)}
+                      aria-pressed={active}
+                      className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-left transition-colors ${
+                        active
+                          ? "bg-accent/10 text-foreground"
+                          : "text-muted hover:bg-zinc-50 dark:hover:bg-zinc-800/60"
+                      }`}
+                    >
+                      <Icon size={15} className={active ? "text-accent" : "text-muted"} />
+                      <span className="flex-1">
+                        <span className={`block text-[13px] font-semibold ${active ? "text-accent" : ""}`}>
+                          {m.label}
+                        </span>
+                        <span className="block text-[10.5px] text-muted">{m.note}</span>
+                      </span>
+                      {active && <span className="h-1.5 w-1.5 rounded-full bg-accent" />}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </motion.div>
         )}

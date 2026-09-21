@@ -23,14 +23,23 @@ export function Footer() {
     <footer className="border-t border-line">
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-14 md:flex-row md:items-start md:justify-between">
         <div className="max-w-sm space-y-3">
-          <Link href="/" className="flex items-center gap-2.5">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent text-white">
-              <IconGitBranch size={18} />
-            </span>
-            <span className="text-[15px] font-semibold tracking-tight">
-              Git<span className="text-accent">·In</span>Depth
-            </span>
-          </Link>
+          <div className="flex items-center justify-between gap-3">
+            <Link href="/" className="flex items-center gap-2.5">
+              <span className="grid h-8 w-8 place-items-center rounded-lg bg-accent text-white">
+                <IconGitBranch size={18} />
+              </span>
+              <span className="text-[15px] font-semibold tracking-tight">
+                Git<span className="text-accent">·In</span>Depth
+              </span>
+            </Link>
+            <button
+              onClick={toggle}
+              aria-label={ui.nav.themeAria}
+              className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-line bg-white text-muted transition-colors hover:border-accent/40 hover:text-accent dark:bg-zinc-900"
+            >
+              {theme === "light" ? <IconMoon size={15} /> : <IconSun size={15} />}
+            </button>
+          </div>
           <p className="text-sm leading-relaxed text-muted">{ui.footer.tagline}</p>
         </div>
 
@@ -134,7 +143,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-line">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-5 text-xs text-muted sm:flex-row">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-5 text-xs text-muted sm:flex-row">
           <p>
             {ui.footer.credit}{" "}
             <a
@@ -147,16 +156,7 @@ export function Footer() {
             </a>
             .
           </p>
-          <div className="flex items-center gap-3">
-            <p className="flex items-center gap-1">{ui.footer.madeFor}</p>
-            <button
-              onClick={toggle}
-              aria-label={ui.nav.themeAria}
-              className="grid h-9 w-9 place-items-center rounded-full border border-line bg-white text-muted transition-colors hover:border-accent/40 hover:text-accent dark:bg-zinc-900"
-            >
-              {theme === "light" ? <IconMoon size={15} /> : <IconSun size={15} />}
-            </button>
-          </div>
+          <p className="flex items-center gap-1">{ui.footer.madeFor}</p>
         </div>
       </div>
     </footer>

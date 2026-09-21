@@ -7,6 +7,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SmallScreenTip } from "@/components/SmallScreenTip";
+import { BackToTop } from "@/components/BackToTop";
 import { ThemeProvider, LevelProvider } from "@/components/providers";
 import { LanguageProvider } from "@/components/i18n/LanguageProvider";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_AUTHOR } from "@/lib/site";
@@ -148,6 +149,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <SmallScreenTip />
               <main className="flex-1">{children}</main>
               <Footer />
+              <BackToTop />
             </LanguageProvider>
           </LevelProvider>
         </ThemeProvider>
