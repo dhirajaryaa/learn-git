@@ -29,7 +29,7 @@ export function Stash({ caption }: { caption?: string }) {
                 key={f}
                 initial={{ opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 + i * 0.1 }}
+                transition={{ delay: 0.3 + i * 0.15 }}
                 className="flex items-center gap-2 rounded-lg border border-line bg-zinc-50/60 px-3 py-2 font-mono text-[11px] text-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-300"
               >
                 <span className="h-1.5 w-1.5 rounded-full bg-accent" />
@@ -60,7 +60,7 @@ export function Stash({ caption }: { caption?: string }) {
           <motion.div
             className="relative z-10 grid h-8 w-8 shrink-0 place-items-center rounded-full bg-accent text-white shadow-md"
             animate={vertical ? { y: ["-50%", "50%", "-50%"] } : { x: ["-50%", "430%", "-50%"] }}
-            transition={{ duration: 1.7, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
             style={{ x: "-50%", y: "-50%" }}
           >
             {vertical ? <IconArrowDown size={14} /> : <IconArrowRight size={14} />}
@@ -87,7 +87,7 @@ export function Stash({ caption }: { caption?: string }) {
                 key={f}
                 initial={{ opacity: 0, y: -8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 + i * 0.1 }}
+                transition={{ delay: 1 + i * 0.15 }}
                 className="flex items-center gap-2 rounded-lg border border-accent/20 bg-accent/5 px-3 py-2 font-mono text-[11px] text-zinc-700 dark:text-zinc-300"
               >
                 <IconCheck size={12} className="text-accent" />
@@ -97,7 +97,7 @@ export function Stash({ caption }: { caption?: string }) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.1 }}
+              transition={{ delay: 1.6 }}
               className="flex items-center gap-2 rounded-lg border border-dashed border-line px-3 py-2 font-mono text-[11px] text-zinc-400"
             >
               workspace is clean now

@@ -682,9 +682,9 @@
       }
     },
     {
-      "title": "Three-way merge",
-      "body": "Git base commit ko dono tips se compare karta hai, phir dono sets of changes ko combine karta hai. Alag regions khud merge ho jaate hain.",
-      "cmd": "git commit",
+      "title": "Three-way merge: userland bilkul be-rok",
+      "body": "Git base commit ko dono tips se compare karta hai, phir dono sets of changes ko combine karta hai. Alag regions — ya ek taraf ki pure insertions — khud merge ho jaate hain. Kisi insaan ki zaroorat nahi.",
+      "cmd": "git merge feature",
       "visual": {
         "kind": "graph",
         "spec": {
@@ -741,17 +741,104 @@
           ],
           "animation": "merge",
           "highlight": 4,
-          "caption": "A merge commit joins both parents — history preserved"
+          "caption": "Different hunks stitch together into a two-parent merge commit"
         }
       }
     },
     {
-      "title": "Conflict ka waqt",
-      "body": "Dono sides ne same lines edit ki? Git guess nahi karta — dono ko <<<<<<< aur >>>>>>> markers ke saath dikhata hai.",
-      "cmd": "git add . && git commit",
+      "title": "Conflict: merge ruk jaata hai aur file aapko de deta hai",
+      "body": "Lekin agar dono sides ne SAME lines edit ki hain — Git guess nahi karta ki kaun jeeta. Dono versions file me likh deta hai <<<<<<< HEAD, ======= aur >>>>>>> markers ke saath, path ko unmerged mark karta hai, aur merge ko rok deta hai. Abhi tak history me kuch nahi likha — aapke paas saaf escape hai: git merge --abort.",
+      "cmd": "git merge feature",
       "visual": {
-        "kind": "diff",
-        "caption": "Conflicts show 'ours' vs 'theirs' — you decide, then commit"
+        "kind": "conflict",
+        "mode": "markers",
+        "caption": "The same hunk, both answers, three markers — Git hands you the decision"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "git status ladai ka maidaan padhta hai",
+      "body": "Merge atak gaya hai, aur git status exact bataata hai kahan: 'Unmerged paths' me 'both modified' — dono branches ne is file ko working tree me badla hai. Jab tak path unmerged hai, commit nahi kar sakte; pehle resolve karo, phir status green.",
+      "cmd": "git status",
+      "visual": {
+        "kind": "status",
+        "caption": "Unmerged paths: both modified — the merge is paused, not broken"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "Faisla karo, phir git add resolve mark karta hai",
+      "body": "File kholo, dono sides padho, aur jo sahi hai rakho — ek side, dono, ya blend. Marker lines hatate hi file 'resolved' ban jaati hai; phir git add file ko Git ko bataata hai 'maine decide kar liya'. Resolve koi jadoo nahi — bas markers hatana aur stage karna.",
+      "cmd": "git add src/Header.tsx",
+      "visual": {
+        "kind": "conflict",
+        "mode": "resolved",
+        "caption": "Markers gone, one truth chosen — add stages exactly what the merge should record"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "Finish: merge --continue merge commit likhta hai",
+      "body": "git merge --continue wahin se uthata hai jahan merge ruka tha: commit editor me pehle se 'Merge branch Feature' likha hota hai, save karo, aur ek asli two-parent merge commit utar aata hai — bilkul kisi bhi be-conflict merge ki tarah. Resolution bas ek normal commit hai.",
+      "cmd": "git merge --continue",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "main: dark mode",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "c1d8e2f",
+              "msg": "feature: login",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "0f9e8d7",
+              "msg": "merge branch 'feature'",
+              "parents": [
+                2,
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 4
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "merge",
+          "highlight": 4,
+          "caption": "A resolved conflict is still just a merge commit — two parents, one decision"
+        }
       },
       "min": "junior"
     }

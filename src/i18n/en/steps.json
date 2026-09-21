@@ -682,9 +682,9 @@
       }
     },
     {
-      "title": "Three-way merge",
-      "body": "Git compares the base commit against BOTH tips, then combines the two sets of changes. Different regions merge themselves automatically.",
-      "cmd": "git commit",
+      "title": "Three-way merge: the userland is untouched",
+      "body": "Git compares the base commit against BOTH tips, then combines the two sets of changes. Different regions — or pure insertions on one side — merge themselves automatically. No human needed.",
+      "cmd": "git merge feature",
       "visual": {
         "kind": "graph",
         "spec": {
@@ -741,17 +741,104 @@
           ],
           "animation": "merge",
           "highlight": 4,
-          "caption": "A merge commit joins both parents — history preserved"
+          "caption": "Different hunks stitch together into a two-parent merge commit"
         }
       }
     },
     {
-      "title": "Conflict time",
-      "body": "Both sides edited the same lines? Git refuses to guess and shows them both with <<<<<<< and >>>>>>> markers.",
-      "cmd": "git add . && git commit",
+      "title": "Conflict: the merge stops and hands you the file",
+      "body": "But both sides edited the SAME lines — and Git refuses to guess who wins. It writes BOTH versions into the file, separated by <<<<<<< HEAD, ======= and >>>>>>> markers, marks the path unmerged, and halts the merge. Nothing is written to history yet — you still have a clean escape: git merge --abort.",
+      "cmd": "git merge feature",
       "visual": {
-        "kind": "diff",
-        "caption": "Conflicts show 'ours' vs 'theirs' — you decide, then commit"
+        "kind": "conflict",
+        "mode": "markers",
+        "caption": "The same hunk, both answers, three markers — Git hands you the decision"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "git status reads the battlefield",
+      "body": "The merge is stuck, and git status tells you exactly where. Under 'Unmerged paths' it says 'both modified' — both branches changed this file into the working tree. You cannot commit while a path is unmerged; resolve first, then it goes green.",
+      "cmd": "git status",
+      "visual": {
+        "kind": "status",
+        "caption": "Unmerged paths: both modified — the merge is paused, not broken"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "Decide, then git add marks it resolved",
+      "body": "Open the file, read both sides, and keep what's right — one side, the other, or a blend. Delete the marker lines, save, then git add the file to tell Git 'I decided'. A resolved file is just a normal staged file; the conflict is what you remove.",
+      "cmd": "git add src/Header.tsx",
+      "visual": {
+        "kind": "conflict",
+        "mode": "resolved",
+        "caption": "Markers gone, one truth chosen — add stages exactly what the merge should record"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "Finish: merge --continue writes the merge commit",
+      "body": "git merge --continue picks up where the merge paused: it opens the commit editor pre-filled with 'Merge branch Feature', you save it, and a real two-parent merge commit lands — just like any uncontested merge. Resolution is just a normal commit; the branch story stays fork-shaped forever.",
+      "cmd": "git merge --continue",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "main: dark mode",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "c1d8e2f",
+              "msg": "feature: login",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "0f9e8d7",
+              "msg": "merge branch 'feature'",
+              "parents": [
+                2,
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 4
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "merge",
+          "highlight": 4,
+          "caption": "A resolved conflict is still just a merge commit — two parents, one decision"
+        }
       },
       "min": "junior"
     }

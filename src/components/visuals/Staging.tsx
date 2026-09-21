@@ -66,7 +66,7 @@ function Card({
             key={`${title}-${f.name}`}
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.35 + fi * 0.07 }}
+            transition={{ delay: 0.5 + fi * 0.12 }}
             className="flex items-center gap-2 rounded-lg border border-line bg-zinc-50/60 px-2.5 py-1.5 dark:bg-zinc-800/50"
           >
             {f.badge === null ? (
@@ -118,7 +118,7 @@ function Arrow({ dir, label, active }: { dir: Dir; label: string; active: boolea
         className="absolute top-1/2 left-1/2 z-10 hidden h-7 items-center gap-1.5 rounded-full bg-accent px-2.5 text-white shadow-sm sm:flex"
         animate={{ x: xK }}
         transition={{
-          duration: dir === "plain" ? 2.4 : 1.6,
+          duration: dir === "plain" ? 3.2 : 2.3,
           repeat: Infinity,
           ease: "easeInOut",
         }}
@@ -139,7 +139,7 @@ function Arrow({ dir, label, active }: { dir: Dir; label: string; active: boolea
       <motion.div
         className="absolute left-1/2 z-10 grid h-7 w-7 -translate-x-1/2 place-items-center rounded-full bg-accent text-white shadow-sm sm:hidden"
         animate={{ y: [0, 22, 0] }}
-        transition={{ duration: 1.6, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 2.3, repeat: Infinity, ease: "easeInOut" }}
       >
         <IconArrowDown size={12} />
       </motion.div>

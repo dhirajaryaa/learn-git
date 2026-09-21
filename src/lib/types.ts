@@ -79,7 +79,8 @@ export type VisualConfig =
   | { kind: "diff"; caption?: string }
   | { kind: "reflog"; caption?: string }
   | { kind: "stash"; caption?: string }
-  | { kind: "status"; caption?: string };
+  | { kind: "status"; caption?: string }
+  | { kind: "conflict"; mode: "markers" | "resolved"; caption?: string };
 
 export interface Command {
   slug: string;

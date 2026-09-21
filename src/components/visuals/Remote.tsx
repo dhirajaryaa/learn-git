@@ -85,7 +85,7 @@ export function Remote({
                 ? { y: ["-50%", "50%", "-50%"] }
                 : { x: ["-50%", "410%", "-50%"] }
             }
-            transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
             style={{ x: "-50%", y: "-50%" }}
           >
             {mo === "push" || mo === "clone" ? <IconUpload size={14} /> : <IconDownload size={14} />}

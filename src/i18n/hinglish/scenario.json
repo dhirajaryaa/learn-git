@@ -16,7 +16,7 @@
       "id": "ship",
       "kicker": "Act 3",
       "title": "Shaanti se ship karo",
-      "sub": "Experiment branch par rakho, phir bina drama ke merge karo."
+      "sub": "Experiment branch par rakho, phir bina drama ke land karo — chahe conflict merge par ambush karke aaye."
     }
   ],
   "steps": [
@@ -457,69 +457,24 @@
     },
     {
       "act": 2,
-      "title": "Kahaniyon ko jodo",
-      "body": "Feature review ke baad ready hai. git merge --no-ff ek explicit merge commit banata hai jo join ko record karta hai — graph ka fork hamesha visible rahta hai, aur team ko baad me padhna aasaani hoti hai.",
-      "cmd": "git merge --no-ff feat/avatar -m \"merge: land user avatars\"",
+      "title": "Merge ghar aata hai, aur takra jaata hai",
+      "body": "feat/avatar ne avatar header ko dobara likha — aur main ke sidebar refactor ne bhi usi file ko chhua. Same hunk, do sach: Git stitch nahi kar paata, isliye dono ko <<<<<<< / ======= / >>>>>>> markers ke saath print karta hai aur ROOK deta hai. Abhi kisi ka kuch nahi gaya. Panic button ab bhi kaam karta hai: git merge --abort.",
+      "cmd": "git merge feat/avatar",
       "visual": {
-        "kind": "graph",
-        "spec": {
-          "nodes": [
-            {
-              "id": "1a2b3c4",
-              "msg": "chore: scaffold project setup",
-              "parents": []
-            },
-            {
-              "id": "7e8f9ab",
-              "msg": "fix: reset focus ring on space bar",
-              "parents": [
-                0
-              ]
-            },
-            {
-              "id": "4d5e6f7",
-              "msg": "feat: add sticky mobile sidebar",
-              "parents": [
-                1
-              ]
-            },
-            {
-              "id": "9a0b1c2",
-              "msg": "style: align page title spacing",
-              "parents": [
-                2
-              ]
-            },
-            {
-              "id": "c3d4e5f",
-              "msg": "feat: render user avatars",
-              "parents": [
-                3
-              ]
-            },
-            {
-              "id": "f0a1b2c",
-              "msg": "merge: land user avatars",
-              "parents": [
-                3,
-                4
-              ]
-            }
-          ],
-          "refs": [
-            {
-              "name": "main",
-              "node": 5,
-              "active": true
-            },
-            {
-              "name": "feat/avatar",
-              "node": 4
-            }
-          ],
-          "animation": "merge",
-          "highlight": 5
-        }
+        "kind": "conflict",
+        "mode": "markers",
+        "caption": "The merge pauses, politely, and hands you the decision"
+      }
+    },
+    {
+      "act": 2,
+      "title": "Sach chuno, Git ko batao, aur continue karo",
+      "body": "Aapko feature wala avatar logic CHAHIYE aur main ka naya sidebar styling BHI — toh dono hunks rakho, markers hatayo, save karo. git add file ko resolved mark karta hai, aur git merge --continue ek saaf two-parent merge commit likhta hai. Din phir bhi ship hota hai, aur kisi ne panic nahi kiya.",
+      "cmd": "git add src/avatar.tsx && git merge --continue",
+      "visual": {
+        "kind": "conflict",
+        "mode": "resolved",
+        "caption": "Markers gone, merge continued, calendar unharmed"
       }
     },
     {

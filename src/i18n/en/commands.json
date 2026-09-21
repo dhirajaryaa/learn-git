@@ -846,6 +846,10 @@
       {
         "title": "A conflict is a file with both answers",
         "body": "When both sides edit the same lines, Git refuses to guess. It writes both versions into the file with <<<<<<< / ======= / >>>>>>> markers and marks the path as conflicting. The merge stops; you resolve and commit."
+      },
+      {
+        "title": "Resolve = edit, then add, then continue",
+        "body": "Keep one side, both, or a blend — delete the marker lines — and git add the file to mark it resolved. Then git merge --continue (or a plain commit) closes the merge. Abort anytime before that with git merge --abort: the only thing you throw away is the half-baked attempt."
       }
     ],
     "visual": {

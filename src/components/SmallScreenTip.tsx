@@ -4,9 +4,11 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { IconDeviceMobile, IconX } from "@tabler/icons-react";
 import { useI18n } from "@/components/i18n/LanguageProvider";
+import { useMediaQuery } from "@/components/useMediaQuery";
 
 export function SmallScreenTip() {
   const { ui } = useI18n();
+  const isMobile = useMediaQuery("(max-width: 767px)");
   const [dismissed, setDismissed] = useState(
     () => typeof window !== "undefined" && sessionStorage.getItem("git-tip-dismissed") === "1"
   );
@@ -15,6 +17,8 @@ export function SmallScreenTip() {
     sessionStorage.setItem("git-tip-dismissed", "1");
     setDismissed(true);
   };
+
+  if (!isMobile) return null;
 
   return (
     <AnimatePresence>

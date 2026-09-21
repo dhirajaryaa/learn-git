@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import {
   IconGitBranch,
   IconBrandGithub,
@@ -68,8 +69,14 @@ export function Footer() {
               rel="noopener noreferrer"
               className="group flex items-center gap-2 text-[15px] font-semibold text-foreground hover:text-accent"
             >
-              <span className="grid h-7 w-7 place-items-center rounded-full bg-zinc-900 text-[10px] font-bold text-white transition-colors group-hover:bg-accent">
-                D
+              <span className="h-7 w-7 overflow-hidden rounded-full ring-1 ring-line">
+                <Image
+                  src="https://dhirajarya.in/assets/hero.webp"
+                  alt={ui.footer.builtBy}
+                  width={28}
+                  height={28}
+                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                />
               </span>
               Dhiraj Arya
             </Link>
@@ -102,7 +109,7 @@ export function Footer() {
                 <IconBrandLinkedin size={15} />
               </a>
               <a
-                href="mailto:dhirajarya.ptn@gmail.com"
+                href="mailto:hello@dhirajarya.in"
                 aria-label={ui.footer.mail}
                 className="grid h-8 w-8 place-items-center rounded-lg border border-line text-muted transition-colors hover:border-accent/40 hover:text-accent"
               >

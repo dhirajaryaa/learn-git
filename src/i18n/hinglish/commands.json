@@ -846,6 +846,10 @@
       {
         "title": "Conflict ek file hai jisme dono answers",
         "body": "Jab dono sides same lines edit karein, Git guess nahi karta. Dono versions file me conflict markers ke saath likh deta hai — aap decide karo."
+      },
+      {
+        "title": "Resolve = edit, then add, then continue",
+        "body": "Keep one side, both, or a blend — delete the marker lines — and git add the file to mark it resolved. Then git merge --continue (or a plain commit) closes the merge. Abort anytime before that with git merge --abort: the only thing you throw away is the half-baked attempt."
       }
     ],
     "visual": {

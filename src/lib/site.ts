@@ -1,4 +1,6 @@
-export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? "https://git-in-depth.vercel.app").replace(/\/$/, "");
+const envUrl = process.env.NEXT_PUBLIC_SITE_URL ?? process.env.SITE_URL ?? "";
+
+export const SITE_URL = (envUrl || "https://git-in-depth.vercel.app").replace(/\/$/, "");
 
 export const SITE_NAME = "Git In Depth";
 
@@ -19,5 +21,6 @@ export const SITE_AUTHOR = {
   website: "https://dhirajarya.in",
   github: "https://github.com/dhirajaryaa",
   twitter: "https://twitter.com/dhirajarya01",
-  email: "dhirajarya.ptn@gmail.com",
+  linkedin: "https://linkedin.com/in/dhirajarya01",
+  email: "hello@dhirajarya.in",
 };

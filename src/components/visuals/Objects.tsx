@@ -19,7 +19,7 @@ export function Objects({ caption }: { caption?: string }) {
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+          transition={{ delay: 0.15 }}
           className="w-full max-w-xs rounded-2xl border border-accent/40 bg-white p-4 shadow-sm dark:bg-zinc-900"
         >
           <div className="mb-3 flex items-center justify-between">
@@ -34,7 +34,7 @@ export function Objects({ caption }: { caption?: string }) {
                 key={r.k}
                 initial={{ opacity: 0, x: -6 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 + i * 0.1 }}
+                transition={{ delay: 0.45 + i * 0.15 }}
                 className="flex items-center gap-2 rounded-lg bg-zinc-50 px-2.5 py-1.5 dark:bg-zinc-800/60"
               >
                 <r.ic size={12} className="shrink-0 text-zinc-400" />
@@ -50,7 +50,7 @@ export function Objects({ caption }: { caption?: string }) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.55 }}
+          transition={{ delay: 0.8 }}
           className="hidden font-mono text-[20px] text-zinc-300 sm:block"
         >
           →
@@ -60,7 +60,7 @@ export function Objects({ caption }: { caption?: string }) {
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
+          transition={{ delay: 1 }}
           className="w-full max-w-xs rounded-2xl border border-line bg-white p-4 shadow-sm dark:bg-zinc-900"
         >
           <div className="mb-3 flex items-center justify-between">
@@ -79,7 +79,7 @@ export function Objects({ caption }: { caption?: string }) {
                 key={row}
                 initial={{ opacity: 0, x: -6 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.9 + i * 0.1 }}
+                transition={{ delay: 1.3 + i * 0.15 }}
                 className="flex items-center gap-2 rounded-lg bg-zinc-50 px-2.5 py-1.5 font-mono text-[10.5px] text-zinc-700 dark:bg-zinc-800/60 dark:text-zinc-300"
               >
                 {row}
@@ -91,7 +91,7 @@ export function Objects({ caption }: { caption?: string }) {
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.15 }}
+          transition={{ delay: 1.6 }}
           className="hidden font-mono text-[20px] text-zinc-300 sm:block"
         >
           →
@@ -101,7 +101,7 @@ export function Objects({ caption }: { caption?: string }) {
         <motion.div
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.25 }}
+          transition={{ delay: 1.75 }}
           className="w-full max-w-xs rounded-2xl border border-line bg-white p-4 shadow-sm dark:bg-zinc-900"
         >
           <div className="mb-3 flex items-center justify-between">
@@ -114,7 +114,7 @@ export function Objects({ caption }: { caption?: string }) {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 1.4 }}
+              transition={{ delay: 2 }}
               className="rounded-lg border border-dashed border-line px-2.5 py-2 font-mono text-[10.5px] leading-relaxed text-zinc-500"
             >
               header: blob + size<br />content bytes…

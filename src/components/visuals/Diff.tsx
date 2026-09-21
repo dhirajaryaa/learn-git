@@ -25,7 +25,7 @@ export function Diff({ caption }: { caption?: string }) {
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.15 + i * 0.16 }}
+                transition={{ delay: 0.25 + i * 0.24 }}
                 className={`flex items-center gap-2 border-r border-line px-4 py-[7px] font-mono text-[11.5px] ${
                   CHANGED[i] ? "bg-[#fef2f2] text-[#b91c1c]" : "bg-[#fafafb] text-zinc-500"
                 }`}
@@ -40,7 +40,7 @@ export function Diff({ caption }: { caption?: string }) {
               <motion.div
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.15 + i * 0.16 }}
+                transition={{ delay: 0.25 + i * 0.24 }}
                 className={`flex items-center gap-2 px-4 py-[7px] font-mono text-[11.5px] ${
                   CHANGED[i] ? "bg-[#f0fdf4] text-[#15803d]" : "bg-white text-zinc-500 dark:bg-zinc-800 dark:text-zinc-400"
                 }`}

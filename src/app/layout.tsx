@@ -1,5 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Navbar } from "@/components/Navbar";
@@ -84,6 +86,41 @@ export const viewport: Viewport = {
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebSite",
+        name: SITE_NAME,
+        url: SITE_URL,
+        description: SITE_DESCRIPTION,
+        inLanguage: "en",
+        publisher: {
+          "@type": "Organization",
+          name: SITE_NAME,
+          url: SITE_URL,
+          logo: { "@type": "ImageObject", url: `${SITE_URL}/icon.svg` },
+        },
+        potentialAction: {
+          "@type": "SearchAction",
+          target: `${SITE_URL}?q={search_term_string}`,
+          "query-input": "required name=search_term_string",
+        },
+      },
+      {
+        "@type": "Organization",
+        name: "Dhiraj Arya",
+        url: SITE_AUTHOR.website,
+        email: SITE_AUTHOR.email,
+        sameAs: [SITE_AUTHOR.github, SITE_AUTHOR.twitter, SITE_AUTHOR.linkedin ?? ""].filter(Boolean),
+        brand: {
+          "@type": "Brand",
+          name: SITE_NAME,
+        },
+      },
+    ],
+  };
+
   return (
     <html
       lang="en"
@@ -98,6 +135,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             __html: `(function(){try{var t=localStorage.getItem("git-in-depth-theme");var d=t?t==="dark":window.matchMedia("(prefers-color-scheme: dark)").matches;if(d)document.documentElement.classList.add("dark");}catch(e){}})();`,
           }}
         />
+        <Script
+          id="site-jsonld"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <ThemeProvider>
           <LevelProvider>
             <LanguageProvider>
@@ -108,6 +151,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </LanguageProvider>
           </LevelProvider>
         </ThemeProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

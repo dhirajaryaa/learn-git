@@ -15,7 +15,7 @@ import { useLearner } from "@/components/providers";
 import { useI18n } from "@/components/i18n/LanguageProvider";
 import { tpl } from "@/i18n/types";
 
-const STEP_MS = 6000;
+const STEP_MS = 9000;
 const TICKS = 100;
 
 const LEVEL_ORDER: Record<string, number> = { child: 0, junior: 1, developer: 2 };

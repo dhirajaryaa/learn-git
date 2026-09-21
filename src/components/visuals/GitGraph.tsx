@@ -104,7 +104,7 @@ export function GitGraph({ spec, height }: { spec: GraphSpec; height?: number })
       >
         {/* edges + flow */}
         {edges.map((e, i) => {
-          const delay = 0.1 + i * 0.16;
+          const delay = 0.2 + i * 0.24;
           return (
             <g key={`edge-${i}`}>
               <motion.path
@@ -116,7 +116,7 @@ export function GitGraph({ spec, height }: { spec: GraphSpec; height?: number })
                 strokeLinecap="round"
                 initial={{ pathLength: 0, opacity: 0.4 }}
                 animate={{ pathLength: 1, opacity: 1 }}
-                transition={{ pathLength: { duration: 0.7, delay, ease: "easeInOut" }, opacity: { duration: 0.25, delay } }}
+                transition={{ pathLength: { duration: 1.15, delay, ease: "easeInOut" }, opacity: { duration: 0.4, delay } }}
               />
               <motion.circle
                 r={3}
@@ -124,8 +124,8 @@ export function GitGraph({ spec, height }: { spec: GraphSpec; height?: number })
                 initial={{ offsetDistance: "0%", opacity: 0 }}
                 animate={{ offsetDistance: "100%", opacity: [0, 1, 1, 0] }}
                 transition={{
-                  offsetDistance: { duration: 1.05, delay: delay + 0.2, ease: "easeInOut" },
-                  opacity: { duration: 1.05, delay: delay + 0.2, times: [0, 0.15, 0.85, 1] },
+                  offsetDistance: { duration: 1.6, delay: delay + 0.3, ease: "easeInOut" },
+                  opacity: { duration: 1.6, delay: delay + 0.3, times: [0, 0.15, 0.85, 1] },
                 }}
                 style={{ offsetPath: `path("${e.d}")` }}
               />
@@ -148,7 +148,7 @@ export function GitGraph({ spec, height }: { spec: GraphSpec; height?: number })
                   strokeWidth={1.5}
                   initial={{ opacity: 0, scale: 0.4 }}
                   animate={{ opacity: [0, 1, 0], scale: [0.5, 1.15, 1.5] }}
-                  transition={{ duration: 2.2, delay: 0.6 + i * 0.12, repeat: Infinity, repeatDelay: 0.6, ease: "easeOut" }}
+                  transition={{ duration: 3, delay: 0.9 + i * 0.18, repeat: Infinity, repeatDelay: 0.8, ease: "easeOut" }}
                 />
               )}
               <motion.circle
@@ -160,7 +160,7 @@ export function GitGraph({ spec, height }: { spec: GraphSpec; height?: number })
                 strokeWidth={isHighlight ? 2 : 1.4}
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", stiffness: 380, damping: 22, delay: 0.1 + i * 0.12 }}
+                transition={{ type: "spring", stiffness: 240, damping: 24, delay: 0.2 + i * 0.18 }}
               />
               <text
                 x={p.x}
@@ -203,7 +203,7 @@ export function GitGraph({ spec, height }: { spec: GraphSpec; height?: number })
                       }
                     })()}
                     animate={{ x: c.x, y: c.y, opacity: 1 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 22, delay: 0.7 + i * 0.16 + ri * 0.1 }}
+                    transition={{ type: "spring", stiffness: 180, damping: 24, delay: 1 + i * 0.22 + ri * 0.15 }}
                   >
                     <rect
                       x={c.x}

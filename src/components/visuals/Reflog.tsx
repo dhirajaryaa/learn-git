@@ -27,7 +27,7 @@ export function Reflog({ caption }: { caption?: string }) {
               key={e.hash + i}
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 + i * 0.14 }}
+              transition={{ delay: 0.3 + i * 0.2 }}
               className={`relative mb-1.5 flex items-center gap-2 rounded-lg py-1 pl-5 font-mono text-[11.5px] last:mb-0 ${
                 e.now ? "bg-accent/5 font-semibold text-foreground" : "text-zinc-600"
               }`}

@@ -35,7 +35,7 @@ export function Status({ caption }: { caption?: string }) {
               key={i}
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15 + i * 0.12 }}
+              transition={{ delay: 0.25 + i * 0.17 }}
               className="whitespace-pre py-[2.5px] font-mono text-[11.5px] leading-relaxed"
             >
               {l.text ? <span className={l.cls}>{l.text}</span> : <span className="text-zinc-400"> </span>}

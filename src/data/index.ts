@@ -48,7 +48,7 @@ export function getBuilder() {
     github: "https://github.com/dhirajaryaa",
     twitter: "https://twitter.com/dhirajarya01",
     linkedin: "https://linkedin.com/in/dhirajarya01",
-    email: "dhirajarya.ptn@gmail.com",
+    email: "hello@dhirajarya.in",
     stack: ["Next.js", "TypeScript", "Tailwind", "PostgreSQL", "Drizzle", "Node.js"],
   };
 }

@@ -10,11 +10,12 @@ import { Reflog } from "./Reflog";
 import { Stash } from "./Stash";
 import { Status } from "./Status";
 import { Rebase } from "./Rebase";
+import { Conflict } from "./Conflict";
 import type { VisualConfig } from "@/lib/types";
 
 export function Visual({ visual }: { visual: VisualConfig }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-line bg-gradient-to-b from-zinc-50/80 to-white p-3 sm:p-6">
+    <div className="overflow-hidden rounded-2xl border border-line bg-gradient-to-b from-zinc-50/80 to-white p-3 dark:from-zinc-900/70 dark:to-zinc-900 sm:p-6">
       {visual.kind === "gitdir" && (
         <GitDir kind={visual.kind === "gitdir" ? "init" : "init"} caption={visual.caption} />
       )}
@@ -42,6 +43,9 @@ export function Visual({ visual }: { visual: VisualConfig }) {
       {visual.kind === "reflog" && <Reflog caption={visual.caption} />}
       {visual.kind === "stash" && <Stash caption={visual.caption} />}
       {visual.kind === "status" && <Status caption={visual.caption} />}
+      {visual.kind === "conflict" && (
+        <Conflict mode={visual.mode} caption={visual.caption} />
+      )}
     </div>
   );
 }

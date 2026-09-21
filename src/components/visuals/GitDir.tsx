@@ -50,7 +50,7 @@ export function GitDir({ kind, caption }: { kind: "init" | "config"; caption?: s
               key={t.name}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.15 + i * 0.08 }}
+              transition={{ delay: 0.25 + i * 0.12 }}
               className="flex items-center gap-1.5 py-[3px] font-mono text-[12px]"
             >
               {t.icon === "folder" ? (

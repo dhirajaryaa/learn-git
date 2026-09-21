@@ -20,7 +20,7 @@ export function Rebase({ spec }: { spec: RebaseSpec }) {
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.9 }}
+            transition={{ delay: 1.3 }}
             className="absolute -top-3 left-1/2 z-10 -translate-x-1/2 rounded-full bg-accent px-3 py-1 text-[10px] font-semibold text-white shadow"
           >
             {spec.action}
