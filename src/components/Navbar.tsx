@@ -199,7 +199,7 @@ export function Navbar() {
           <button
             onClick={toggle}
             aria-label={ui.nav.themeAria}
-            className="grid h-9 w-9 place-items-center rounded-full border border-line bg-white text-muted transition-colors hover:border-accent/40 hover:text-accent dark:bg-zinc-900"
+            className="hidden h-9 w-9 place-items-center rounded-full border border-line bg-white text-muted transition-colors hover:border-accent/40 hover:text-accent md:grid dark:bg-zinc-900"
           >
             <AnimatePresence mode="wait" initial={false}>
               <motion.span

@@ -9,11 +9,15 @@ import {
   IconBrandLinkedin,
   IconWorld,
   IconMail,
+  IconSun,
+  IconMoon,
 } from "@tabler/icons-react";
+import { useTheme } from "@/components/providers";
 import { useI18n } from "@/components/i18n/LanguageProvider";
 
 export function Footer() {
   const { ui } = useI18n();
+  const { theme, toggle } = useTheme();
 
   return (
     <footer className="border-t border-line">
@@ -130,7 +134,7 @@ export function Footer() {
       </div>
 
       <div className="border-t border-line">
-        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-5 text-xs text-muted sm:flex-row">
+        <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-3 px-6 py-5 text-xs text-muted sm:flex-row">
           <p>
             {ui.footer.credit}{" "}
             <a
@@ -143,7 +147,16 @@ export function Footer() {
             </a>
             .
           </p>
-          <p className="flex items-center gap-1">{ui.footer.madeFor}</p>
+          <div className="flex items-center gap-3">
+            <p className="flex items-center gap-1">{ui.footer.madeFor}</p>
+            <button
+              onClick={toggle}
+              aria-label={ui.nav.themeAria}
+              className="grid h-9 w-9 place-items-center rounded-full border border-line bg-white text-muted transition-colors hover:border-accent/40 hover:text-accent dark:bg-zinc-900"
+            >
+              {theme === "light" ? <IconMoon size={15} /> : <IconSun size={15} />}
+            </button>
+          </div>
         </div>
       </div>
     </footer>
