@@ -1,0 +1,135 @@
+{
+  "git-init": [
+    { "title": "Ek khali room chuno", "body": "Git ko kisi bhi folder par point karo — jisme abhi kuch bhi na ho." },
+    { "title": ".git folder dikhta hai", "body": "Git poora repository ek chhupe .git directory me banata hai: objects/ (khali), refs/ (khali), HEAD, aur index." },
+    { "title": "Abhi kuch track nahi hota", "body": "Na koi objects, na koi commits. Git sirf ready hai — aapke pehle git add aur git commit ka intezaar kar raha hai." }
+  ],
+  "git-status": [
+    { "title": "Dekho", "body": "Jaanna hai ki kya badla. Bas git status chalao — ye teen snapshots compare karta hai: aapki files, index, aur last commit." },
+    { "title": "Columns padho", "body": "Har file ko ek state marker milta hai. ✚ staged = commit ke liye ready. ✏ modified = disk par badla hua. Blue = bilkul nayi, kabhi track nahi hui." },
+    { "title": "Comparison ka trick", "body": "Status poori files nahi padhta — index ki fast hash ko disk file ki hash se compare karta hai. Hash same? File unchanged." }
+  ],
+  "git-add": [
+    { "title": "File change karo", "body": "Aap src/button.tsx edit karte ho. Git dekhta hai ki worktree ab index se match nahi karti — file 'modified' hai lekin staged nahi." },
+    { "title": "git add chalao", "body": "File ka content blob object me hash hota hai, aur index path → blob-hash store karta hai. Aapki file ab 'next commit' preview ka hissa hai." },
+    { "title": "Disk par kuch move nahi hua", "body": "Working file bilkul waisi hi rehti hai. Staging sirf index likhta hai — ek note jo kehta hai 'ye content agla snapshot hai'." }
+  ],
+  "git-commit": [
+    { "title": "Pehle stage karo", "body": "Commit se pehle files index (staging) me hoti hain. Index commit ka preview hai." },
+    { "title": "git commit chalao", "body": "Git index ko tree object me wrap karta hai, phir commit object banata hai jo us tree aur previous commit (uska parent) ko point karta hai." },
+    { "title": "Commit ko aate dekho", "body": "Ek naya commit object graph me judta hai. Branch pointer aage slide karti hai aur HEAD follow karta hai. History ek node lambi ho gayi." }
+  ],
+  "git-config": [
+    { "title": "Apna naam set karo", "body": "Pehle commit se pehle Git ko identity chahiye — naam aur email jo aapke har commit me likha jaata hai." },
+    { "title": "Apni email set karo", "body": "Commits is identity ke saath author aur committer lines ke roop me stamp hote hain — commit object me hamesha ke liye baked." },
+    { "title": "Saare aliases dekho", "body": "Config ek cascade hai: ye repo → aapka user (~/.gitconfig) → machine. Jo sabse paas hai wohi jeet-ta hai." }
+  ],
+  "git-branch": [
+    { "title": "Apna starting point chuno", "body": "Branch sirf commit ka pointer hai. HEAD jahan bhi ho, wahan naya naam hang kar sakte ho." },
+    { "title": "git branch chalao", "body": "Ek chhoti ref file current commit ke hash ke saath likhi jaati hai. Ab do naam ek hi commit ko point karte hain." },
+    { "title": "Aap ab bhi main par ho", "body": "Branch sirf pointer banata hai — aapko move nahi karta. Wo kaam git switch ka hai." }
+  ],
+  "git-checkout": [
+    { "title": "Kahan khade hona hai?", "body": "Checkout HEAD ko ek branch se doosri par flip karta hai — aur working files ko us branch se match karne ke liye rewrite karta hai." },
+    { "title": "HEAD move hota hai, files follow karti hain", "body": "HEAD file ab kehti hai ref: refs/heads/feature. Feature ke commit ke blobs disk par copy hote hain taaki aapka worktree match kare." },
+    { "title": "Safety pehle", "body": "Agar file me unsaved edits hain, checkout unhe destroy karne ke bajaye mana kar deta hai. -f matlab 'main sach me karna chahta hoon'." }
+  ],
+  "git-switch": [
+    { "title": "Focused checkout", "body": "SWITCH checkout ka sirf branch-wala hissa hai. Ek kaam: HEAD ko branches ke beech move karna." },
+    { "title": "Poora hop ek pointer edit hai", "body": "HEAD.txt doosri branch ke naam se rewritten hota hai. Disk par files us branch ke blobs se synchronized hoti hain." },
+    { "title": "Create + hop ek saath", "body": "git switch -c name branch plus switch do kaam ek me karta hai — checkout -b ka modern replacement." }
+  ],
+  "git-merge": [
+    { "title": "Do branches, do timelines", "body": "Aapki feature branch aur main dono move hui hain jab se same commit se split hui thi." },
+    { "title": "Three-way merge", "body": "Git base commit ko dono tips se compare karta hai, phir dono sets of changes ko combine karta hai. Alag regions khud merge ho jaate hain." },
+    { "title": "Conflict ka waqt", "body": "Dono sides ne same lines edit ki? Git guess nahi karta — dono ko <<<<<<< aur >>>>>>> markers ke saath dikhata hai." }
+  ],
+  "git-rebase": [
+    { "title": "Naya base, wahi ideas", "body": "Aap chahte ho ki aapki feature newest main par baithe — kisi stale fork point par nahi." },
+    { "title": "Replay karo, copy nahi", "body": "Har feature commit main ke naye tip par re-create hota hai. Same diff, naya parent, naya hash. Wahi changes, cleaner story." },
+    { "title": "Conflicts ek-ek commit par handle karo", "body": "Agar replayed commit takra jaaye, rebase ruk jaata hai taaki aap fix karo, phir continue. Commit by commit." },
+    { "title": "Rewrite rule", "body": "Rebased commits ko naye hashes milte hain. Jo doosron ne pull kar liya use kabhi rebase mat karo — aise force-pushes paida hote hain." }
+  ],
+  "git-log": [
+    { "title": "Puchho kisne kya kiya", "body": "git log HEAD se shuru hota hai aur har parent pointer follow karta hai, har commit print karta hai." },
+    { "title": "Ye linked list hai", "body": "Trick: commits sirf apne parents ko jaante hain. Log bas us chain par chal raha hai — neeche, neeche, first commit tak." }
+  ],
+  "git-show": [
+    { "title": "Ek commit kholo", "body": "git show ek single object ka full anatomy dikhata hai — commit ke liye, metadata plus uska diff." },
+    { "title": "Past se file nikalo", "body": "rev:path syntax kisi bhi file ko bilkul waisa print karta hai jaise wo thi: git show HEAD~2:src/App.tsx." }
+  ],
+  "git-diff": [
+    { "title": "Maine kya touch kiya?", "body": "git diff aapki working files ko index se compare karta hai — har edit jo aapne abhi stage nahi kiya." },
+    { "title": "Dekho kya staged hai", "body": "git diff --cached index ko HEAD se compare karta hai — aapke next commit ka preview." },
+    { "title": "Blob hashing kaam chhota karta hai", "body": "Same content = same SHA-1 — matching blobs instantly skip hote hain. Sirf changed files diff engine me jaati hain." }
+  ],
+  "git-blame": [
+    { "title": "Culprit dhundo (polite ho kar)", "body": "git blame file ki history backward walk karta hai aur har line us commit se mark karta hai jisne usse introduce kiya." },
+    { "title": "Trail follow karo", "body": "Blamed commit se git show ke saath uske message par jump karo — 'kyun' aksar waheen likha hota hai." }
+  ],
+  "git-reflog": [
+    { "title": "Undo stack", "body": "Jab bhi HEAD move hota hai — commit, reset, rebase, checkout, amend — git usse journal karta hai. git reflog wahi journal print karta hai." },
+    { "title": "Kuch bhi recover karo", "body": "Hard-reset bahut door gaya? Reflog me purani position dhundo aur HEAD ko wapas point karo. Commit ab bhi objects/ me hai." },
+    { "title": "90-din ki window", "body": "Unreachable commits delete nahi hote — bas wait karte hain. git gc unhe default 90 din ke baad finally prune karta hai." }
+  ],
+  "git-gc": [
+    { "title": "Repository mota ho jaata hai", "body": "Har add aur commit alag-alag compressed loose files likhta hai. Haazaron ke baad .git bloated aur slow ho jaata hai." },
+    { "title": "Compress aur prune", "body": "git gc loose objects ko ek delta-compressed packfile me pack karta hai aur unreachable, aged-out objects delete karta hai." }
+  ],
+  "git-reset": [
+    { "title": "Bahut door, bahut fast", "body": "Ek ganda commit aapki branch ke tip par hai. Aap chahte ho branch pointer uspar se peeche slide kare." },
+    { "title": "Pointer rewind karta hai", "body": "Branch file purane commit ko point karne ke liye rewritten hoti hai. Oops commit ab bhi objects/ me hai — bas unreachable." },
+    { "title": "Regret ki teen gehrayi", "body": "soft cheezein staged rakhta hai, mixed (default) unstage karta hai, hard aapki files ko bhi revert kar deta hai." }
+  ],
+  "git-restore": [
+    { "title": "File kharab kar di?", "body": "Aapki src/bug.js ki working copy tooti hui hai. Restore use index (ya HEAD) se rewrite karta hai." },
+    { "title": "Galti se unstage ho gaya?", "body": "restore --staged HEAD ka version wapas index me kheenchta hai, file ko unstage karke — disk ko touch kiye bina." },
+    { "title": "History se wapas lao", "body": "--source kisi bhi revision ka blob nikala deta hai. Gayi file, purana version, jo bhi — read karke nikaal lo." }
+  ],
+  "git-revert": [
+    { "title": "Shared branch, toota commit", "body": "Ek ganda commit har teammate tak ja chuka. Reset se rewrite karne par unke clones toot jaate — isliye hum add karte hain." },
+    { "title": "Correction, erasure nahi", "body": "git revert reverse diff ko ek brand-new commit ke roop me top par apply karta hai. Ganda commit history me rehta hai — sach me." }
+  ],
+  "git-stash": [
+    { "title": "Feature beech me ruk gaya", "body": "Aadha-finished changes aapke worktree me hain, lekin abhi branch switch karni hai." },
+    { "title": "Ek box me park kiya", "body": "Aapke changes stash stack par special commits ke roop me record hote hain, aur worktree clean HEAD par reset hota hai." },
+    { "title": "Baad me wapas aana", "body": "Koi branch, kabhi bhi: git stash pop stack ka top reapply karta hai aur use remove kar deta hai." }
+  ],
+  "git-cherry-pick": [
+    { "title": "Ek fix, doosri branch me bhi", "body": "Ek hotfix main par aa gaya, lekin release branch ko abhi chahiye — main ka poora merge kiye bina." },
+    { "title": "Release par replay", "body": "Release par ek naya commit aata hai — same change, lekin brand-new hash aur parent ke saath." }
+  ],
+  "git-clean": [
+    { "title": "Idhar-udhar files", "body": "Untracked files aur build ka kachra worktree me pada hai. Pehle preview karo ki clean kya hatayega." },
+    { "title": "Full sweep", "body": "clean -fd untracked files AUR directories delete karta hai; -x ignored files bhi remove karta hai. Permanent — isliye pehle preview." }
+  ],
+  "git-clone": [
+    { "title": "Pura project pakad lo", "body": "Aap ek remote URL par point karte ho. Sab kuch — har commit, branch, tag — neeche flow hone wala hai." },
+    { "title": "Fetch + checkout ek me", "body": "Clone literally ek fetch (saare objects download) hai uske baad ek checkout (default branch materialize karna)." },
+    { "title": "Origin aapke liye wired hai", "body": "refs/remotes/origin/main ban jaati hai aur aapki main use track karna seekh jaati hai — isi se day one par git pull kaam karta hai." }
+  ],
+  "git-remote": [
+    { "title": "Doosri repo bookmark karo", "body": "Remote sirf name → URL ka note hai. Fetch ya push tak koi network nahi hota." },
+    { "title": "Fork workflow", "body": "origin aapka hai, upstream original. Dono bookmarks rakho aur kahin se bhi sync kar sakte ho." }
+  ],
+  "git-fetch": [
+    { "title": "Badle bina dekho", "body": "Aap remote ke naye commits par peek karna chahte ho bina apne kaam ko disturb kiye." },
+    { "title": "Remote refs update hoti hain, aap nahi", "body": "refs/remotes/origin/main aage slide hoti hai. Aapki apni main, index aur worktree untouched rehte hain." },
+    { "title": "Future preview karo", "body": "git diff HEAD..origin/main dikhata hai ki ek pull kya laayega — usse commit karne se pehle." }
+  ],
+  "git-pull": [
+    { "title": "Team ke saath sync", "body": "git pull remote ka naya kaam fetch karta hai, phir use aapki current branch me merge karta hai." },
+    { "title": "…phir merge fold karta hai", "body": "Agar aapne koi local commit nahi kiya, main bas fast-forward hoti hai. Kiya hai to merge commit (ya rebase) unhe jodta hai." },
+    { "title": "Merge ki jagah rebase", "body": "git pull --rebase aapke local edits ko merge ki jagah top par replay karta hai — ek clean, seedhi line." }
+  ],
+  "git-push": [
+    { "title": "Apne commits share karo", "body": "Aapne locally commit kiya. Remote ke paas wo objects abhi nahi hain — wo upar travel karne wale hain." },
+    { "title": "Upload + advance", "body": "Aapke naye objects remote par stream hote hain, aur origin/main aapki branch se match karne ke liye advance hota hai." },
+    { "title": "Rejected? Aap peeche ho", "body": "Remote history khona mana karta hai. Pehle pull --rebase, phir push — shared branches ki daily rhythm." },
+    { "title": "Force-push, safely", "body": "Remote branch rewrite karni hai? Sirf --force-with-lease: ye tabhi force karta hai jab remote waisa hi ho jaisa aapne aakhri baar dekha." }
+  ],
+  "git-tag": [
+    { "title": "Milestone freeze karo", "body": "Aapne v1.0.0 ship kiya. Branch drift karti hai — aapko ek aisa naam chahiye jo kabhi move na ho." },
+    { "title": "Pin drop hota hai", "body": "Ek tag ref us commit ko hamesha ke liye point karta hai — chahe main aage race kare, v1.0.0 wahi point karta rehta hai." }
+  ]
+}

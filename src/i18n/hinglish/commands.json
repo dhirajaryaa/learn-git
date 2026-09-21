@@ -1,0 +1,2740 @@
+{
+  "git-status": {
+    "slug": "git-status",
+    "command": "git status",
+    "name": "git status",
+    "category": "snapshotting",
+    "icon": "list",
+    "level": "beginner",
+    "tagline": "Working tree, index aur last commit — teeno ko compare karo.",
+    "what": "git status ek read-only report hai. Ye teen jagah check karta hai — aapki working files, index (jo aapne stage kiya), aur HEAD (last commit) — aur batata hai ki har file kis haal me hai. Ye kuch delete ya badalta nahi.",
+    "how": [
+      {
+        "title": "Teen jagah, teen sawaal",
+        "body": "Repo ki har file ko samajhne ke liye teen snapshots compare karein: HEAD (last commit), index (next commit ka preview) aur working tree (disk par jo hai). Status in teeno ke beech ka difference dikhata hai."
+      },
+      {
+        "title": "Ye file ka content nahi padhta — sirf checksum",
+        "body": "Status index me record ki gayi blob hash ko disk file ki fast hash se compare karta hai. Hash same hai? File unchanged. Alag? Modified. Isliye status instant rehta hai.",
+        "code": ".git/index  →  0b2a…  ls-files -s\nworktree    →  hash  →  compare"
+      },
+      {
+        "title": "Branches ahead/behind",
+        "body": "Jab upstream tracking set ho, status ek aur comparison add karta hai: aapki branch ref vs remote-tracking branch (refs/remotes/origin/main). Ye batata hai ki aap kitna aage ho ya peeche."
+      },
+      {
+        "title": "Untracked — modified nahi",
+        "body": "Files jo Git ne kabhi nahi dekhi (index me nahi hain) wo 'untracked' hoti hain. Inka hash hai hi nahi compare karne ko, isliye ye alag list me dikhti hain."
+      }
+    ],
+    "visual": {
+      "kind": "status",
+      "caption": "A real git status, colour-coded by the three states"
+    },
+    "syntax": "git status [--short]",
+    "options": [
+      {
+        "flag": "--short",
+        "desc": "Compact machine-friendly output: M, A, D, ??…"
+      },
+      {
+        "flag": "--branch",
+        "desc": "Status ke saath branch aur ahead/behind bhi dikhao (aksar -sb)."
+      },
+      {
+        "flag": "--ignored",
+        "desc": ".gitignore se ignore hoti files bhi list karo."
+      }
+    ],
+    "uses": [
+      "Session ki pehli command — aap hamesha jaanna chahte ho ki repo kis haal me hai.",
+      "Commit karne se pehle, ye dekhne ke liye ki exact kya include hoga.",
+      "Pull karne ke baad, conflicts ya surprises jaldi pakadne ke liye."
+    ],
+    "aliases": [
+      {
+        "short": "g st",
+        "full": "git status",
+        "note": "Duniya mein sabse zyada use hone wala alias."
+      },
+      {
+        "short": "g sts",
+        "full": "git status --short",
+        "note": "Compact form — har file ek line par."
+      },
+      {
+        "short": "g s",
+        "full": "git status --short --branch",
+        "note": "Oh-my-zsh ka default; branch bhi dikhata hai."
+      }
+    ],
+    "related": [
+      "git-add",
+      "git-diff",
+      "git-commit"
+    ],
+    "proTip": "`git status --short` sirf do columns print karta hai: index state (1st char) aur worktree state (2nd char). 'M ' staged, ' M' modified. Ek nazar me poora haal."
+  },
+  "git-add": {
+    "slug": "git-add",
+    "command": "git add",
+    "name": "git add",
+    "category": "snapshotting",
+    "icon": "plus",
+    "level": "beginner",
+    "tagline": "Apne edits ko staging area (index) me copy karo.",
+    "what": "git add list ki gayi files ka pura snapshot index me record kar deta hai. Ye commit nahi banata aur commit hui cheezo ko touch nahi karta. Index me ab 'next commit' ka preview ready ho jaata hai.",
+    "how": [
+      {
+        "title": "Har file ek blob ban jaati hai",
+        "body": "Git file ka content compress karta hai, ek chhota header ('blob <size>\\0') lagata hai aur SHA-1 se hash karta hai. Is blobs ko .git/objects me 'content-addressed' file ke roop me likha jaata hai — naam hi content ke hash se nikalta hai.",
+        "code": "echo 'content' | git hash-object -w --stdin\n# → a5b2f31c5e71f86a9be9f0aa4b139b2b0a9d717a"
+      },
+      {
+        "title": "Index update hota hai",
+        "body": "Index file (.git/index) me har staged path ke liye ek row aati hai: path → blob hash + file mode + stat data. Ab ye file 'pehli baar' git ko pata hai."
+      },
+      {
+        "title": "Same content, same blob — no duplication",
+        "body": "Blobs content-addressed hain, isliye do identical files add karne par values kabhi do baar store nahi hoti. Git automatically ek hi object ko share karta hai."
+      },
+      {
+        "title": "File nahi, intent stage karo",
+        "body": "Staging sirf index ke baare me hai: working file disk par bilkul waise hi rehti hai. Kuch move nahi hota, kuch copy nahi hota — sirf ek note banta hai ki 'ye content agla snapshot hai'."
+      }
+    ],
+    "visual": {
+      "kind": "staging",
+      "staged": [
+        "src/button.tsx",
+        "src/theme.css"
+      ],
+      "dirty": [
+        "src/button.tsx"
+      ],
+      "untracked": [
+        "notes.md"
+      ],
+      "mode": "add",
+      "caption": "git add copies file snapshots from the worktree into the index"
+    },
+    "syntax": "git add <path>",
+    "options": [
+      {
+        "flag": "-A",
+        "desc": "Saare changes stage karo: nayi, modified aur deleted files."
+      },
+      {
+        "flag": "-p",
+        "desc": "Hunks interactively stage karo — poora file nahi, kuch hissa chuno."
+      },
+      {
+        "flag": "-u",
+        "desc": "Sirf tracked files stage karo; nayi untracked files skip karo."
+      },
+      {
+        "flag": "-n",
+        "desc": "Dry run — kya stage hoga preview karo."
+      }
+    ],
+    "uses": [
+      "Ek feature khatam kiya aur saare changes selectively commit karna hai.",
+      "Config file tweak ki aur is commit me nahi chahiye — baaki sab stage kar do.",
+      "Surgical precision ke liye -p se clean, reviewable commits banao."
+    ],
+    "aliases": [
+      {
+        "short": "g a",
+        "full": "git add -A",
+        "note": "Sab kuch stage karo, deletions bhi. Classic muscle-memory alias."
+      },
+      {
+        "short": "g aa",
+        "full": "git add -A",
+        "note": "Same cheez, speed ke liye double."
+      },
+      {
+        "short": "g ap",
+        "full": "git add -p",
+        "note": "Har hunk ko interactively stage karo."
+      },
+      {
+        "short": "ga.",
+        "full": "git add .",
+        "note": "Stage everything in the current directory."
+      },
+      {
+        "short": "g a -n",
+        "full": "git add -A -n",
+        "note": "Dry-run what you'd accidentally stage in a monorepo."
+      }
+    ],
+    "related": [
+      "git-status",
+      "git-commit",
+      "git-restore"
+    ],
+    "proTip": "`git add -p` clean history ke liye sabse acchi aadat hai. Agar hunk aasani se stage nahi hota -p se, to commit ko chhota karke baar-baar karo — history ke professionals aise hi kaam karte hain."
+  },
+  "git-commit": {
+    "slug": "git-commit",
+    "command": "git commit",
+    "name": "git commit",
+    "category": "snapshotting",
+    "icon": "book",
+    "level": "beginner",
+    "tagline": "Index ko ek permanent commit object me seal karo.",
+    "what": "git commit index padhta hai, use ek tree object me wrap karta hai, aur ek commit object banata hai jo us tree aur aapke current HEAD ko point karta hai. Phir branch ref ko aage badhata hai. Ye poore Git me sabse important moment hai.",
+    "how": [
+      {
+        "title": "Step 1 — index se tree banta hai",
+        "body": "Har staged path ko trees (directories) aur blobs (files) me pack kiya jaata hai. Top-level tree object poore project ka snapshot hai — wo commit ka content banega.",
+        "code": "tree f2b0c9d…\n├─ blob aa8f1e…  README.md\n├─ blob 3c2d09…  src/main.ts\n└─ tree b7e1a2…  src/"
+      },
+      {
+        "title": "Step 2 — commit object likha jaata hai",
+        "body": "Git commit object banata hai jisme hota hai: tree hash, parent commit hash, author, committer, timestamp aur message. Parent wo commit hota hai jise aap abhi point kar rahe the.",
+        "code": "commit 74d3b9f  (your new commit)\n  tree    f2b0c9d…\n  parent  9a2f1c0…  (previous commit)\n  author  Ada <ada@…>\n  committer Ada <ada@…>\n  message feat: add dark mode"
+      },
+      {
+        "title": "Step 3 — branch move hoti hai, HEAD follow karta hai",
+        "body": "Jis branch par aap ho (refs/heads/main) uski ref file rewrite hoti hai — ab wo naye commit hash ko hold karti hai. HEAD bina badle hi naye commit ko point karta hai.",
+        "code": "git rev-parse main   # → 74d3b9f…\ncat .git/HEAD         # → ref: refs/heads/main\ncat .git/refs/heads/main  # → 74d3b9f…"
+      },
+      {
+        "title": "Parent pointers history banate hain",
+        "body": "Har commit apna parent record karta hai. Kisika bhi commit se parent chain follow karo to poori history mil jaati hai. Branch move hui, history badhi — dono ek commit me."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "build",
+        "highlight": 4,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "c86d9ee",
+            "msg": "style layout",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "e1b5a09",
+            "msg": "fix nav menu",
+            "parents": [
+              2
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              3
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 3
+          },
+          {
+            "name": "HEAD",
+            "node": 3,
+            "active": true
+          }
+        ],
+        "caption": "The commit object is appended and the branch pointer slides forward"
+      }
+    },
+    "syntax": "git commit -m \"<message>\"",
+    "options": [
+      {
+        "flag": "-m",
+        "desc": "Commit message inline set karo."
+      },
+      {
+        "flag": "-a",
+        "desc": "Commit se pehle saari tracked modified files stage karo (nayi files kabhi nahi)."
+      },
+      {
+        "flag": "--amend",
+        "desc": "Last commit replace karo — naya tree, naya message, naya hash."
+      },
+      {
+        "flag": "--no-verify",
+        "desc": "Pre-commit aur commit-msg hooks skip karo."
+      }
+    ],
+    "uses": [
+      "Kaam ka ek logical unit khatam hua aur index theek lag raha hai.",
+      "Last commit me typo fix kiya: git commit --amend --no-edit.",
+      "Sab kuch commit karna hai aur index dance overhead lag raha hai to -a ke saath."
+    ],
+    "aliases": [
+      {
+        "short": "g cm",
+        "full": "git commit -m",
+        "note": "Inline message ke saath commit."
+      },
+      {
+        "short": "g cma",
+        "full": "git commit -am",
+        "note": "Tracked files stage + commit, ek mee me."
+      },
+      {
+        "short": "g amend",
+        "full": "git commit --amend --no-edit",
+        "note": "Last commit me changes fold karo, message ko hataye bina."
+      },
+      {
+        "short": "g cm \"$(gen)\"",
+        "full": "git commit -m <generated msg>",
+        "note": "Some devs pipe a commit-message generator here."
+      }
+    ],
+    "related": [
+      "git-add",
+      "git-status",
+      "git-log",
+      "git-reset"
+    ],
+    "proTip": "Amend history ko edit nahi karta — ye ek brand-new commit object banata hai jiska parent wahi purana hai. Isliye amend aur reset dono reflog me record hote hain."
+  },
+  "git-init": {
+    "slug": "git-init",
+    "command": "git init",
+    "name": "git init",
+    "category": "setup",
+    "icon": "plus",
+    "level": "beginner",
+    "tagline": "Kisi bhi folder ko Git repository bana do.",
+    "what": "git init aapke project ke andar ek chhupa .git directory banata hai. Ye directory poora repository hai — har object, har pointer, history ka har tukda yahin rehta hai. Bahar ka folder sirf working tree hai.",
+    "how": [
+      {
+        "title": "Git .git folder banata hai",
+        "body": "git init .git directory likhta hai jisme char core structures hote hain: objects/ (khali), refs/ (khali), HEAD (ek text file) aur index (khali). Isi me aage poora history aayega.",
+        "code": "mkdir .git\nmkdir .git/objects/{info,pack}\nmkdir .git/refs/{heads,tags}\necho 'ref: refs/heads/main' > .git/HEAD"
+      },
+      {
+        "title": "HEAD ka janam",
+        "body": "HEAD sirf ek text file hai jisme current branch ka naam hota hai. Ye refs/heads/main point karta hai, lekin wo branch file abhi exist nahi karti — bas pehla commit banne ka wait.",
+        "code": "cat .git/HEAD  # → ref: refs/heads/main"
+      },
+      {
+        "title": "Abhi kuch track nahi hota",
+        "body": "Koi object exist nahi karta. Index me koi file nahi. Git bas kah raha hai 'demonstrated, ready hoon' aur wait karta hai. Working directory ko wo bilkul touch nahi karta."
+      }
+    ],
+    "visual": {
+      "kind": "gitdir",
+      "caption": "git init materializes the .git folder"
+    },
+    "syntax": "git init [<directory>]",
+    "options": [
+      {
+        "flag": "<directory>",
+        "desc": "Current folder ki jagah kisi specific folder me ini tialize karo."
+      },
+      {
+        "flag": "-b <name>",
+        "desc": "Initial branch ka naam set karo (default: main)."
+      },
+      {
+        "flag": "--bare",
+        "desc": "Bare repo banao — koi working directory nahi, sirf refs. Servers ke liye."
+      }
+    ],
+    "uses": [
+      "Brand-new project shuru kiya aur day one se version control chahiye.",
+      "Bina .git folder ki kisi ki code download ki aur apni history chahiye.",
+      "Git internals explore kar rahe ho aur clean sandbox chahiye: git init /tmp/lab."
+    ],
+    "aliases": [
+      {
+        "short": "g init",
+        "full": "git init",
+        "note": "Common global alias jahan g = git."
+      },
+      {
+        "short": "gi",
+        "full": "git init",
+        "note": "Kuch shells define karte hain ye initials."
+      },
+      {
+        "short": "g init -y",
+        "full": "git init -b main",
+        "note": "Default-branch warn skip karne ke liye kuch setups ka alias."
+      }
+    ],
+    "related": [
+      "git-add",
+      "git-commit",
+      "git-clone"
+    ],
+    "proTip": "Nayi Git versions me default branch main hoti hai. Check karne ke liye: `git init -h` me --initial-branch ka default dikhta hai."
+  },
+  "git-config": {
+    "slug": "git-config",
+    "command": "git config",
+    "name": "git config",
+    "category": "setup",
+    "icon": "settings",
+    "level": "beginner",
+    "tagline": "Identity aur behaviour set karo jo Git commit karte waqt use karta hai.",
+    "what": "git config key/value pairs ko teen scopes me padhta aur likhta hai: system (poori machine), global (aapka user) aur local (ye repository). Commits in values ko author ke roop me stamp karte hain.",
+    "how": [
+      {
+        "title": "Teen scopes, ek merged result",
+        "body": "Values wide → narrow cascade hoti hain. Jab Git ko koi value chahiye, wo local, phir global, phir system check karta hai — aur pehli mili value use karta hai.",
+        "code": "/etc/gitconfig      ← system   (--system)\n~/.gitconfig        ← global    (--global)\n.git/config         ← local     (this repo)"
+      },
+      {
+        "title": "Written as INI text files",
+        "body": "Configuration sirf human-readable text hai. Value set karna = appropriate file me ek section + key append karna. Aap ise notepad me bhi edit kar sakte ho.",
+        "code": "[user]\n  name = Ada Lovelace\n  email = ada@example.com"
+      },
+      {
+        "title": "Commits ise creation time par padhte hain",
+        "body": "Jab aap commit karte ho, Git resolved user.name aur user.email ko seedha commit object me author ke roop me bake kar deta hai. Baad me ye values badalne se purane commits pe impact nahi."
+      }
+    ],
+    "visual": {
+      "kind": "gitdir",
+      "caption": "Config values cascade system → global → local"
+    },
+    "syntax": "git config <key> <value>",
+    "options": [
+      {
+        "flag": "--global",
+        "desc": "~/.gitconfig me likho (aapka user, saare repos)."
+      },
+      {
+        "flag": "--local",
+        "desc": "Sirf is repository me likho (default)."
+      },
+      {
+        "flag": "--list",
+        "desc": "Poori resolved config print karo, aliases samet."
+      },
+      {
+        "flag": "alias.<name>",
+        "desc": "Shortcut banao: git config --global alias.co checkout."
+      }
+    ],
+    "uses": [
+      "Abhi Git install kiya aur first commit se pehle user.name/user.email set karna hai.",
+      "Ek baar aise aliases define karne hain jo har repo me chalenge.",
+      "Do identities hain (work vs personal) aur --local se har repo me ek pin karna hai."
+    ],
+    "aliases": [
+      {
+        "short": "g cf",
+        "full": "git config --global",
+        "note": "Global config edits ka shorthand."
+      },
+      {
+        "short": "g cgl",
+        "full": "git config --global --list",
+        "note": "Saare configured aliases aur settings dump karo."
+      }
+    ],
+    "related": [
+      "git-init",
+      "git-commit"
+    ],
+    "proTip": "Apne saare defined aliases dekho: `git config --global --get-regexp ^alias`."
+  },
+  "git-branch": {
+    "slug": "git-branch",
+    "command": "git branch",
+    "name": "git branch",
+    "category": "branching",
+    "icon": "git-branch",
+    "level": "beginner",
+    "tagline": "Commits ko point karne wale refs create, list aur rename karo.",
+    "what": "Branch ek movable pointer ke alawa kuch nahi — .git/refs/heads me ek text file jo ek commit hash store karti hai. git branch inhe list karta hai, current position par naya pointer banata hai, rename/delete karta hai.",
+    "how": [
+      {
+        "title": "Branch ek file hai jisme ek hash",
+        "body": "Branch banane ka matlab literally ek 41-byte file likhna hai. Hash wahin copy hota hai jahan aap the jab 'git branch <name>' chalaya.",
+        "code": "echo 74d3b9f0… > .git/refs/heads/feature  # what `git branch feature` does"
+      },
+      {
+        "title": "Kai branches, har ek ka apna commit",
+        "body": "Branches sasti hain kyunki inme koi data nahi hota. Jis history ko ye point karti hain wo share hoti hai — pointers bas ek jagah aage badhte hain."
+      },
+      {
+        "title": "Listing refs padhti hai aur HEAD dikhati hai",
+        "body": "`git branch` refs/heads ki har file padhta hai, use uske commit me resolve karta hai, aur current branch par asterisk (*) lagata hai.",
+        "code": "$ git branch\n* main\n  feature/login\n  feature/export"
+      },
+      {
+        "title": "Delete sirf pointer hatata hai",
+        "body": "Branch delete karna = sirf uska ref file delete karna. Commits objects/ me rehti hain aur reflog ya tags se tab tak zinda rehti hain jab tak gc na chale."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "branch",
+        "highlight": 2,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              1
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 2
+          },
+          {
+            "name": "HEAD",
+            "node": 2,
+            "active": true
+          },
+          {
+            "name": "feature",
+            "node": 2
+          }
+        ],
+        "caption": "git branch feature just adds a second pointer to the same commit"
+      }
+    },
+    "syntax": "git branch <name>",
+    "options": [
+      {
+        "flag": "<name>",
+        "desc": "Current commit ko point karti nayi branch banao."
+      },
+      {
+        "flag": "-a",
+        "desc": "Saari branches list karo, remote-tracking walo samet."
+      },
+      {
+        "flag": "-d / -D",
+        "desc": "Branch delete karo (merged / force)."
+      },
+      {
+        "flag": "-m",
+        "desc": "Current branch rename karo."
+      },
+      {
+        "flag": "-vv",
+        "desc": "Dikhao ki har local branch kaunse refs track karti hai."
+      }
+    ],
+    "uses": [
+      "Current branch chhode bina nayi feature shuru karni hai.",
+      "Switch karne se pehle dekho kaunsi branches exist karti hain aur kahan point karti hain.",
+      "Merge ke baad -d se stale branches saaf karni hain."
+    ],
+    "aliases": [
+      {
+        "short": "g b",
+        "full": "git branch",
+        "note": "Branches list karne ka universal shorthand."
+      },
+      {
+        "short": "g bav",
+        "full": "git branch -avv",
+        "note": "Tracking info ke saath sab list karo."
+      },
+      {
+        "short": "g ba",
+        "full": "git branch -a",
+        "note": "List me remote-tracking branches bhi include karo."
+      },
+      {
+        "short": "g bd",
+        "full": "git branch -d",
+        "note": "Merged branch delete karo."
+      },
+      {
+        "short": "g bnm",
+        "full": "git branch --no-merged",
+        "note": "Abhi kya merged nahi — pre-merge check."
+      }
+    ],
+    "related": [
+      "git-checkout",
+      "git-merge",
+      "git-log"
+    ],
+    "proTip": "Create + checkout ek saath: `git switch -c feature` (ya purana `git checkout -b feature`). Do alag actions ek ke andar."
+  },
+  "git-checkout": {
+    "slug": "git-checkout",
+    "command": "git checkout",
+    "name": "git checkout",
+    "category": "branching",
+    "icon": "git-branch",
+    "level": "beginner",
+    "tagline": "HEAD ko doosri branch par le jao aur working tree dobara banao.",
+    "what": "git checkout do bade kaam karta hai: HEAD ko doosri branch point karta hai (ya kisi commit par detach karta hai), aur working directory ko us branch se match karne ke liye rewrite karta hai.",
+    "how": [
+      {
+        "title": "HEAD ek ref se doosre ref par flip hota hai",
+        "body": "HEAD ek file hai. `git checkout main` usme 'ref: refs/heads/main' likhta hai. Ye ek edit hi poori history ka viewpoint badal deta hai."
+      },
+      {
+        "title": "Working tree sync hota hai",
+        "body": "Git checked-out commit ke tree ko aapki current files se compare karke difference disk par copy karta hai. Changed files overwrite hote hain, nayi files aati hain, delete hui files hat jaati hain."
+      },
+      {
+        "title": "Git rukega, data nahi khaayega",
+        "body": "Agar raste me kisi file par uncommitted changes hain, checkout mana kar deta hai: 'Your local changes would be overwritten'. -f matlab 'mujhe sach me ye chahiye'."
+      },
+      {
+        "title": "Detached HEAD",
+        "body": "`git checkout 74d3b9f` HEAD ko raw commit par le jaata hai branch ki jagah. Ab aap 'detached' state me ho: jo commits banoge wo kisi branch ke under nahi honge."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "headmove",
+        "highlight": 0,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              1
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "feature",
+            "node": 0
+          },
+          {
+            "name": "main",
+            "node": 2
+          },
+          {
+            "name": "HEAD",
+            "node": 2,
+            "active": true
+          }
+        ],
+        "caption": "The 'HEAD' capsule glides from main to the feature commit — and the working tree rewrites itself"
+      }
+    },
+    "syntax": "git checkout <branch|commit>",
+    "options": [
+      {
+        "flag": "-b <name>",
+        "desc": "Branch banao, phir checkout karo — classic branch+switch."
+      },
+      {
+        "flag": "-- <path>",
+        "desc": "Sirf ek specific file ke working-tree changes discard karo."
+      },
+      {
+        "flag": "-f",
+        "desc": "Force switch karo, uncommitted changes discard karke."
+      }
+    ],
+    "uses": [
+      "Feature branches ke beech context-switch ke liye jump karna.",
+      "Kabhi bhi git branch akele use nahi karte — -b se create+switch ek step me chahiye.",
+      "Kisi purane commit ko directly inspect karne jana (dhyaan: detached HEAD)."
+    ],
+    "aliases": [
+      {
+        "short": "g co",
+        "full": "git checkout",
+        "note": "Legendary alias — billion muscle memories me carved."
+      },
+      {
+        "short": "g cob",
+        "full": "git checkout -b",
+        "note": "Create + switch, ek keystroke me."
+      },
+      {
+        "short": "g co -- .",
+        "full": "git checkout -- .",
+        "note": "Poora working tree HEAD par wapas lao. Dhyaan se use karo."
+      }
+    ],
+    "related": [
+      "git-switch",
+      "git-branch",
+      "git-restore",
+      "git-reset"
+    ],
+    "proTip": "git checkout do kaam karta hai (branches switch + files restore) jiski wajah se generations confuse hui. Isi liye git switch aur git restore alag commands bane."
+  },
+  "git-switch": {
+    "slug": "git-switch",
+    "command": "git switch",
+    "name": "git switch",
+    "category": "branching",
+    "icon": "git-branch",
+    "level": "beginner",
+    "tagline": "Branches badalne ka naya, focused tareeka.",
+    "what": "git switch (Git 2.23+) checkout jaisa hi HEAD-moving mechanism hai, bas file-restore wala hissa hata diya. Ye sirf batata hai ki aap kis branch par ho — koi accident restore nahi.",
+    "how": [
+      {
+        "title": "Sirf HEAD + worktree operation",
+        "body": "Checkout ki tarah, switch .git/HEAD ko rewrite karta hai aur working tree ko sync karta hai. Farak conceptual hai: switch sirf branch badalta hai, kabhi files nahi."
+      },
+      {
+        "title": "-c create karta hai, phir switch",
+        "body": "`git switch -c feat` under the hood do steps hai: `git branch feat` (ref file likho) aur phir HEAD ko us nayi branch par switch karo."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "headmove",
+        "highlight": 1,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              1
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 2
+          },
+          {
+            "name": "feature",
+            "node": 1
+          },
+          {
+            "name": "HEAD",
+            "node": 2,
+            "active": true
+          }
+        ],
+        "caption": "git switch only moves HEAD between branches — nothing else"
+      }
+    },
+    "syntax": "git switch <branch>",
+    "options": [
+      {
+        "flag": "-c <name>",
+        "desc": "Branch banao, phir us par switch karo."
+      },
+      {
+        "flag": "-",
+        "desc": "Previous checked-out branch par wapas jao (toggle)."
+      },
+      {
+        "flag": "-f",
+        "desc": "Local changes discard karke switch karo."
+      },
+      {
+        "flag": "-t <remote/branch>",
+        "desc": "Diye gaye remote branch ko track karne wali local branch banao."
+      }
+    ],
+    "uses": [
+      "Roz ka branch-jumping — intent checkout se zyada clean.",
+      "Do branches ke beech `git switch -` se hai jump karna.",
+      "Beginner onboarding: naye aane walo ko switch + restore sikhate hain, legacy checkout split nahi."
+    ],
+    "aliases": [
+      {
+        "short": "g sw",
+        "full": "git switch",
+        "note": "Oh-my-zsh ka default."
+      },
+      {
+        "short": "g swc",
+        "full": "git switch -c",
+        "note": "Branch banao aur turant jump karo."
+      },
+      {
+        "short": "g sw -",
+        "full": "git switch -",
+        "note": "Wapas us branch par flip karo jo last thi."
+      }
+    ],
+    "related": [
+      "git-checkout",
+      "git-branch"
+    ],
+    "proTip": "`git switch -` stashing ke saath zabardast kaam karta hai: branch A par work save karo, `g sw -` se branch B par jao, aur kabhi bhi wapas."
+  },
+  "git-merge": {
+    "slug": "git-merge",
+    "command": "git merge",
+    "name": "git merge",
+    "category": "branching",
+    "icon": "git-merge",
+    "level": "intermediate",
+    "tagline": "Doosri branch ka history aapki branch me fold karo.",
+    "what": "git merge doosri branch ke commits ko aapki current branch ke saath jodta hai. Agar alag ho gayi hain, Git three-way merge karta hai — do timelines compare karke ek join banata hai. Kuch cases me to sirf pointer slide hota hai.",
+    "how": [
+      {
+        "title": "Fast-forward: ye asal merge nahi hai",
+        "body": "Agar aapki branch move na hui ho, merge sirf aapki branch pointer ko doosri branch ke tip tak slide kar deta hai. Koi merge commit nahi banta — history ek line me rehti hai.",
+        "code": "before:  main ▸ a — b — c\n         feat  ▸ a — b — c — d\nafter:   main ▸ a — b — c — d   (pointer only)"
+      },
+      {
+        "title": "Alag hui: three-way merge",
+        "body": "Jab dono branches me naye commits hon, Git merge base dhunde (most recent common ancestor). Base vs aapki branch vs doosri branch — teeno ka diff karke ek combined version banata hai.",
+        "code": "       base\n      /    \\\n   yours   theirs\n      \\    /\n   merge commit (two parents)"
+      },
+      {
+        "title": "Blobs merge hote hain, lines nahi",
+        "body": "Har file ke liye Git teen blob versions padhta hai, word/line diff chalaata hai, aur agar dono taraf alag regions changed hain to dono changes ko ek saath rakh deta hai."
+      },
+      {
+        "title": "Conflict ek file hai jisme dono answers",
+        "body": "Jab dono sides same lines edit karein, Git guess nahi karta. Dono versions file me conflict markers ke saath likh deta hai — aap decide karo."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "merge",
+        "highlight": 5,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "c1d8e2f",
+            "msg": "feature work",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "f0e9d8c",
+            "msg": "more feature",
+            "parents": [
+              3
+            ]
+          },
+          {
+            "id": "9b8a7c6",
+            "msg": "merge branch 'feature'",
+            "parents": [
+              2,
+              4
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 5
+          },
+          {
+            "name": "feature",
+            "node": 4
+          },
+          {
+            "name": "HEAD",
+            "node": 5,
+            "active": true
+          }
+        ],
+        "caption": "The merge commit links both histories with a second parent edge"
+      }
+    },
+    "syntax": "git merge <branch>",
+    "options": [
+      {
+        "flag": "--no-ff",
+        "desc": "Fast-forward possible ho tab bhi merge commit force karo."
+      },
+      {
+        "flag": "--squash",
+        "desc": "Merged changes ko ek unstaged change me stitch karo — koi merge commit nahi."
+      },
+      {
+        "flag": "--abort",
+        "desc": "Conflicted merge cancel karke pre-merge state par wapas jao."
+      },
+      {
+        "flag": "-m",
+        "desc": "Auto-generated merge message override karo."
+      }
+    ],
+    "uses": [
+      "Review ke baad feature branch ko main me integrate karna.",
+      "History me exact branches preserve karni hain (history honest rahe).",
+      "Release branches me visible 'merge bubble' ke liye --no-ff ke saath."
+    ],
+    "aliases": [
+      {
+        "short": "g mg",
+        "full": "git merge",
+        "note": "Chhota merge alias."
+      },
+      {
+        "short": "g mnn",
+        "full": "git merge --no-ff",
+        "note": "Hamesha merge commit banao — release branches ke liye common."
+      },
+      {
+        "short": "g mg --abort",
+        "full": "git merge --abort",
+        "note": "Gande conflict se emergency exit."
+      }
+    ],
+    "related": [
+      "git-rebase",
+      "git-pull",
+      "git-log"
+    ],
+    "proTip": "Conflicts dono jagah jaate hain: file me aur index me 'unmerged' entries ke roop me (har stage ka ek blob). `git ls-files -u` unhe dikhata hai."
+  },
+  "git-rebase": {
+    "slug": "git-rebase",
+    "command": "git rebase",
+    "name": "git rebase",
+    "category": "branching",
+    "icon": "box",
+    "level": "advanced",
+    "tagline": "Apne commits ko naye base par dobara lagao — aur history rewrite karo.",
+    "what": "git rebase aapke commits ko purane base se uthata hai aur doosri branch ki tip par ek-ek karke naye commits ke roop me replay karta hai. Result: clean, linear history.",
+    "how": [
+      {
+        "title": "Purane commits recreate hote hain, copy nahi",
+        "body": "Rebase common ancestor dhunde, aapke commits collect karta hai branch tip tak, phir har ek ko: padho, uske changes nikalo, new base par apply karo aur naya commit banao.",
+        "code": "before:\n  main  ▸ a                   feature ▸ a — x — y\n\nafter:\n  main  ▸ a — x — y                    (feature gone, replayed)\n  feature ▸ a — x — y                  (x' and y' new hashes)"
+      },
+      {
+        "title": "Ek parent change poore chain ko rehash kar deta hai",
+        "body": "Chaunki commit ka hash uske parent par depend karta hai, first parent replace karte hi har aage wale commit ka hash naya ho jaata hai. Isliye rebase se history 'rewrite' hoti hai."
+      },
+      {
+        "title": "Har commit par mini three-way merge",
+        "body": "Har commit ke liye Git old base, aapka commit aur naye base — in teeno ke beech ek chhota three-way merge karta hai. Jo commit clean apply ho jaate hain unme koi conflict nahi."
+      },
+      {
+        "title": "Danger: aap shared history edit kar rahe ho",
+        "body": "Rebase hashes badalta hai. Jo bhi aapke purane-hash commits ko pull kar chuka hai, uska history diverge ho jayega. Isliye: kabhi un branches ko rebase mat karo jo doosron ne kheench li hain."
+      }
+    ],
+    "visual": {
+      "kind": "rebased",
+      "spec": {
+        "action": "git rebase main",
+        "before": {
+          "animation": "log",
+          "nodes": [
+            {
+              "id": "a1b2c3d",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "e4f5a6b",
+              "msg": "main: fix nav",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c7d8e9f",
+              "msg": "feature: add btn",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "0a1b2cd",
+              "msg": "feature: wire API",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 1
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ]
+        },
+        "after": {
+          "animation": "log",
+          "nodes": [
+            {
+              "id": "a1b2c3d",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "e4f5a6b",
+              "msg": "main: fix nav",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "f1a2b3c",
+              "msg": "feature: add btn'",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "b2c3d4e",
+              "msg": "feature: wire API'",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 1
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "syntax": "git rebase <branch>",
+    "options": [
+      {
+        "flag": "-i",
+        "desc": "Interactive mode — commits reorder, squash, fixup, drop."
+      },
+      {
+        "flag": "--onto <base>",
+        "desc": "Commits ko kisi bhi arbitrary naye base par replay karo."
+      },
+      {
+        "flag": "--root",
+        "desc": "Sabse pehle commit ko bhi rebase karo (interaction chahiye)."
+      },
+      {
+        "flag": "--abort",
+        "desc": "Process cancel karke original branch restore karo."
+      }
+    ],
+    "uses": [
+      "Feature branch ko merge se pehle fast-moving main ke saath sync rakhna.",
+      "WIP commits ke dher ko -i se ek clean commit me squash karna.",
+      "Perfectly linear history chahiye (GitHub squash-merge culture)."
+    ],
+    "aliases": [
+      {
+        "short": "g rb",
+        "full": "git rebase",
+        "note": "Plain rebase shorthand."
+      },
+      {
+        "short": "g rbi",
+        "full": "git rebase -i",
+        "note": "Interactive rewrite — power button."
+      },
+      {
+        "short": "g rb main",
+        "full": "git rebase main",
+        "note": "Updated main par feature ko re-sync karo."
+      }
+    ],
+    "related": [
+      "git-merge",
+      "git-pull",
+      "git-reset",
+      "git-cherry-pick"
+    ],
+    "proTip": "Squash/fixup interactive rebase ka killer feature hai gandi work ke liye: `git rebase -i main` phir 'pick' ko 'squash' me badlo. Result: ek clean commit."
+  },
+  "git-log": {
+    "slug": "git-log",
+    "command": "git log",
+    "name": "git log",
+    "category": "inspecting",
+    "icon": "history",
+    "level": "beginner",
+    "tagline": "Parent links ki chain chalo aur apni history padho.",
+    "what": "git log pure read operation hai: HEAD se shuru karke har commit ke parent pointer ko peechle commit tak follow karta hai, hamesha. Har commit object ek line ya block ke roop me render hota hai.",
+    "how": [
+      {
+        "title": "Ye linked-list traversal hai",
+        "body": "Commits sirf apne parents ko jaante hain. Log ek ref (jaise HEAD) se start karta hai, use print karta hai, parent par jump karta hai, print karta hai — tab tak jab tak parent khatam na ho.",
+        "code": "HEAD → 74d3b9f → parent → 4b7c2a5 → parent → 9a2f1c0 → <no parent>"
+      },
+      {
+        "title": "--oneline ek commit ko ek hash+subject banata hai",
+        "body": "Chhote 7-character hashes full 40-digit hash ke pehle 7 hex digits se aate hain. Isi format se poora graph ek nazar me samajh aata hai."
+      },
+      {
+        "title": "--graph DAG draw karta hai",
+        "body": "Merges commit list ko line ke bajaye graph banate hain. --graph track karta hai ki har commit kaunsi 'lane' me hai aur ASCII me branch topology draw karta hai."
+      },
+      {
+        "title": "Range aur filter syntax",
+        "body": "`git log main..feature` ka matlab: 'commits jo feature se reachable hain lekin main se nahi'. Set-difference ki tarah padho — ye aapko aise commits deta hai jo sirf feature me hain."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "log",
+        "highlight": 2,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "c86d9ee",
+            "msg": "style layout",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "e1b5a09",
+            "msg": "fix nav menu",
+            "parents": [
+              2
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              3
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 4
+          },
+          {
+            "name": "HEAD",
+            "node": 4,
+            "active": true
+          }
+        ],
+        "caption": "A light beam sweeps down the parent pointers, printing each commit"
+      }
+    },
+    "syntax": "git log [<revision range>]",
+    "options": [
+      {
+        "flag": "--oneline",
+        "desc": "Har commit ek line par: 7-char hash + subject."
+      },
+      {
+        "flag": "--graph",
+        "desc": "Branch topology ko ASCII lanes se paint karo."
+      },
+      {
+        "flag": "-p",
+        "desc": "Listed har commit ka full diff dikhao."
+      },
+      {
+        "flag": "-n <count>",
+        "desc": "Output ko newest n commits tak limit karo."
+      },
+      {
+        "flag": "--author=",
+        "desc": "Author pattern se filter karo."
+      },
+      {
+        "flag": "-S\"string\"",
+        "desc": "Sirf wahi commits jisme wo string add ya remove hui."
+      }
+    ],
+    "uses": [
+      "'Kya badla aur kab' — git ki everyday archaeology.",
+      "PR kholne se pehle apna kaam review karna: git log --oneline -10.",
+      "Bug kab aaya ye dhunda jaana: git log -S\"buggyExpr\" -- file."
+    ],
+    "aliases": [
+      {
+        "short": "g lg",
+        "full": "git log --oneline --graph",
+        "note": "One-liner history view jo har koi config me paste karta hai."
+      },
+      {
+        "short": "g lgg",
+        "full": "git log --all --graph --oneline --decorate",
+        "note": "Har branch, fully drawn, ref names ke saath."
+      },
+      {
+        "short": "g lgp",
+        "full": "git log --oneline --stat",
+        "note": "Compact log — har commit ke file stats ke saath."
+      },
+      {
+        "short": "g ls",
+        "full": "git log --stat -p",
+        "note": "Deep dive: har commit ne har file ka kya kiya."
+      }
+    ],
+    "related": [
+      "git-show",
+      "git-diff",
+      "git-reflog",
+      "git-blame"
+    ],
+    "proTip": "Lazy alias banao jo hamesha kaam aayega: `git config --global alias.tree \"log --graph --oneline --all --decorate\"`."
+  },
+  "git-show": {
+    "slug": "git-show",
+    "command": "git show",
+    "name": "git show",
+    "category": "inspecting",
+    "icon": "eye",
+    "level": "intermediate",
+    "tagline": "Kisi bhi ek object ka full anatomy dikhao.",
+    "what": "git show kisi git object ko human-readable form me print karta hai. Commit do aur metadata + uske introduction ka diff milega. Tags, trees aur blobs bhi show kar sakte ho.",
+    "how": [
+      {
+        "title": "Har object type ka apna renderer",
+        "body": "git show ek dispatcher hai: ye object type dekhta hai (commit/tree/blob/tag) aur matching renderer choose karta hai. Har type ka alag display format."
+      },
+      {
+        "title": "Revision:path history se blob padhta hai",
+        "body": "`git show HEAD~2:src/App.tsx` HEAD~2 ko commit me resolve karta hai, uska tree padhta hai, src/ tak walk karta hai, aur us file ka exact content print karta hai."
+      }
+    ],
+    "visual": {
+      "kind": "objects",
+      "caption": "git show renders a commit object's full anatomy"
+    },
+    "syntax": "git show <rev>[<:path>]",
+    "options": [
+      {
+        "flag": "--stat",
+        "desc": "Sirf changed files ka summary, full diff nahi."
+      },
+      {
+        "flag": "--no-patch",
+        "desc": "Sirf metadata — identity, parents, message, aur kuch nahi."
+      },
+      {
+        "flag": "<rev>:<path>",
+        "desc": "Us revision par us file ka exact content print karo."
+      }
+    ],
+    "uses": [
+      "Single commit full me review karna: `git show 74d3b9f`.",
+      "History se file nikalo: `git show release/1.0:configs/env.js > env.js`.",
+      "Tag object inspect karna — kisne tag kiya aur kab."
+    ],
+    "aliases": [
+      {
+        "short": "g sh",
+        "full": "git show",
+        "note": "Common single-commit inspector alias."
+      },
+      {
+        "short": "g sh --stat",
+        "full": "git show --stat",
+        "note": "Commit ne kaunsi files touch ki, ek nazar me."
+      }
+    ],
+    "related": [
+      "git-log",
+      "git-blame",
+      "git-diff"
+    ],
+    "proTip": "`rev:path` syntax ek secret file-recovery tool hai: file galti se delete? `git show HEAD~1:path/to/file.js` use wapas la sakta hai."
+  },
+  "git-diff": {
+    "slug": "git-diff",
+    "command": "git diff",
+    "name": "git diff",
+    "category": "inspecting",
+    "icon": "arrows-diff",
+    "level": "beginner",
+    "tagline": "Apne content ke koi bhi do versions compare karo.",
+    "what": "git diff do states ke beech har difference highlight karta hai: working tree vs index, index vs HEAD, ya koi do arbitrary commits. Ye wahi engine hai jo pull requests aur patches ko color karta hai.",
+    "how": [
+      {
+        "title": "Blob-to-blob, SHA-1 hashes se",
+        "body": "Git content compare karta hai hashing se. Agar dono blobs identical hain, hash match hota hai aur file skip ho jaati hai — full read-batta bina."
+      },
+      {
+        "title": "Myers diff algorithm",
+        "body": "Diffing = do sequences ke beech shortest edit script dhunda. Git Myers diff use karta hai (xdiff library me) jo efficient aur deterministic hai."
+      },
+      {
+        "title": "Hunks, files nahi",
+        "body": "Output hunks me grouped hota hai — contiguous changed regions — @@ -old +new @@ line numbers ke prefix ke saath. Ye har modern tool ka base format hai."
+      },
+      {
+        "title": "Teen comparison modes",
+        "body": "Plain `git diff` working tree ko index se compare karta hai. `git diff --cached` index ko HEAD se. `git diff <a> <b>` koi do commits ko."
+      }
+    ],
+    "visual": {
+      "kind": "diff",
+      "caption": "Two blob versions, reduced to an edit script"
+    },
+    "syntax": "git diff [<revA>] [<revB>]",
+    "options": [
+      {
+        "flag": "--cached",
+        "desc": "Index ko HEAD se diff karo — aapka next commit kya karega."
+      },
+      {
+        "flag": "--stat",
+        "desc": "Sirf kaunsi files change hui, compact bar chart ki tarah."
+      },
+      {
+        "flag": "--name-only",
+        "desc": "Sirf changed file names, aur kuch nahi."
+      },
+      {
+        "flag": "--word-diff",
+        "desc": "Line-by-line ki jagah word-by-word changes highlight karo."
+      }
+    ],
+    "uses": [
+      "Staging se pehle har edit review karna: git diff.",
+      "Check karna ki exact ek commit ne kya change kiya: git diff HEAD~1 HEAD.",
+      "Do branches ke beech quick sanity diff: git diff main..feature."
+    ],
+    "aliases": [
+      {
+        "short": "g d",
+        "full": "git diff",
+        "note": "Unstaged changes check karo."
+      },
+      {
+        "short": "g dc",
+        "full": "git diff --cached",
+        "note": "Staged changes — jo commit hone wale hain."
+      },
+      {
+        "short": "g ds",
+        "full": "git diff --stat",
+        "note": "Noise ke bina file-level summary."
+      },
+      {
+        "short": "g difw",
+        "full": "git diff --word-diff",
+        "note": "Prose aur docs ke liye robust."
+      }
+    ],
+    "related": [
+      "git-status",
+      "git-add",
+      "git-blame",
+      "git-log"
+    ],
+    "proTip": "Review ceremony ke liye aliases chain karo: `git config --global alias.review '!git diff; git diff --cached'`."
+  },
+  "git-blame": {
+    "slug": "git-blame",
+    "command": "git blame",
+    "name": "git blame",
+    "category": "inspecting",
+    "icon": "file",
+    "level": "intermediate",
+    "tagline": "File ki har line ko us commit aur author se attribute karo.",
+    "what": "git blame ek file ke liye commit graph walk karta hai aur line-by-line batata hai ki kaunsa commit (aur kaun author, kab) us line ko aakhir baar touch kiya. Ye Git ka forensic tool hai.",
+    "how": [
+      {
+        "title": "Backward diff walking",
+        "body": "Blame file ke current version se shuru hota hai aur commit-by-commit backward walk karta hai, consecutive versions ka diff karke. Jahan bhi line unchanged milti hai, wo usi commit se attribute hoti hai.",
+        "code": "previous blob ──diff──> next blob\nlines removed leave a mark → attributed to that commit"
+      },
+      {
+        "title": "Renames and splices are tracked",
+        "body": "With follow mode (git blame -M -C), Git detects lines copied within a file or across files and re-attributes them to the origin commit — even through renames."
+      }
+    ],
+    "visual": {
+      "kind": "diff",
+      "caption": "Each line carries its origin commit — the effect of blame"
+    },
+    "syntax": "git blame <file>",
+    "options": [
+      {
+        "flag": "-L <start>,<end>",
+        "desc": "Sirf ek line range blame karo (badi files ke liye fast)."
+      },
+      {
+        "flag": "-M",
+        "desc": "Same file me moved lines detect karo."
+      },
+      {
+        "flag": "-C",
+        "desc": "Doosri files se copied lines detect karo."
+      },
+      {
+        "flag": "-w",
+        "desc": "Whitespace differences ignore karo."
+      }
+    ],
+    "uses": [
+      "'Ye line aisi kyun hai?' → blame karo, message padho, PR dekho.",
+      "Kisi risky function ko touch karne se pehle batano who last edited.",
+      "10k-line files me -L se sirf hot spot par focus karo."
+    ],
+    "aliases": [
+      {
+        "short": "g bl",
+        "full": "git blame -L",
+        "note": "Specific line range blame karo."
+      },
+      {
+        "short": "g blame",
+        "full": "git blame -w -M",
+        "note": "Move detection ke saath noise-reduced blame."
+      }
+    ],
+    "related": [
+      "git-log",
+      "git-show",
+      "git-diff"
+    ],
+    "proTip": "Blame ek stepping stone hai: suspicious commit milte hi uske message par jump karo `git show <hash>` se."
+  },
+  "git-reflog": {
+    "slug": "git-reflog",
+    "command": "git reflog",
+    "name": "git reflog",
+    "category": "inspecting",
+    "icon": "clock",
+    "level": "advanced",
+    "tagline": "Aapne jo jo kiya — jise rewrite kar diya usme bhi.",
+    "what": "git reflog undo-ka-undo hai. Ye har baar HEAD move hone ka journal hai: commits, resets, rebases, checkouts, amends — har entry previous hash ke saath logged.",
+    "how": [
+      {
+        "title": "Reflog sirf ek log file hai",
+        "body": "Git har ref movement par ek line append karta hai .git/logs/HEAD me. Har line record karta hai: old-hash, new-hash, kon, kab, aur kyun.",
+        "code": "0000000 9a2f1c0 Ada <ada> 12:01 init: Repository created\n9a2f1c0 4b7c2a5 Ada <ada> 12:04 commit: add components\n4b7c2a5 74d3b9f Ada <ada> 12:07 commit: feat: dark mode\n74d3b9f 9a2f1c0 Ada <ada> 12:09 reset: moving to HEAD~2"
+      },
+      {
+        "title": "Purana commit GC tak zinda rehta hai",
+        "body": "Jo commits saare refs kohata dete hain wo unreachable ban jaate hain. Git unhe 90 din tak (default) alive rakhta hai, phir git gc them remove karta hai."
+      },
+      {
+        "title": "Entry syntax: HEAD@{n}",
+        "body": "HEAD@{0} = 'abhi', HEAD@{1} = previous HEAD position, aise hi aage. Time se bhi address kar sakte ho: HEAD@{yesterday}."
+      }
+    ],
+    "visual": {
+      "kind": "reflog",
+      "caption": "Every HEAD movement is journaled — scroll the list, never lose a commit"
+    },
+    "syntax": "git reflog [<ref>]",
+    "options": [
+      {
+        "flag": "--all",
+        "desc": "Sirf HEAD nahi, har ref ka reflog dikhao."
+      },
+      {
+        "flag": "-n <count>",
+        "desc": "Sirf recent n entries dikhao."
+      },
+      {
+        "flag": "--since=",
+        "desc": "Entries ko time ke hisaab se filter karo."
+      }
+    ],
+    "uses": [
+      "Hard reset galat kiya? `git reset --hard HEAD~3` — `git reset --hard HEAD@{1}` se recover karo.",
+      "Branch rebase ki aur realize ki original me woh commit tha jo chahiye.",
+      "'Wo commit kahan gaya?' — jab kisi ne force-push karke over-write kiya."
+    ],
+    "aliases": [
+      {
+        "short": "g rl",
+        "full": "git reflog",
+        "note": "Sabse chhota rescue alias jo kabhi chahiye hoga."
+      },
+      {
+        "short": "g rlg",
+        "full": "git reflog --oneline",
+        "note": "Compact, one-line reflog view."
+      }
+    ],
+    "related": [
+      "git-reset",
+      "git-commit",
+      "git-gc"
+    ],
+    "proTip": "'#undo stack' mental model bilkul sahi hai: HEAD@{n} undo history ki tarah behave karta hai. Kisi bhi destructive operation ke baad pehli entry wahi hoti hai."
+  },
+  "git-gc": {
+    "slug": "git-gc",
+    "command": "git gc",
+    "name": "git gc",
+    "category": "inspecting",
+    "icon": "broom",
+    "level": "intermediate",
+    "tagline": "Unreachable objects saaf karo aur repository compress karo.",
+    "what": "git gc Git ka garbage collector hai. Ye un objects ko delete karta hai jinpar koi ref nahi (jab wo kaafi purane ho), loose objects ko packfiles me repack karta hai, aur purani temp files saaf karta hai.",
+    "how": [
+      {
+        "title": "Reachability rule",
+        "body": "Object zinda hai agar kisi ref se reachable ho: branches, tags, index ya reflog. Baaki sab candidate hai delete ho jaane ka.",
+        "code": "objects ──reachable via──> refs/heads/*, refs/tags/*,\n  reflog, index, HEAD\n  ↓ unreachable & old\n  pruned by git gc"
+      },
+      {
+        "title": "Loose objects → packfiles",
+        "body": "Loose objects alag-apart compressed hote hain (fast likhna, slow padhna). git gc unhe ek packfile me repack karta hai — delta-compressed aur saare history walk ke liye fast."
+      },
+      {
+        "title": "Ye automatically bhi chalta hai",
+        "body": "Git light gc khud chalaata hai jab bahut saare loose objects ho jaate hain (~7,000). Aapko haath se shayad hi chalana pade."
+      }
+    ],
+    "visual": {
+      "kind": "objects",
+      "caption": "git gc collapses loose objects into one packed, delta-compressed packfile"
+    },
+    "syntax": "git gc [--aggressive]",
+    "options": [
+      {
+        "flag": "--aggressive",
+        "desc": "Zyada thorough — behtar deltas dhunde, time lagta hai."
+      },
+      {
+        "flag": "--prune=<date>",
+        "desc": "Unreachable objects ko kisi date se purane ya 'now' se prune karo."
+      },
+      {
+        "flag": "--auto",
+        "desc": "Git internal use karta hai wahi automatic routine chalao."
+      }
+    ],
+    "uses": [
+      "Giant monorepo clone atak raha hai → .gitignore fix karne ke baad git gc --aggressive.",
+      "Bada binary force-push karke hataya → gc finally use .git se remove karta hai.",
+      "Repo zip me bhejna hai: pehle gc se pack karo taaki bundle chhota ho."
+    ],
+    "aliases": [
+      {
+        "short": "g gca",
+        "full": "git gc --aggressive",
+        "note": "Full clean, jab .git bloated ho gaya hai."
+      },
+      {
+        "short": "g gc --prune=now",
+        "full": "git gc --prune=now",
+        "note": "Recoverable but really-dead commits force-remove karo."
+      }
+    ],
+    "related": [
+      "git-reflog",
+      "git-reset",
+      "git-fsck"
+    ],
+    "proTip": "Gc se pehle check karo kya sach me dead hai: `git fsck --lost-found` dangling commits list karta hai (unreachable, abhi prune nahi hua)."
+  },
+  "git-reset": {
+    "slug": "git-reset",
+    "command": "git reset",
+    "name": "git reset",
+    "category": "undoing",
+    "icon": "rotate-360",
+    "level": "intermediate",
+    "tagline": "Branch pointer move karo aur apne staging decisions undo karo.",
+    "what": "git reset branch ko kisi purane commit par rewinds karta hai. Mode ke hisaab se ye index (mixed), index AND working tree (hard), ya dono me se kuch nahi (soft) reset karta hai.",
+    "how": [
+      {
+        "title": "Reset branch ref move karta hai — HEAD file nahi",
+        "body": "Reset us commit ko le leta hai jispar aap point kar rahe ho aur refs/heads/<you> ko purane hash par rewrite kar deta hai. HEAD ka file reference wahi rehta hai.",
+        "code": "git reset --soft HEAD~2   # branch now at old commit\nmain:  9a2f1c0 ← 4b7c2a5 ← 74d3b9f(moved away)"
+      },
+      {
+        "title": "Teen mode sab index ke baare me hain",
+        "body": "Mixed (default) branch AND index reset karta hai. Soft sirf branch move karta hai (index staged rehta hai). Hard branch, index aur working tree — teeno wipe karta hai."
+      },
+      {
+        "title": "Purane commits delete nahi hote",
+        "body": "objects/ se kuch remove nahi hota. Unlinked commits unreachable ho jaate hain — aur reflog ab bhi unhe list karta hai. Isliye galti dab jaati hai sirf."
+      },
+      {
+        "title": "Shared history kabhi reset mat karo",
+        "body": "Reset branch pointer rewind karta hai. Jisne bhi branch clone ki hai uske liye wo vanish ho jaayegi aur force-push ki zaroorat hogi."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "reset",
+        "highlight": 1,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              1
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "HEAD",
+            "node": 1,
+            "active": true
+          },
+          {
+            "name": "main",
+            "node": 1
+          },
+          {
+            "name": "stale 74d3b9f",
+            "node": 2
+          }
+        ],
+        "caption": "--soft/mixed/hard pick how far back the branch, index and worktree go"
+      }
+    },
+    "syntax": "git reset [--soft|--mixed|--hard] <commit>",
+    "options": [
+      {
+        "flag": "--soft",
+        "desc": "Sirf branch move karo; index staged rakho."
+      },
+      {
+        "flag": "--mixed",
+        "desc": "Default: branch move + index unstage; files rakho."
+      },
+      {
+        "flag": "--hard",
+        "desc": "Branch move karo, index AND working tree wipe karo."
+      },
+      {
+        "flag": "<path>",
+        "desc": "Kisi doosre revision se ibs sa path index me reset karo."
+      }
+    ],
+    "uses": [
+      "Galti se wrong branch par commit kiya: reset --soft se fix karke kahin aur re-commit.",
+      "Sab unstage karna: git reset (mixed) — index-dance escape hatch.",
+      "Local-only gandagi ka full revert: git reset --hard HEAD."
+    ],
+    "aliases": [
+      {
+        "short": "g res",
+        "full": "git reset",
+        "note": "Mixed reset — unstage karo, files rakho."
+      },
+      {
+        "short": "g ressh",
+        "full": "git reset --soft HEAD~1",
+        "note": "Last commit undo karo, staged rakho."
+      },
+      {
+        "short": "g reshard",
+        "full": "git reset --hard HEAD",
+        "note": "Saare local uncommitted changes discard karo."
+      }
+    ],
+    "related": [
+      "git-reflog",
+      "git-revert",
+      "git-commit"
+    ],
+    "proTip": "Teen mode ki training rule: SOFT commit bhoolta hai, MIXED staging bhi bhoolta hai, HARD files bhi bhoolta hai."
+  },
+  "git-restore": {
+    "slug": "git-restore",
+    "command": "git restore",
+    "name": "git restore",
+    "category": "undoing",
+    "icon": "arrows-shuffle",
+    "level": "beginner",
+    "tagline": "Working tree ya index me changes undo karo — surgically.",
+    "what": "git restore file contents kahin se wapas laata hai: index se, HEAD se, ya kisi bhi commit se. Ye purane checkout का file-scoped वाला hissa hai, branch-switching ke bina.",
+    "how": [
+      {
+        "title": "Do directions, ek command",
+        "body": "`git restore <file>` file ko index se working copy par likhta hai — aapke edits discard. `git restore --staged <file>` index se us file ko unstage karta hai."
+      },
+      {
+        "title": "Checkout -- ki tarah, lekin explicit",
+        "body": "Restore isliye bana kyunki `git checkout <path>` badi confusions ki jad thi. Restore files restore karta hai, checkout branches switch — alag-alag."
+      },
+      {
+        "title": "Koi bhi source chalega",
+        "body": "`git restore --source=HEAD~2 file` file ko waise wapas laata hai jaise do commits pehle thi. Restore us blob padhta hai aur working copy par likhta hai."
+      }
+    ],
+    "visual": {
+      "kind": "staging",
+      "staged": [
+        "src/bug.js"
+      ],
+      "mode": "restore",
+      "caption": "restore copies file blobs back from the index or HEAD into the working tree"
+    },
+    "syntax": "git restore <path>",
+    "options": [
+      {
+        "flag": "--staged",
+        "desc": "INDEX kaa version restore karo — matlab path ke unstage."
+      },
+      {
+        "flag": "--source=<rev>",
+        "desc": "HEAD ki jagah kisi arbitrary commit se restore karo."
+      },
+      {
+        "flag": "--worktree",
+        "desc": "Sirf working-tree copy restore karo (default interaction)."
+      }
+    ],
+    "uses": [
+      "File mangled ki aur HEAD ka version turant wapas chahiye.",
+      "Galti se file stage ki — restore --staged se sirf use unstage karo.",
+      "History me se kisi ek file ka purana version --source se nikalo."
+    ],
+    "aliases": [
+      {
+        "short": "g rest",
+        "full": "git restore",
+        "note": "File ko last commit state me restore karo."
+      },
+      {
+        "short": "g ihrs",
+        "full": "git restore --staged",
+        "note": "Unstage. Pro tip: kuch log ise 'ihrs' kehte hain famous config ke baad."
+      },
+      {
+        "short": "g rest --source=HEAD^",
+        "full": "git restore --source=HEAD^ file",
+        "note": "File ko previous commit se wapas lao."
+      }
+    ],
+    "related": [
+      "git-checkout",
+      "git-add",
+      "git-reset"
+    ],
+    "proTip": "Naming hi poora khel hai: `git switch` branches badalta hai, `git restore` files, aur `git reset` branch pointer ko — teeno ek saath confusing nahi hote."
+  },
+  "git-revert": {
+    "slug": "git-revert",
+    "command": "git revert",
+    "name": "git revert",
+    "category": "undoing",
+    "icon": "rotate-clockwise",
+    "level": "intermediate",
+    "tagline": "Commit ko undo karo ek NAYA commit jod kar jo opposite karta hai.",
+    "what": "git revert kisi purane commit ka inverse banata hai — ek commit jo iske har change ko reverse karta hai — aur use history me append karta hai. History linear aur shared-safe rehti hai.",
+    "how": [
+      {
+        "title": "Ye three-way merge hai — almost",
+        "body": "Commit X revert karne ke liye Git X ke parent aur X ke beech ka diff nikalta hai, phir use reverse me current state par apply karta hai. Result ek naya 'revert' commit.",
+        "code": "A — B — C — D(you)\nrevert C:\nA — B — C — D — C⁻   (C⁻ undoes C's changes)"
+      },
+      {
+        "title": "Conflicts possible even though it's reverse",
+        "body": "If later commit D also touched the lines C changed, reversing C conflicts with D's version. Git stops and lets you reconcile — exactly like a merge conflict."
+      },
+      {
+        "title": "The commit is preserved in history",
+        "body": "Unlike reset's amputation, revert leaves C in place. The reflog never matters, the history tells the story truthfully: 'someone added this, then someone reversed it.'"
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "merge",
+        "highlight": 4,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "dead: old login",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "e1b5a09",
+            "msg": "feature A",
+            "parents": [
+              2
+            ]
+          },
+          {
+            "id": "8c4f2e9",
+            "msg": "revert \"dead: old login\"",
+            "parents": [
+              3
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 4
+          },
+          {
+            "name": "HEAD",
+            "node": 4,
+            "active": true
+          }
+        ],
+        "caption": "An inverse commit is appended — nothing in history is rewritten"
+      }
+    },
+    "syntax": "git revert <commit>",
+    "options": [
+      {
+        "flag": "--no-commit",
+        "desc": "Reverse changes apply karo lekin commit nahi — kai reverts batch karo."
+      },
+      {
+        "flag": "-m <parent>",
+        "desc": "Merge commit revert karo — diya gaya parent 'theirs' ban jaata hai."
+      },
+      {
+        "flag": "-n",
+        "desc": "Auto-commit mat karo, taaki result review kar sako."
+      }
+    ],
+    "uses": [
+      "Bug shared main par live ho gaya — force-push ke bina undo: git revert <hash>.",
+      "CI red hai merged feature ki wajah se: revert karo, fix karo, baad me revert ko revert.",
+      "Release todne wale merge ko rollback karna."
+    ],
+    "aliases": [
+      {
+        "short": "g rv",
+        "full": "git revert",
+        "note": "Commit ko safely reverse karo."
+      },
+      {
+        "short": "g rv -n",
+        "full": "git revert --no-commit",
+        "note": "Ek commit se pehle kai reversions apply karo."
+      }
+    ],
+    "related": [
+      "git-reset",
+      "git-cherry-pick",
+      "git-merge"
+    ],
+    "proTip": "Mental rule: RESET rewinds (local history rewrite), REVERT reverses (correcting commit jodta hai), CHERRY-PICK reproduce karta hai (ek commit kahin aur copy)."
+  },
+  "git-stash": {
+    "slug": "git-stash",
+    "command": "git stash",
+    "name": "git stash",
+    "category": "undoing",
+    "icon": "archive",
+    "level": "intermediate",
+    "tagline": "Apne uncommitted changes park karo aur clean working tree paao.",
+    "what": "git stash aapke staged aur unstaged changes ko working tree se hata kar specially-marked commit objects ke roop me stash stack par store karta hai. Working tree HEAD jaisa clean ban jaata hai.",
+    "how": [
+      {
+        "title": "Stash commit ka ek joda hai",
+        "body": "Git aapke index ko ek commit ke roop me aur working-tree changes ko doosre ke roop me commit karta hai — dono aapke current HEAD se hang ho kar. Stack par ek entry ban jaati hai.",
+        "code": "W-index = stash of staged\nW's-worktree = stash of unstaged\nstash@{0} → parent → your HEAD"
+      },
+      {
+        "title": "Working tree phir force-clean hota hai",
+        "body": "Recording ke baad git stash worktree ko HEAD par reset karta hai — wahi file-discard logic quietly chala kar jo checkout use karta hai."
+      },
+      {
+        "title": "Stack ordered hai, merged nahi",
+        "body": "stash@{0} sabse naya hai. git stash pop apply + drop karta hai, git stash apply apply + keep, git stash list pure stack dikhata hai."
+      }
+    ],
+    "visual": {
+      "kind": "stash",
+      "caption": "Changes are packed into a stash object and emptied from the worktree"
+    },
+    "syntax": "git stash",
+    "options": [
+      {
+        "flag": "-u",
+        "desc": "Untracked files bhi stash karo (warna ye aise hi rehti hain)."
+      },
+      {
+        "flag": "push -m <msg>",
+        "desc": "Stash ka naam do taaki yaad rahe kya tha."
+      },
+      {
+        "flag": "pop",
+        "desc": "Sabse naya stash apply karke stack se remove karo."
+      },
+      {
+        "flag": "list / show",
+        "desc": "Stack inspect karo, kuch chhuye bina."
+      },
+      {
+        "flag": "branch <name>",
+        "desc": "Stash ke base par branch banao aur apply karo — conflict cancel ho jaata hai."
+      }
+    ],
+    "uses": [
+      "Client beech me call kiya; abhi branch switch karni hai: stash, switch, work, switch back, pop.",
+      "Ek set of changes ko isolation me test karna hai.",
+      "Stash stack as a lightweight scratchpad of work-in-progress."
+    ],
+    "aliases": [
+      {
+        "short": "g s",
+        "full": "git stash -u --include-untracked",
+        "note": "Oh-my-zsh ka default stash — safe, untracked files bhi pakadta hai."
+      },
+      {
+        "short": "g sa",
+        "full": "git stash apply",
+        "note": "Bina pop kiye re-apply karo (stack rehta hai)."
+      },
+      {
+        "short": "g sl",
+        "full": "git stash list",
+        "note": "Poora stack survey karo."
+      },
+      {
+        "short": "g sp",
+        "full": "git stash pop",
+        "note": "Sabse naya stash restore karke drop karo."
+      }
+    ],
+    "related": [
+      "git-switch",
+      "git-restore",
+      "git-branch"
+    ],
+    "proTip": "Stash ek aisa commit hai jo kisi branch ka nahi hota — dream state. Kabhi pop na kiya to 30 din me garbage-collect ho jaata hai."
+  },
+  "git-cherry-pick": {
+    "slug": "git-cherry-pick",
+    "command": "git cherry-pick",
+    "name": "git cherry-pick",
+    "category": "undoing",
+    "icon": "point",
+    "level": "intermediate",
+    "tagline": "Ek specific commit ko apni current branch par re-apply karo.",
+    "what": "git cherry-pick kisi bhi commit ke changes ko current branch par ek NAYE commit ke roop me replay karta hai. 'Wo ek fix mujhe chahiye' ke liye survival tool.",
+    "how": [
+      {
+        "title": "Narrowed three-way merge",
+        "body": "Cherry-pick picked commit ko uske parent se diff karta hai, phir us diff ko current HEAD par three-way-merge karta hai. Result: wahi changes, naya commit.",
+        "code": "main — A — B\npicked commit: X (on feature)\nresult: A — B — X'   X' has same diff, new identity"
+      },
+      {
+        "title": "Range cherry-pick karna",
+        "body": "`git cherry-pick A..B` us range ke har commit ko order me replay karta hai — selective rebase ka cheap version. Useful jab branch delete ho gayi ho."
+      },
+      {
+        "title": "Conflicts merge conflicts ki tarah behave karte hain",
+        "body": "Agar aapki current branch ne wahi lines change ki hain, cherry-pick ruk kar resolve karne ko kehta hai — `git add` + `git cherry-pick --continue`."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "merge",
+        "highlight": 4,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "main: base",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "c1d8e2f",
+            "msg": "fix: hotfix #42",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "e5f6a7b",
+            "msg": "main: ship v1",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "0a9b8c7",
+            "msg": "fix: hotfix #42'",
+            "parents": [
+              3
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "release",
+            "node": 4
+          },
+          {
+            "name": "hotfix",
+            "node": 2
+          },
+          {
+            "name": "HEAD",
+            "node": 4,
+            "active": true
+          }
+        ],
+        "caption": "The fix commit is duplicated onto release with the identical diff but a new hash"
+      }
+    },
+    "syntax": "git cherry-pick <commit>",
+    "options": [
+      {
+        "flag": "-n",
+        "desc": "Changes apply karo lekin commit nahi — pehle kai picks merge kar lo."
+      },
+      {
+        "flag": "--continue / --abort",
+        "desc": "Conflicted pick khatam ya cancel karo."
+      },
+      {
+        "flag": "-x",
+        "desc": "Message me '(cherry picked from commit …)' provenance ke roop me jodo."
+      }
+    ],
+    "uses": [
+      "Hotfix commit main par aa gaya lekin release branch ko abhi chahiye.",
+      "Wrong branch par commit kiya: cherry-pick karke nikaal lo, phir wrong branch reset karo.",
+      "Kai feature branches se selectively release assemble karna."
+    ],
+    "aliases": [
+      {
+        "short": "g cp",
+        "full": "git cherry-pick",
+        "note": "Classic rescue alias."
+      },
+      {
+        "short": "g cp -x",
+        "full": "git cherry-pick -x",
+        "note": "Keep provenance — traces back to the original fix."
+      }
+    ],
+    "related": [
+      "git-rebase",
+      "git-revert",
+      "git-reset"
+    ],
+    "proTip": "Committed to the wrong branch? `git cherry-pick <hash>` onto the right branch, then `git reset --hard HEAD~1` on the wrong one. That two-step is one of the most common recovery dances in a working day."
+  },
+  "git-clean": {
+    "slug": "git-clean",
+    "command": "git clean",
+    "name": "git clean",
+    "category": "undoing",
+    "icon": "broom",
+    "level": "intermediate",
+    "tagline": "Untracked, unignored files ko working tree se delete karo.",
+    "what": "git clean un files ko remove karta hai jo Git ne kabhi track nahi kiya aur .gitignore protect nahi karta: build artifacts, log files, bekaar ke temp files. Deletion permanent hai, isliye pehle preview zaroor karo.",
+    "how": [
+      {
+        "title": "Ye worktree walk karta hai, repo nahi",
+        "body": "Clean working tree un paths ke liye scan karta hai jinka index entry nahi, phir unhe remove karta hai. Deletion system level hoti hai — koii undo nahi."
+      },
+      {
+        "title": "-f guard, -d dirs me jaata hai, -x ignored jodta hai",
+        "body": "Default me clean directories ko touch nahi karta (chahiye -d) aur ignored files ko kabhi nahi (chahiye -x). -f 'main sach me karna chaahta hoon' ka confirm hai."
+      },
+      {
+        "title": "Clean + reset = nuclear combo",
+        "body": "`git reset --hard` tracked changes ka khayaal rakhta hai; `git clean -fdx` baaki sab untracked ka. Saath me ye working tree ko bilkul pristine bana dete hain."
+      }
+    ],
+    "visual": {
+      "kind": "status",
+      "caption": "git clean finds and permanently deletes untracked files"
+    },
+    "syntax": "git clean -fd",
+    "options": [
+      {
+        "flag": "-n",
+        "desc": "Dry run: kya delete hoga list karo, kuch delete mat karo."
+      },
+      {
+        "flag": "-d",
+        "desc": "Files ke saath untracked directories bhi remove karo."
+      },
+      {
+        "flag": "-x",
+        "desc": "Ignored files bhi remove karo (full nuclear option)."
+      },
+      {
+        "flag": "-f",
+        "desc": "Asal deleting karo."
+      }
+    ],
+    "uses": [
+      "Folder zip karne se pehle build artifacts aur node_modules saaf karna.",
+      "File delete ki lekin git status abhi bhi dikhata hai? ignored dirs ke leftover copies clean -f se nuke.",
+      "Fresh work se pehle pristine-worktree reset combo."
+    ],
+    "aliases": [
+      {
+        "short": "g clean -n",
+        "full": "git clean -n",
+        "note": "Pehle hamesha preview karo — safe version!"
+      },
+      {
+        "short": "g cluxe",
+        "full": "git clean -fdx",
+        "note": "Full sweep: files, dirs, ignored. Dheere se kehte hain."
+      }
+    ],
+    "related": [
+      "git-restore",
+      "git-reset",
+      "git-status"
+    ],
+    "proTip": "Safe default ko default banao: `git config --global alias.accurate \"clean -n\"` aur kisi bhi real clean se pehle hamesha chalao."
+  },
+  "git-clone": {
+    "slug": "git-clone",
+    "command": "git clone",
+    "name": "git clone",
+    "category": "sharing",
+    "icon": "copy",
+    "level": "beginner",
+    "tagline": "Poori repository copy karo — history, refs, branches — apni machine par.",
+    "what": "git clone remote se connect hota hai, uske object store ka har object download karta hai aur repository ko locally reconstruct karta hai: saare commits, trees, blobs, tags. Phir default branch checkout karta hai.",
+    "how": [
+      {
+        "title": "Ye fetch plus checkout hai",
+        "body": "Under the hood clone = git fetch (saare reachable objects apne local object store me download) + git checkout (default branch ko working tree me)."
+      },
+      {
+        "title": "Remote-tracking refs banti hain",
+        "body": "Clone refs/remotes/origin/main likhta hai jo remote ki default branch ko point karta hai, aur main ka upstream bhi set hota hai taaki aage git push/pull seedha kaam kare."
+      },
+      {
+        "title": "Poori history neeche aati hai",
+        "body": "Clone by default full-depth hai: har commit, blob aur tree loose objects ya packfiles ke roop me aata hai. Isliye bada repo clone karna heavy hota hai."
+      },
+      {
+        "title": "--depth history skip karta hai speed ke liye",
+        "body": "Shallow clones (--depth 1) sirf ek commit ke objects download karte hain. Quick look ke liye badhiya, baad me full history ke liye tax hona."
+      }
+    ],
+    "visual": {
+      "kind": "remote",
+      "remote": "origin",
+      "branch": "main",
+      "mo": "clone",
+      "caption": "The remote's whole object database streams down; a copy is materialized"
+    },
+    "syntax": "git clone <url> [<dir>]",
+    "options": [
+      {
+        "flag": "<url>",
+        "desc": "HTTPS ya SSH URL (https://github.com/org/repo.git)."
+      },
+      {
+        "flag": "--depth 1",
+        "desc": "Shallow clone — sirf latest snapshot."
+      },
+      {
+        "flag": "--branch <b>",
+        "desc": "Initial checkout ke roop me specific branch par jump karo."
+      },
+      {
+        "flag": "--bare",
+        "desc": "Repo ko bina working directory ke mirror karo (server-side)."
+      }
+    ],
+    "uses": [
+      "Project pakad kar kaam karne ke liye: git clone git@github.com:user/repo.git.",
+      "--bare ya --mirror se repo ka backup mirror banana.",
+      "Build images me shallow-clone karke CI ko fast karna."
+    ],
+    "aliases": [
+      {
+        "short": "g cl",
+        "full": "git clone",
+        "note": "Universal clone alias. One-commit clone — CI workflow staple."
+      },
+      {
+        "short": "g cl --depth=1",
+        "full": "git clone --depth 1",
+        "note": "One-commit clone — the CI workflow staple."
+      }
+    ],
+    "related": [
+      "git-remote",
+      "git-fetch",
+      "git-pull",
+      "git-push"
+    ],
+    "proTip": "After clone, origin is just a name your git config maps to a URL: `git config --get remote.origin.url`. You can rename it (git remote rename upstream origin) and re-point any remote at will."
+  },
+  "git-remote": {
+    "slug": "git-remote",
+    "command": "git remote",
+    "name": "git remote",
+    "category": "sharing",
+    "icon": "satellite",
+    "level": "beginner",
+    "tagline": "Doosri repositories ko point karne wale bookmarks manage karo.",
+    "what": "git remote ek thin config manager hai: ye bookmarks list/add/rename/remove karta hai. Har remote sirf name → URL mapping hai .git/config me. Internals me kuch bhi transfer nahi hota.",
+    "how": [
+      {
+        "title": "Remote config ki do lines hai",
+        "body": "git remote add origin <url> .git/config me ek section likhta hai. Koi transfer nahi, koi network nahi — sirf ek bookmark. Origin ka matlab bhi kuch khaas nahi, bas convention.",
+        "code": "[remote \"origin\"]\n  url = git@github.com:user/repo.git\n  fetch = +refs/heads/*:refs/remotes/origin/*"
+      },
+      {
+        "title": "Fetch lines remote-tracking refs ban jaati hain",
+        "body": "Fetch refspec kehta hai 'remote heads lo aur refs/remotes/origin/ ke neeche locally store karo'. Yahi se remote ki nazar aane wali history aati hai."
+      }
+    ],
+    "visual": {
+      "kind": "remote",
+      "remote": "origin",
+      "branch": "main",
+      "mo": "clone",
+      "caption": "git remote wires origin in the config — the bookmark for the outside world"
+    },
+    "syntax": "git remote add <name> <url>",
+    "options": [
+      {
+        "flag": "add",
+        "desc": "Nayi repository bookmark karo."
+      },
+      {
+        "flag": "-v",
+        "desc": "Fetch/push URLs ke saath remotes list karo."
+      },
+      {
+        "flag": "remove",
+        "desc": "Bookmark delete karo (remote repo par kuch asar nahi)."
+      },
+      {
+        "flag": "rename",
+        "desc": "Remote ka naam badlo."
+      },
+      {
+        "flag": "set-url",
+        "desc": "Remote ka URL repoint karo (jaise HTTPS → SSH)."
+      }
+    ],
+    "uses": [
+      "Forking workflow: original repo ko point karta hua upstream remote add karo.",
+      "HTTPS se SSH auth par shift: git remote set-url origin git@….",
+      "Kisi sensitive jagah push karne se pehle check karo 'origin' asal me kahaan hai."
+    ],
+    "aliases": [
+      {
+        "short": "g rm",
+        "full": "git remote",
+        "note": "Remote bookmarks list karo."
+      },
+      {
+        "short": "g rmv",
+        "full": "git remote -v",
+        "note": "URLs ke SAATH list karo — honest view."
+      },
+      {
+        "short": "g rma",
+        "full": "git remote add upstream <url>",
+        "note": "Fork-flow standard: upstream add karo."
+      }
+    ],
+    "related": [
+      "git-clone",
+      "git-fetch",
+      "git-pull",
+      "git-push"
+    ],
+    "proTip": "Fork workflow remotes par jeeta hai: `origin` = aapka, `upstream` = original. Dono rakho, upstream fetch, upstream merge."
+  },
+  "git-fetch": {
+    "slug": "git-fetch",
+    "command": "git fetch",
+    "name": "git fetch",
+    "category": "sharing",
+    "icon": "download",
+    "level": "intermediate",
+    "tagline": "Remote ke objects download karo — bina merge, bina apne work ko touch kiye.",
+    "what": "git fetch remote se connect ho kar jo objects aapke paas nahi unhe download karta hai aur remote-tracking refs (refs/remotes/origin/*) update karta hai. Working tree, index — sab untouched rehta hai.",
+    "how": [
+      {
+        "title": "Pehle object negotiation",
+        "body": "Fetch remote ko batata hai ki uske paas kya-kya objects already hain ('want/dontwant'), isliye sirf missing wale stream karte hain — aksar bahut chhota transfer."
+      },
+      {
+        "title": "Refs update hoti hain, branches nahi",
+        "body": "Objects aane ke baad fetch refs/remotes/origin/main ko aage badhata hai (non-fast-forward refs 'forced update' ke roop me reject hote hain). Aapki own branches ko chase nahi karta."
+      },
+      {
+        "title": "Quiet inspection",
+        "body": "`git fetch && git diff origin/main` — 'dikhao kya aa raha hai bina kuch badale' ka pattern. Lighthouse-style, no surprises."
+      }
+    ],
+    "visual": {
+      "kind": "remote",
+      "remote": "origin",
+      "branch": "main",
+      "mo": "fetch",
+      "caption": "Only new objects travel down; your branch and worktree stay put"
+    },
+    "syntax": "git fetch [<remote>]",
+    "options": [
+      {
+        "flag": "--all",
+        "desc": "Saare configured remotes se ek saath fetch karo."
+      },
+      {
+        "flag": "--prune",
+        "desc": "Un local refs ko delete karo jinke remote counterparts gayab ho gaye."
+      },
+      {
+        "flag": "<remote> <refspec>",
+        "desc": "Sirf specific branches fetch karo."
+      }
+    ],
+    "uses": [
+      "Sirf dekhna hai: rebase karne se pehle origin/main ke naye commits.",
+      "Aise worktree par remote-tracking info sync karna jise disturb nahi karna.",
+      "Multi-remote projects: upstream fetch karke fork current rakhna."
+    ],
+    "aliases": [
+      {
+        "short": "g f",
+        "full": "git fetch --all --prune",
+        "note": "Always-safe sync: sab kuch, cleaned."
+      },
+      {
+        "short": "g fa",
+        "full": "git fetch --all",
+        "note": "Har remote, bina pruning."
+      },
+      {
+        "short": "g fap",
+        "full": "git fetch --all --prune",
+        "note": "Oh-my-zsh convention: sab fetch karo, ghost drop karo."
+      }
+    ],
+    "related": [
+      "git-pull",
+      "git-clone",
+      "git-remote",
+      "git-diff"
+    ],
+    "proTip": "Future bina change kiye dekhna hai: `git fetch` phir `git log HEAD..origin/main --oneline`. Range syntax 'HEAD..origin/main' = commits jo sirf remote me hain."
+  },
+  "git-pull": {
+    "slug": "git-pull",
+    "command": "git pull",
+    "name": "git pull",
+    "category": "sharing",
+    "icon": "download",
+    "level": "intermediate",
+    "tagline": "Remote fetch karo aur current branch me fold karo.",
+    "what": "git pull ek coat me do commands hai: fetch (remote objects download + remote-tracking refs update) aur phir un updates ka merge aapki current branch me. --rebase se merge ki jagah replay kar sakte ho.",
+    "how": [
+      {
+        "title": "Fetch + merge (default)",
+        "body": "git pull = git fetch (origin/main ke naye commits refs/remotes/origin/main ke roop me lao) phir git merge origin/main aapki current branch par."
+      },
+      {
+        "title": "Fast-forward typical happy path hai",
+        "body": "Agar aapne koi local commit nahi kiya, pull pure pointer move hai: aapki branch remote ke tip par slide ho jaati hai. Koi merge commit nahi banta."
+      },
+      {
+        "title": "--rebase linearity savior hai",
+        "body": "git pull --rebase fetch karta hai phir aapke local commits ko remote ke naye base par replay karta hai bina merge bubble banaye. History ek line rehti hai."
+      },
+      {
+        "title": "Divergence matlab conflict ka kaam",
+        "body": "Agar aap aur remote dono ne same lines badli, pull conflicts ke saath ruk jata hai. Resolve → git add → git commit. Koi data nahi khota."
+      }
+    ],
+    "visual": {
+      "kind": "remote",
+      "remote": "origin",
+      "branch": "main",
+      "mo": "pull",
+      "caption": "New objects travel down, then a merge integrates them into your branch"
+    },
+    "syntax": "git pull [--rebase]",
+    "options": [
+      {
+        "flag": "--rebase",
+        "desc": "Merge ki jagah remote ke naye base par apne commits replay karo."
+      },
+      {
+        "flag": "--ff-only",
+        "desc": "Non-fast-forward merge refuse karo — diverge hone se pehle fail."
+      },
+      {
+        "flag": "--tags",
+        "desc": "Remote se tags bhi pull karo."
+      }
+    ],
+    "uses": [
+      "Team ke saath daily sync: kaam shuru karne se pehle git pull.",
+      "git pull --rebase main fast-moving main ke saath WIP branch linear rakhta hai.",
+      "git pull --ff-only jab 'stay in sync, never diverge' chahiye."
+    ],
+    "aliases": [
+      {
+        "short": "g up",
+        "full": "git pull --rebase",
+        "note": "Linear-history pull — rebase'd, koi merge bubble nahi."
+      },
+      {
+        "short": "g pl",
+        "full": "git pull",
+        "note": "Plain pull shorthand."
+      },
+      {
+        "short": "g uff",
+        "full": "git pull --ff-only",
+        "note": "Sync karo ya loudly fail karo — scripts ke liye perfect."
+      },
+      {
+        "short": "g gl",
+        "full": "git pull -r",
+        "note": "Ek aur popular rebase-pull alias."
+      }
+    ],
+    "related": [
+      "git-fetch",
+      "git-merge",
+      "git-rebase",
+      "git-push"
+    ],
+    "proTip": "Ek baar set karo `git config --global pull.rebase true` aur `pull.ff only`, phir git pull ek philosophical position ban jaata hai: updates lao, bat avoid karo."
+  },
+  "git-push": {
+    "slug": "git-push",
+    "command": "git push",
+    "name": "git push",
+    "category": "sharing",
+    "icon": "upload",
+    "level": "intermediate",
+    "tagline": "Apni branch ke commits upload karo aur remote branch advance karo.",
+    "what": "git push aapke local commits (jo remote ke paas nahi) wire par bhejta hai, phir remote ki branch ref ko aapke jaisa update karta hai. Default me sirf current branch ko push karta hai.",
+    "how": [
+      {
+        "title": "Upload-pack negotiation, reversed",
+        "body": "Push remote ko batata hai aapke paas kya hai; remote jawab deta hai use kya kami hai; sirf missing objects bheje jaate hain — pehle compress/pack hokar."
+      },
+      {
+        "title": "Ref update ancestry ka claim hai",
+        "body": "main branch push matlab: 'ye raha mera objects, aur mera main tumhare main ka descendant hai.' Agar zero steps ahead ho, remote reject kar deta hai (non-fast-forward)."
+      },
+      {
+        "title": "Force-push guard override karta hai",
+        "body": "`git push --force` ancestry check ignore karta hai. Ye git ka forbidden-word hai: ye remote branch ko rewrite karta hai jo kisi aur ne bhi dekh raha ho to bhag jao."
+      },
+      {
+        "title": "Tags alag se travel karte hain",
+        "body": "Branches branches push karti hain; tags ko `git push --tags` (ya --follow-tags) chahiye saath aane ke liye. Refspec syntax: `git push origin main:main`."
+      }
+    ],
+    "visual": {
+      "kind": "remote",
+      "remote": "origin",
+      "branch": "main",
+      "mo": "push",
+      "caption": "Your new objects travel up; the remote branch ref advances to match you"
+    },
+    "syntax": "git push [<remote>] [<branch>]",
+    "options": [
+      {
+        "flag": "-u",
+        "desc": "Upstream set karo — future pulls/pushes ke liye local branch ko remote se link karo."
+      },
+      {
+        "flag": "--force-with-lease",
+        "desc": "Force update tabhi jab remote waisa hi hai jaisa aakhri fetch me tha."
+      },
+      {
+        "flag": "--tags",
+        "desc": "Branches ke saath saare tags push karo."
+      },
+      {
+        "flag": "--delete <b>",
+        "desc": "Remote par branch delete karo."
+      }
+    ],
+    "uses": [
+      "PR ke liye feature branch publish karna: git push -u origin feature/x.",
+      "Pull + clean rebase ke baad team ke saath latest local commits share karna.",
+      "Merged remote branch saaf karna: git push origin --delete feature/x."
+    ],
+    "aliases": [
+      {
+        "short": "g pu",
+        "full": "git push",
+        "note": "Current branch push karo."
+      },
+      {
+        "short": "g puf",
+        "full": "git push -u origin HEAD",
+        "note": "First-time push: upstream set aur publish ek me."
+      },
+      {
+        "short": "g pushf",
+        "full": "git push --force-with-lease",
+        "note": "SURVIVAL push — sirf wahi overwrite karo jo aapne dekha."
+      },
+      {
+        "short": "g pd",
+        "full": "git push origin --delete",
+        "note": "Remote branch terminal se delete karo."
+      }
+    ],
+    "related": [
+      "git-fetch",
+      "git-pull",
+      "git-remote",
+      "git-rebase"
+    ],
+    "proTip": "Upstream rejected? Aapne kuch fast-forward nahi kiya — remote aage hai. Pehle `git pull --rebase`, phir push. Ye pattern (fetch-rebase-push) grab kar lo, baaki history handles karegi."
+  },
+  "git-tag": {
+    "slug": "git-tag",
+    "command": "git tag",
+    "name": "git tag",
+    "category": "sharing",
+    "icon": "tag",
+    "level": "intermediate",
+    "tagline": "Commit par permanent, named marker lagao.",
+    "what": "git tag kisi specific commit par ek immutable naam lagata hai — v1.0.0, v2.3.1 — ek release anchor jiski branches aage badh jaati hain. Lightweight tags sirf ref hain; annotated tags pura object.",
+    "how": [
+      {
+        "title": "Lightweight: ek ref jo kabhi move nahi hota",
+        "body": "`git tag v1.0.0` ek file refs/tags/v1.0.0 likhta hai jisme commit hash hota hai. Branch ka hi mechanism, bas move nahi hota."
+      },
+      {
+        "title": "Annotated: pura tag object",
+        "body": "`git tag -a v1.0.0 -m \"release\"` ek TAG OBJECT banata hai (type: tag) jisme tagger, message, date hota hai aur wo commit ko point karta hai. Release meta taaki saath me stored."
+      },
+      {
+        "title": "Tags clones ke saath chale jaate hain agar push karo",
+        "body": "Tags branch push ke saath default me nahi jaate. `git push --follow-tags` (ya --tags) unhe bhejta hai. Isliye release tarike se registry jaisa hota hai."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "tag",
+        "highlight": 2,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "v1.0 candidate",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "e1b5a09",
+            "msg": "ship it",
+            "parents": [
+              1
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 2
+          },
+          {
+            "name": "HEAD",
+            "node": 2,
+            "active": true
+          },
+          {
+            "name": "v1.0.0",
+            "node": 1
+          }
+        ],
+        "caption": "A tag pins a commit forever, indifferent to branch movement"
+      }
+    },
+    "syntax": "git tag -a <name> -m \"<msg>\"",
+    "options": [
+      {
+        "flag": "-a + -m",
+        "desc": "Release message ke saath annotated tag."
+      },
+      {
+        "flag": "-s",
+        "desc": "GPG key se tag sign karo (provenance!)."
+      },
+      {
+        "flag": "push origin --tags",
+        "desc": "Remote par tags publish karo."
+      },
+      {
+        "flag": "list",
+        "desc": "Saare tags lexically sorted dikhao."
+      }
+    ],
+    "uses": [
+      "Releases mark karna: v1.0.0, v2.1.3 — asli immovable milestones.",
+      "Rollback anchors: git checkout v1.2.0 se released state chalao.",
+      "npm/package.json version bump matching tag ke saath."
+    ],
+    "aliases": [
+      {
+        "short": "g tg",
+        "full": "git tag -a -m",
+        "note": "Message ke saath annotated tag, ek alias me."
+      },
+      {
+        "short": "g tgp",
+        "full": "git push origin --follow-tags",
+        "note": "Branch push ke saath apne tags publish karo."
+      },
+      {
+        "short": "g tgl",
+        "full": "git tag -l",
+        "note": "Saare tags jaldi list karo."
+      }
+    ],
+    "related": [
+      "git-checkout",
+      "git-push",
+      "git-show"
+    ],
+    "proTip": "`git describe` nearest tag padhta hai jiske downstream me commit ho — isi se bahut saare tools (aur git khud) human-ish version names banate hain."
+  }
+}

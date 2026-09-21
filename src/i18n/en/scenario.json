@@ -1,0 +1,134 @@
+{
+  "acts": [
+    {
+      "id": "setup",
+      "kicker": "Act 1",
+      "title": "The first commit",
+      "sub": "Scaffold the repo the same way a cautious human does — one clean chore commit."
+    },
+    {
+      "id": "build",
+      "kicker": "Act 2",
+      "title": "Three changes, three commits",
+      "sub": "Split a messy work session into small, reviewable, atomic commits."
+    },
+    {
+      "id": "ship",
+      "kicker": "Act 3",
+      "title": "Ship it calmly",
+      "sub": "Put the experiment on a branch, then merge it without drama."
+    }
+  ],
+  "steps": [
+    {
+      "act": 0,
+      "title": "A blank directory, full of promise",
+      "body": "You're starting a tiny website from scratch. The first real git act is to give it a repo — git won't do anything useful until it has one.",
+      "cmd": "git init",
+      "visual": { "kind": "gitdir", "caption": "git init makes the .git directory — objects, refs and the index live inside it." }
+    },
+    {
+      "act": 0,
+      "title": "Decide what does NOT belong",
+      "body": "Before the first commit, add a .gitignore. Node_modules, build output, and that stray debug.log should never be tracked. Deciding what stays out is part of the discipline.",
+      "cmd": "printf 'node_modules\\nbuild\\ndebug.log\\n' > .gitignore && git add .gitignore",
+      "visual": { "kind": "staging", "staged": [".gitignore"], "mode": "add", "caption": "Only the ignore rule is staged so far — still nothing committed." }
+    },
+    {
+      "act": 0,
+      "title": "Stage the scaffold, then stop",
+      "body": "Now stage the three files that make up the project shell: package.json, the lockfile and the README. Notice the craft: you only stage what belongs to THIS commit, not 'everything that exists'.",
+      "cmd": "git add package.json package-lock.json README.md",
+      "visual": { "kind": "staging", "staged": ["package.json", "package-lock.json", "README.md", ".gitignore"], "mode": "add" }
+    },
+    {
+      "act": 0,
+      "title": "The first commit",
+      "body": "Commit the shell as a single logical unit. The prefix chore marks housekeeping — no user-visible behavior yet. And the subject is short: 26 characters, well under the 50 limit.",
+      "cmd": "git commit -m \"chore: scaffold project setup\"",
+      "visual": { "kind": "graph", "spec": { "nodes": [{ "id": "1a2b3c4", "msg": "chore: scaffold project setup", "parents": [] }], "refs": [{ "name": "main", "node": 0, "active": true }], "animation": "build", "highlight": 0 } }
+    },
+    {
+      "act": 0,
+      "title": "The 50 / 72 rule",
+      "body": "A human-readable commit is a gift to your future self. Keep the subject under 50 characters — it reads in listings. Wrap detail lines at 72. If the message needs a paragraph, it deserves its own commit.",
+      "cmd": "git commit -m \"fix: reset focus ring\" -m \"Pressing space no longer keeps the focus ring stuck after the button closes.\""
+    },
+    {
+      "act": 1,
+      "title": "The trap: six files, one commit",
+      "body": "A real work session leaves the tree messy. Here: a bug fix, a small feature, some styling, and a stray debug.log, all edited at once. The lazy commit — git add -A; git commit -m \"update\" — buries everything under one blob.",
+      "cmd": "git status",
+      "visual": { "kind": "status", "caption": "git status shows 6 changes at once — this is the exactly the situation a careful human splits apart." }
+    },
+    {
+      "act": 1,
+      "title": "Group by logical change",
+      "body": "Sort the files the way a reviewer thinks: the bug fix alone, the feature's two files together, the styling alone — and the debug.log ignored, never committed. Three logical changes, three commits. No reason to rush.",
+      "cmd": "git add src/button.tsx"
+    },
+    {
+      "act": 1,
+      "title": "Commit the fix — small and atomic",
+      "body": "One fix, one commit, a prefix that says fix, a subject that says WHAT and not HOW. Reviewers can read this line and instantly decide it's safe. That's the whole point of atomic commits.",
+      "cmd": "git commit -m \"fix: reset focus ring on space bar\"",
+      "visual": { "kind": "graph", "spec": { "nodes": [{ "id": "1a2b3c4", "msg": "chore: scaffold project setup", "parents": [] }, { "id": "7e8f9ab", "msg": "fix: reset focus ring on space bar", "parents": [0] }], "refs": [{ "name": "main", "node": 1, "active": true }], "animation": "build", "highlight": 1 } }
+    },
+    {
+      "act": 1,
+      "title": "The feature lands next",
+      "body": "The feature spans two files, so stage them together: nav.tsx and nav.css are ONE change — a sidebar isn't complete without its styles. Then commit it with the feat prefix.",
+      "cmd": "git add src/nav.tsx src/nav.css && git commit -m \"feat: add sticky mobile sidebar\"",
+      "visual": { "kind": "graph", "spec": { "nodes": [{ "id": "1a2b3c4", "msg": "chore: scaffold project setup", "parents": [] }, { "id": "7e8f9ab", "msg": "fix: reset focus ring on space bar", "parents": [0] }, { "id": "4d5e6f7", "msg": "feat: add sticky mobile sidebar", "parents": [1] }], "refs": [{ "name": "main", "node": 2, "active": true }], "animation": "build", "highlight": 2 } }
+    },
+    {
+      "act": 1,
+      "title": "Style is its own chore",
+      "body": "Visual-only tweaks get the style prefix — they change behavior of nothing, and the prefix tells everyone so at a glance. Three commits in: chore, fix, feat — each one reviewable in seconds.",
+      "cmd": "git add src/theme.css && git commit -m \"style: align page title spacing\"",
+      "visual": { "kind": "graph", "spec": { "nodes": [{ "id": "1a2b3c4", "msg": "chore: scaffold project setup", "parents": [] }, { "id": "7e8f9ab", "msg": "fix: reset focus ring on space bar", "parents": [0] }, { "id": "4d5e6f7", "msg": "feat: add sticky mobile sidebar", "parents": [1] }, { "id": "9a0b1c2", "msg": "style: align page title spacing", "parents": [2] }], "refs": [{ "name": "main", "node": 3, "active": true }], "animation": "build", "highlight": 3 } }
+    },
+    {
+      "act": 1,
+      "title": "Read it like a changelog",
+      "body": "git log --oneline --graph turns history into a story: chore -> fix -> feat -> style. Each commit is small enough to reason about, and each prefix is a filter. Compare that to one giant 'update stuff' blob — there's no contest.",
+      "cmd": "git log --oneline --graph",
+      "visual": { "kind": "graph", "spec": { "nodes": [{ "id": "1a2b3c4", "msg": "chore: scaffold project setup", "parents": [] }, { "id": "7e8f9ab", "msg": "fix: reset focus ring on space bar", "parents": [0] }, { "id": "4d5e6f7", "msg": "feat: add sticky mobile sidebar", "parents": [1] }, { "id": "9a0b1c2", "msg": "style: align page title spacing", "parents": [2] }], "refs": [{ "name": "main", "node": 3, "active": true }], "animation": "log", "highlight": 3, "caption": "A linear history that reads like a changelog — the reward for atomic commits." } }
+    },
+    {
+      "act": 2,
+      "title": "Experiment on a branch",
+      "body": "Next feature is riskier, so it lives on its own branch. git switch -c both creates and jumps to feat/avatar. main stays clean and shippable while you experiment.",
+      "cmd": "git switch -c feat/avatar",
+      "visual": { "kind": "graph", "spec": { "nodes": [{ "id": "1a2b3c4", "msg": "chore: scaffold project setup", "parents": [] }, { "id": "7e8f9ab", "msg": "fix: reset focus ring on space bar", "parents": [0] }, { "id": "4d5e6f7", "msg": "feat: add sticky mobile sidebar", "parents": [1] }, { "id": "9a0b1c2", "msg": "style: align page title spacing", "parents": [2] }], "refs": [{ "name": "main", "node": 3 }, { "name": "HEAD", "node": 3, "active": true }], "animation": "branch", "highlight": 3 } }
+    },
+    {
+      "act": 2,
+      "title": "Work happens on the branch",
+      "body": "The commit lands on feat/avatar, and main doesn't move at all. Risky work beats up the branch, not the trunk. Same atomic discipline: one feature, one commit.",
+      "cmd": "git commit -m \"feat: render user avatars\"",
+      "visual": { "kind": "graph", "spec": { "nodes": [{ "id": "1a2b3c4", "msg": "chore: scaffold project setup", "parents": [] }, { "id": "7e8f9ab", "msg": "fix: reset focus ring on space bar", "parents": [0] }, { "id": "4d5e6f7", "msg": "feat: add sticky mobile sidebar", "parents": [1] }, { "id": "9a0b1c2", "msg": "style: align page title spacing", "parents": [2] }, { "id": "c3d4e5f", "msg": "feat: render user avatars", "parents": [3] }], "refs": [{ "name": "main", "node": 3 }, { "name": "feat/avatar", "node": 4 }, { "name": "HEAD", "node": 4, "active": true }], "animation": "headmove", "highlight": 4 } }
+    },
+    {
+      "act": 2,
+      "title": "Jump back to the safe line",
+      "body": "git switch main moves HEAD back to the main line. Everything you made is still safe on the branch — but the working tree now reflects the shippable trunk. The graph starts to fork.",
+      "cmd": "git switch main",
+      "visual": { "kind": "graph", "spec": { "nodes": [{ "id": "1a2b3c4", "msg": "chore: scaffold project setup", "parents": [] }, { "id": "7e8f9ab", "msg": "fix: reset focus ring on space bar", "parents": [0] }, { "id": "4d5e6f7", "msg": "feat: add sticky mobile sidebar", "parents": [1] }, { "id": "9a0b1c2", "msg": "style: align page title spacing", "parents": [2] }, { "id": "c3d4e5f", "msg": "feat: render user avatars", "parents": [3] }], "refs": [{ "name": "main", "node": 3, "active": true }, { "name": "feat/avatar", "node": 4 }], "animation": "headmove", "highlight": 3 } }
+    },
+    {
+      "act": 2,
+      "title": "Join the stories",
+      "body": "The feature is reviewed and ready. git merge --no-ff creates an explicit merge commit that records the join — the fork in the graph stays visible forever, which is exactly what a team wants to read later.",
+      "cmd": "git merge --no-ff feat/avatar -m \"merge: land user avatars\"",
+      "visual": { "kind": "graph", "spec": { "nodes": [{ "id": "1a2b3c4", "msg": "chore: scaffold project setup", "parents": [] }, { "id": "7e8f9ab", "msg": "fix: reset focus ring on space bar", "parents": [0] }, { "id": "4d5e6f7", "msg": "feat: add sticky mobile sidebar", "parents": [1] }, { "id": "9a0b1c2", "msg": "style: align page title spacing", "parents": [2] }, { "id": "c3d4e5f", "msg": "feat: render user avatars", "parents": [3] }, { "id": "f0a1b2c", "msg": "merge: land user avatars", "parents": [3, 4] }], "refs": [{ "name": "main", "node": 5, "active": true }, { "name": "feat/avatar", "node": 4 }], "animation": "merge", "highlight": 5 } }
+    },
+    {
+      "act": 2,
+      "title": "The whole day, one clean story",
+      "body": "git log --oneline --graph shows the day's work the way a human actually did it: a chore scaffold, three atomic changes, one forked experiment, one explicit merge. Small commits. Clear prefixes. No 50-file blobs. This is what professionals do.",
+      "cmd": "git config --global alias.lg \"log --oneline --graph --decorate\" && git lg",
+      "visual": { "kind": "graph", "spec": { "nodes": [{ "id": "1a2b3c4", "msg": "chore: scaffold project setup", "parents": [] }, { "id": "7e8f9ab", "msg": "fix: reset focus ring on space bar", "parents": [0] }, { "id": "4d5e6f7", "msg": "feat: add sticky mobile sidebar", "parents": [1] }, { "id": "9a0b1c2", "msg": "style: align page title spacing", "parents": [2] }, { "id": "c3d4e5f", "msg": "feat: render user avatars", "parents": [3] }, { "id": "f0a1b2c", "msg": "merge: land user avatars", "parents": [3, 4] }], "refs": [{ "name": "main", "node": 5, "active": true }, { "name": "feat/avatar", "node": 4 }], "animation": "log", "highlight": 5, "caption": "Six commits, each one logical, one merge, zero panic — a realistic, human day of git." } }
+    }
+  ]
+}

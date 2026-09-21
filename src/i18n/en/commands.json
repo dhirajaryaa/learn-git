@@ -1,0 +1,2740 @@
+{
+  "git-status": {
+    "slug": "git-status",
+    "command": "git status",
+    "name": "git status",
+    "category": "snapshotting",
+    "icon": "list",
+    "level": "beginner",
+    "tagline": "Compare the working tree, the index, and the last commit.",
+    "what": "git status is a read-only report. It walks three places — your working files, the index (what you've staged), and HEAD (the last commit) — and tells you how they differ. Untracked files are shown because Git sees them as new and untracked.",
+    "how": [
+      {
+        "title": "Three stateful places, three questions",
+        "body": "Every file in the repo can be described by comparing three snapshots: HEAD (last commit), the index (staging area), and the working tree (what's on disk). Status just diffs them pairwise."
+      },
+      {
+        "title": "It never reads file contents — only a checksum",
+        "body": "Status compares the blob hash recorded in the index with a fast hash of the file on disk. If they match, the file is considered unchanged; status does not re-read full contents and does not diff.",
+        "code": ".git/index  →  0b2a…  ls-files -s\nworktree    →  hash  →  compare"
+      },
+      {
+        "title": "Branches ahead/behind",
+        "body": "When upstream tracking is set, status adds one more comparison: your branch ref vs the remote-tracking branch (refs/remotes/origin/main). That gives the 'Your branch is ahead by 2' line without touching the network."
+      },
+      {
+        "title": "Untracked ≠ modified",
+        "body": "Files Git has never seen (not in the index) are 'untracked'. They have no hash to compare, so they're listed separately and are invisible to git diff."
+      }
+    ],
+    "visual": {
+      "kind": "status",
+      "caption": "A real git status, colour-coded by the three states"
+    },
+    "syntax": "git status [--short]",
+    "options": [
+      {
+        "flag": "--short",
+        "desc": "Compact machine-friendly output: M, A, D, ??…"
+      },
+      {
+        "flag": "--branch",
+        "desc": "Show branch and ahead/behind info alongside the status (often -sb)."
+      },
+      {
+        "flag": "--ignored",
+        "desc": "Also list files ignored via .gitignore."
+      }
+    ],
+    "uses": [
+      "First command in a session — you always want to know what state your repo is in.",
+      "Before committing, to see exactly what will be included.",
+      "After pulling, to catch conflicts or surprises quickly."
+    ],
+    "aliases": [
+      {
+        "short": "g st",
+        "full": "git status",
+        "note": "The single most-used alias in the wild."
+      },
+      {
+        "short": "g sts",
+        "full": "git status --short",
+        "note": "Compact one-line-per-file form."
+      },
+      {
+        "short": "g s",
+        "full": "git status --short --branch",
+        "note": "Oh-my-zsh default; shows branch too."
+      }
+    ],
+    "related": [
+      "git-add",
+      "git-diff",
+      "git-commit"
+    ],
+    "proTip": "`git status --short` prints exactly two columns: the index state (1st char) and the worktree state (2nd char). 'M ' staged vs ' M' unstaged — order matters."
+  },
+  "git-add": {
+    "slug": "git-add",
+    "command": "git add",
+    "name": "git add",
+    "category": "snapshotting",
+    "icon": "plus",
+    "level": "beginner",
+    "tagline": "Copy your edits into the staging area (the index).",
+    "what": "git add snapshots the current content of the listed files and records it in the index. It does NOT create a commit and it does NOT touch what's committed. The index is a preview — exactly what your next commit will be.",
+    "how": [
+      {
+        "title": "Each file becomes a blob",
+        "body": "Git compresses the file's content, prepends a tiny header ('blob <size>\\0'), and hashes it with SHA-1. The resulting blob object is stored under objects/aa/8f0f1550b3d2b1f5d2…",
+        "code": "echo 'content' | git hash-object -w --stdin\n# → a5b2f31c5e71f86a9be9f0aa4b139b2b0a9d717a"
+      },
+      {
+        "title": "The index is updated",
+        "body": "The index file (.git/index) gets a row for each staged path, mapping path → blob hash + file mode + stat data. From now on, status's comparison uses this row."
+      },
+      {
+        "title": "Same content, same blob — deduplication",
+        "body": "Because blobs are content-addressed, adding an identical file twice never stores it twice. Git automatically deduplicates identical content across the whole repository."
+      },
+      {
+        "title": "Stage the intent, not the file",
+        "body": "Staging is about the index only: the working file stays exactly as-is on disk. Nothing moves, no files are copied to .git — only hashes and index rows are written."
+      }
+    ],
+    "visual": {
+      "kind": "staging",
+      "staged": [
+        "src/button.tsx",
+        "src/theme.css"
+      ],
+      "dirty": [
+        "src/button.tsx"
+      ],
+      "untracked": [
+        "notes.md"
+      ],
+      "mode": "add",
+      "caption": "git add copies file snapshots from the worktree into the index"
+    },
+    "syntax": "git add <path>",
+    "options": [
+      {
+        "flag": "-A",
+        "desc": "Stage all changes: new, modified and deleted files."
+      },
+      {
+        "flag": "-p",
+        "desc": "Stage hunks interactively — pick parts of a file, not the whole thing."
+      },
+      {
+        "flag": "-u",
+        "desc": "Stage tracked files only; skip brand-new untracked files."
+      },
+      {
+        "flag": "-n",
+        "desc": "Dry run — preview what would be staged."
+      }
+    ],
+    "uses": [
+      "You finished a feature and want to commit part of your changes selectively.",
+      "You tweaked a config file and don't want it in this commit — stage everything else.",
+      "Using -p to craft clean, reviewable commits with surgical precision."
+    ],
+    "aliases": [
+      {
+        "short": "g a",
+        "full": "git add -A",
+        "note": "Stage everything, including deletions. The classic muscle-memory alias."
+      },
+      {
+        "short": "g aa",
+        "full": "git add -A",
+        "note": "Same thing, doubled for speed."
+      },
+      {
+        "short": "g ap",
+        "full": "git add -p",
+        "note": "Interactive per-hunk staging."
+      },
+      {
+        "short": "ga.",
+        "full": "git add .",
+        "note": "Stage everything in the current directory."
+      },
+      {
+        "short": "g a -n",
+        "full": "git add -A -n",
+        "note": "Dry-run what you'd accidentally stage in a monorepo."
+      }
+    ],
+    "related": [
+      "git-status",
+      "git-commit",
+      "git-restore"
+    ],
+    "proTip": "`git add -p` is the single best habit for a clean history. If you can't easily stage a hunk with -p, commit with `git commit -p` and the same interactive picker runs at commit time."
+  },
+  "git-commit": {
+    "slug": "git-commit",
+    "command": "git commit",
+    "name": "git commit",
+    "category": "snapshotting",
+    "icon": "book",
+    "level": "beginner",
+    "tagline": "Seal the index into a permanent commit object.",
+    "what": "git commit reads the index, wraps it in a tree object, and creates a commit object that points to that tree and to your current HEAD. Then it moves the branch ref forward. The commit is immutable and permanent — this is history being written.",
+    "how": [
+      {
+        "title": "Step 1 — a tree is built from the index",
+        "body": "Every staged path is packaged into trees (directories) and blobs (files). The top-level tree object describes the entire project snapshot.",
+        "code": "tree f2b0c9d…\n├─ blob aa8f1e…  README.md\n├─ blob 3c2d09…  src/main.ts\n└─ tree b7e1a2…  src/"
+      },
+      {
+        "title": "Step 2 — the commit object is written",
+        "body": "Git builds a commit object containing the tree hash, the parent commit hash(es), the author, the committer, and your message — then hashes THAT. This hash is the commit's identity.",
+        "code": "commit 74d3b9f  (your new commit)\n  tree    f2b0c9d…\n  parent  9a2f1c0…  (previous commit)\n  author  Ada <ada@…>\n  committer Ada <ada@…>\n  message feat: add dark mode"
+      },
+      {
+        "title": "Step 3 — the branch moves, HEAD follows",
+        "body": "The branch file you're on (refs/heads/main) is rewritten to contain the new commit hash, and HEAD points at that branch. The commit is now 'on' the branch.",
+        "code": "git rev-parse main   # → 74d3b9f…\ncat .git/HEAD         # → ref: refs/heads/main\ncat .git/refs/heads/main  # → 74d3b9f…"
+      },
+      {
+        "title": "Why parent pointers make history",
+        "body": "Every commit records its parent. Following the chain of parents from any commit walks the entire history. This is exactly what git log does — it is nothing but a linked list traversal."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "build",
+        "highlight": 4,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "c86d9ee",
+            "msg": "style layout",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "e1b5a09",
+            "msg": "fix nav menu",
+            "parents": [
+              2
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              3
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 3
+          },
+          {
+            "name": "HEAD",
+            "node": 3,
+            "active": true
+          }
+        ],
+        "caption": "The commit object is appended and the branch pointer slides forward"
+      }
+    },
+    "syntax": "git commit -m \"<message>\"",
+    "options": [
+      {
+        "flag": "-m",
+        "desc": "Set the commit message inline."
+      },
+      {
+        "flag": "-a",
+        "desc": "Stage all tracked modified files before committing (never new files)."
+      },
+      {
+        "flag": "--amend",
+        "desc": "Replace the last commit — new tree, new message, new hash."
+      },
+      {
+        "flag": "--no-verify",
+        "desc": "Skip pre-commit and commit-msg hooks."
+      }
+    ],
+    "uses": [
+      "A logical unit of work is finished and the index looks right.",
+      "You fixed a typo in the last commit: git commit --amend --no-edit.",
+      "Combining with -a when you're committing everything and the index dance is overhead."
+    ],
+    "aliases": [
+      {
+        "short": "g cm",
+        "full": "git commit -m",
+        "note": "Commit with an inline message."
+      },
+      {
+        "short": "g cma",
+        "full": "git commit -am",
+        "note": "Stage tracked files + commit in one."
+      },
+      {
+        "short": "g amend",
+        "full": "git commit --amend --no-edit",
+        "note": "Fold changes into the last commit without touching the message."
+      },
+      {
+        "short": "g cm \"$(gen)\"",
+        "full": "git commit -m <generated msg>",
+        "note": "Some devs pipe a commit-message generator here."
+      }
+    ],
+    "related": [
+      "git-add",
+      "git-status",
+      "git-log",
+      "git-reset"
+    ],
+    "proTip": "Amend is NOT editing history in place — it creates a brand-new commit object whose parent is the same as the old one. The old commit is simply dropped and garbage-collected. Never amend commits that are already shared with others."
+  },
+  "git-init": {
+    "slug": "git-init",
+    "command": "git init",
+    "name": "git init",
+    "category": "setup",
+    "icon": "plus",
+    "level": "beginner",
+    "tagline": "Turn any folder into a Git repository.",
+    "what": "git init creates a hidden .git directory inside your project. That directory is the entire repository — every object, every pointer, every piece of history lives inside it. From this moment, Git can track what happens to every file in the project.",
+    "how": [
+      {
+        "title": "Git creates the .git folder",
+        "body": "git init writes a .git directory containing the four core structures: objects/ (empty), refs/ (empty), HEAD (a file pointing at refs/heads/main), and index (an empty binary staging file).",
+        "code": "mkdir .git\nmkdir .git/objects/{info,pack}\nmkdir .git/refs/{heads,tags}\necho 'ref: refs/heads/main' > .git/HEAD"
+      },
+      {
+        "title": "HEAD is born",
+        "body": "HEAD is just a text file holding the name of the current branch. It points at refs/heads/main, but that branch file doesn't exist yet — it appears with your very first commit.",
+        "code": "cat .git/HEAD  # → ref: refs/heads/main"
+      },
+      {
+        "title": "Nothing is tracked yet",
+        "body": "No objects exist. No files are in the index. Git simply says 'demonstrated' and waits. The working directory itself is untouched — Git is a layer on top, not a copy."
+      }
+    ],
+    "visual": {
+      "kind": "gitdir",
+      "caption": "git init materializes the .git folder"
+    },
+    "syntax": "git init [<directory>]",
+    "options": [
+      {
+        "flag": "<directory>",
+        "desc": "Initialize a repo in a specific folder instead of the current one."
+      },
+      {
+        "flag": "-b <name>",
+        "desc": "Set the initial branch name (defaults to main)."
+      },
+      {
+        "flag": "--bare",
+        "desc": "Create a bare repo — no working directory, refs only. Used on servers."
+      }
+    ],
+    "uses": [
+      "Starting a brand-new project and you want version control from day one.",
+      "You downloaded someone's code without a .git folder and want your own history.",
+      "You're exploring Git internals and want a clean sandbox: git init /tmp/lab."
+    ],
+    "aliases": [
+      {
+        "short": "g init",
+        "full": "git init",
+        "note": "Common global alias where g = git."
+      },
+      {
+        "short": "gi",
+        "full": "git init",
+        "note": "Bare initials some shells define."
+      },
+      {
+        "short": "g init -y",
+        "full": "git init -b main",
+        "note": "Some setups alias this to skip the default-branch warning."
+      }
+    ],
+    "related": [
+      "git-add",
+      "git-commit",
+      "git-clone"
+    ],
+    "proTip": "Newer Git versions default the branch to main. To check: `git init -h` shows the default branch name as the --initial-branch hint."
+  },
+  "git-config": {
+    "slug": "git-config",
+    "command": "git config",
+    "name": "git config",
+    "category": "setup",
+    "icon": "settings",
+    "level": "beginner",
+    "tagline": "Set the identity and behaviour Git uses when you commit.",
+    "what": "git config reads and writes key/value pairs across three scopes: system (whole machine), global (your user), and local (this repository). Commits are stamped with the user.name and user.email from the most local scope that has them.",
+    "how": [
+      {
+        "title": "Three scopes, one merged result",
+        "body": "Values cascade from wide → narrow. When Git needs a value, it checks local, then global, then system, and uses the first one found.",
+        "code": "/etc/gitconfig      ← system   (--system)\n~/.gitconfig        ← global    (--global)\n.git/config         ← local     (this repo)"
+      },
+      {
+        "title": "Written as INI text files",
+        "body": "The configuration is just human-readable text. Setting a value appends a section and key to the appropriate file.",
+        "code": "[user]\n  name = Ada Lovelace\n  email = ada@example.com"
+      },
+      {
+        "title": "Commits read it at creation time",
+        "body": "When you commit, Git bakes the resolved user.name and user.email directly into the commit object as author and committer lines. That's why old commits keep their identity even if you change config later."
+      }
+    ],
+    "visual": {
+      "kind": "gitdir",
+      "caption": "Config values cascade system → global → local"
+    },
+    "syntax": "git config <key> <value>",
+    "options": [
+      {
+        "flag": "--global",
+        "desc": "Write to ~/.gitconfig (your user, all repos)."
+      },
+      {
+        "flag": "--local",
+        "desc": "Write to this repository only (default)."
+      },
+      {
+        "flag": "--list",
+        "desc": "Print the fully resolved config, aliases included."
+      },
+      {
+        "flag": "alias.<name>",
+        "desc": "Create a shortcut: git config --global alias.co checkout."
+      }
+    ],
+    "uses": [
+      "Just installed Git and must set user.name and user.email before your first commit.",
+      "You want to define aliases once that work in every repository.",
+      "You have two identities (work vs personal) and pin one per repo with --local."
+    ],
+    "aliases": [
+      {
+        "short": "g cf",
+        "full": "git config --global",
+        "note": "Shorthand for global config edits."
+      },
+      {
+        "short": "g cgl",
+        "full": "git config --global --list",
+        "note": "Dump every configured alias and setting."
+      }
+    ],
+    "related": [
+      "git-init",
+      "git-commit"
+    ],
+    "proTip": "See every alias you've ever defined (including the ones the site suggests) with `git config --global --get-regexp ^alias`."
+  },
+  "git-branch": {
+    "slug": "git-branch",
+    "command": "git branch",
+    "name": "git branch",
+    "category": "branching",
+    "icon": "git-branch",
+    "level": "beginner",
+    "tagline": "Create, list and rename refs that point at commits.",
+    "what": "A branch is nothing but a movable pointer — a text file in .git/refs/heads that stores one commit hash. git branch lists them, creates a new pointer at the current commit, or renames one. Crucially, it does NOT move you onto the branch; that's git switch or git checkout.",
+    "how": [
+      {
+        "title": "A branch is a file with one hash",
+        "body": "Creating a branch literally writes a 41-byte file. The hash is copied from wherever you were when you ran it — usually HEAD's commit.",
+        "code": "echo 74d3b9f0… > .git/refs/heads/feature  # what `git branch feature` does"
+      },
+      {
+        "title": "Multiple branches, one commit each",
+        "body": "Branches are cheap because they hold no data. The history they point at is shared — branch pointers just let you name different positions along it."
+      },
+      {
+        "title": "Listing reads refs and shows HEAD target",
+        "body": "`git branch` reads every file in refs/heads, resolves each to its commit, and puts an asterisk on the branch that HEAD's ref: line names.",
+        "code": "$ git branch\n* main\n  feature/login\n  feature/export"
+      },
+      {
+        "title": "Deleting removes the pointer, never the commits",
+        "body": "Deleting a branch deletes its ref file only. The commits remain in objects/ and stay alive until garbage collected — which is why you can often recover a 'deleted' branch."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "branch",
+        "highlight": 2,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              1
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 2
+          },
+          {
+            "name": "HEAD",
+            "node": 2,
+            "active": true
+          },
+          {
+            "name": "feature",
+            "node": 2
+          }
+        ],
+        "caption": "git branch feature just adds a second pointer to the same commit"
+      }
+    },
+    "syntax": "git branch <name>",
+    "options": [
+      {
+        "flag": "<name>",
+        "desc": "Create a new branch pointing at your current commit."
+      },
+      {
+        "flag": "-a",
+        "desc": "List all branches, including remote-tracking ones."
+      },
+      {
+        "flag": "-d / -D",
+        "desc": "Delete a branch (merged / force)."
+      },
+      {
+        "flag": "-m",
+        "desc": "Rename the current branch."
+      },
+      {
+        "flag": "-vv",
+        "desc": "Show which refs each local branch tracks."
+      }
+    ],
+    "uses": [
+      "You want to start a feature without leaving your current branch yet.",
+      "Check what branches exist and where they point before switching.",
+      "Cleaning up stale branches with -d after a merge."
+    ],
+    "aliases": [
+      {
+        "short": "g b",
+        "full": "git branch",
+        "note": "The universal shorthand for listing branches."
+      },
+      {
+        "short": "g bav",
+        "full": "git branch -avv",
+        "note": "List everything with tracking info."
+      },
+      {
+        "short": "g ba",
+        "full": "git branch -a",
+        "note": "Include remote-tracking branches in the list."
+      },
+      {
+        "short": "g bd",
+        "full": "git branch -d",
+        "note": "Delete a merged branch."
+      },
+      {
+        "short": "g bnm",
+        "full": "git branch --no-merged",
+        "note": "What's not merged yet — pre-merge check."
+      }
+    ],
+    "related": [
+      "git-checkout",
+      "git-merge",
+      "git-log"
+    ],
+    "proTip": "Create AND check out in one move: `git switch -c feature` (or the older `git checkout -b feature`). Two separate actions — create pointer, then move HEAD — are compressed into one command."
+  },
+  "git-checkout": {
+    "slug": "git-checkout",
+    "command": "git checkout",
+    "name": "git checkout",
+    "category": "branching",
+    "icon": "git-branch",
+    "level": "beginner",
+    "tagline": "Move HEAD to another branch and rebuild your working tree.",
+    "what": "git checkout does two big things: it updates HEAD to point at another branch (or detaches it at a commit), and it rewrites your working directory to match that target. Files are added, removed or modified on disk so your working tree reflects the checked-out state.",
+    "how": [
+      {
+        "title": "HEAD flips from one ref to another",
+        "body": "HEAD is a file. `git checkout main` writes ref: refs/heads/main into it. That single edit changes which branch 'you are on.'"
+      },
+      {
+        "title": "The working tree is synchronized",
+        "body": "Git compares the checked-out commit's tree with your current files, then copies the difference onto disk. Blobs are read from objects/ and written out as real files."
+      },
+      {
+        "title": "Git will block you, not your data",
+        "body": "If a file in the way has uncommitted changes, checkout refuses with 'Your local changes would be overwritten.' Git would rather fail loudly than destroy your edits. Add -f only if you truly mean it."
+      },
+      {
+        "title": "Detached HEAD",
+        "body": "`git checkout 74d3b9f` moves HEAD to a raw commit instead of a branch. You're now in a 'detached' state: commits you make belong to no branch and can be swept away by GC — unless you name a branch to hang onto them."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "headmove",
+        "highlight": 0,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              1
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "feature",
+            "node": 0
+          },
+          {
+            "name": "main",
+            "node": 2
+          },
+          {
+            "name": "HEAD",
+            "node": 2,
+            "active": true
+          }
+        ],
+        "caption": "The 'HEAD' capsule glides from main to the feature commit — and the working tree rewrites itself"
+      }
+    },
+    "syntax": "git checkout <branch|commit>",
+    "options": [
+      {
+        "flag": "-b <name>",
+        "desc": "Create a branch, then check it out — the classic branch+switch."
+      },
+      {
+        "flag": "-- <path>",
+        "desc": "Discard working-tree changes to a specific file only."
+      },
+      {
+        "flag": "-f",
+        "desc": "Force the switch, discarding uncommitted changes."
+      }
+    ],
+    "uses": [
+      "Jumping between feature branches to context-switch.",
+      "You never use git branch alone — you always want -b to create and switch in one step.",
+      "Going back to inspect an old commit directly (careful: detached HEAD)."
+    ],
+    "aliases": [
+      {
+        "short": "g co",
+        "full": "git checkout",
+        "note": "The legendary alias, carved into a billion muscle memories."
+      },
+      {
+        "short": "g cob",
+        "full": "git checkout -b",
+        "note": "Create + switch in one keystroke."
+      },
+      {
+        "short": "g co -- .",
+        "full": "git checkout -- .",
+        "note": "Revert the whole working tree to HEAD. Handle with care."
+      }
+    ],
+    "related": [
+      "git-switch",
+      "git-branch",
+      "git-restore",
+      "git-reset"
+    ],
+    "proTip": "git checkout does double duty (switch branches AND restore files) which confused generations of users. That split is exactly why git switch and git restore exist now — switch for refs, restore for files."
+  },
+  "git-switch": {
+    "slug": "git-switch",
+    "command": "git switch",
+    "name": "git switch",
+    "category": "branching",
+    "icon": "git-branch",
+    "level": "beginner",
+    "tagline": "The modern, focused way to change branches.",
+    "what": "git switch (Git 2.23+) is the same HEAD-moving mechanism as git checkout, stripped of the file-restoring half. It only changes which branch you're on — no accidental intent mixing, no hidden file-revert foot-guns.",
+    "how": [
+      {
+        "title": "Purely a HEAD + worktree operation",
+        "body": "Like checkout, switch rewrites .git/HEAD and synchronizes the working tree. The difference is conceptual: the command refuses to guess about files, keeping one job per command."
+      },
+      {
+        "title": "-c creates, then switches",
+        "body": "`git switch -c feat` is two steps under the hood: `git branch feat` (write the ref file) followed by switching HEAD to it. Identical to checkout -b, but scoped and predictable."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "headmove",
+        "highlight": 1,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              1
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 2
+          },
+          {
+            "name": "feature",
+            "node": 1
+          },
+          {
+            "name": "HEAD",
+            "node": 2,
+            "active": true
+          }
+        ],
+        "caption": "git switch only moves HEAD between branches — nothing else"
+      }
+    },
+    "syntax": "git switch <branch>",
+    "options": [
+      {
+        "flag": "-c <name>",
+        "desc": "Create the branch, then switch to it."
+      },
+      {
+        "flag": "-",
+        "desc": "Switch to the previously checked-out branch (toggle)."
+      },
+      {
+        "flag": "-f",
+        "desc": "Discard local changes and switch anyway."
+      },
+      {
+        "flag": "-t <remote/branch>",
+        "desc": "Create a local branch that tracks the given remote one."
+      }
+    ],
+    "uses": [
+      "Your daily branch-jumping — cleaner intent than checkout.",
+      "Quickly bouncing between two branches with `git switch -`.",
+      "Onboarding: newcomers learn switch + restore, never the legacy checkout split."
+    ],
+    "aliases": [
+      {
+        "short": "g sw",
+        "full": "git switch",
+        "note": "The oh-my-zsh default."
+      },
+      {
+        "short": "g swc",
+        "full": "git switch -c",
+        "note": "Create a branch and jump onto it."
+      },
+      {
+        "short": "g sw -",
+        "full": "git switch -",
+        "note": "Flip back to the last branch you were on."
+      }
+    ],
+    "related": [
+      "git-checkout",
+      "git-branch"
+    ],
+    "proTip": "`git switch -` pairs beautifully with stashing: save work on branch A, flip to branch B with `g sw -`, and flip back anytime. HEAD toggling is instant — it's just rewriting one text file plus restoring blobs."
+  },
+  "git-merge": {
+    "slug": "git-merge",
+    "command": "git merge",
+    "name": "git merge",
+    "category": "branching",
+    "icon": "git-merge",
+    "level": "intermediate",
+    "tagline": "Fold the history of another branch into yours.",
+    "what": "git merge takes the commits from another branch and joins them with your current branch. If they diverged, Git performs a three-way merge — comparing the two tips against their common ancestor — and writes a special merge commit with two parents. The other branch stays untouched.",
+    "how": [
+      {
+        "title": "Fast-forward: not really a merge",
+        "body": "If your branch hasn't moved, merging is just sliding your branch pointer forward to the other branch's tip. No new commit, no merge commit — a pure pointer move.",
+        "code": "before:  main ▸ a — b — c\n         feat  ▸ a — b — c — d\nafter:   main ▸ a — b — c — d   (pointer only)"
+      },
+      {
+        "title": "Diverged: the three-way merge",
+        "body": "When both branches have new commits, Git finds the merge base (the most recent common ancestor). It diffs base→yours and base→theirs, then combines both sets of changes.",
+        "code": "       base\n      /    \\\n   yours   theirs\n      \\    /\n   merge commit (two parents)"
+      },
+      {
+        "title": "Blobs merge, not lines",
+        "body": "For each file, Git reads the three blob versions, runs a word/line diff, and if both sides changed different regions, automatically stitches them together. Pure insertions on both sides never conflict."
+      },
+      {
+        "title": "A conflict is a file with both answers",
+        "body": "When both sides edit the same lines, Git refuses to guess. It writes both versions into the file with <<<<<<< / ======= / >>>>>>> markers and marks the path as conflicting. The merge stops; you resolve and commit."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "merge",
+        "highlight": 5,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "c1d8e2f",
+            "msg": "feature work",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "f0e9d8c",
+            "msg": "more feature",
+            "parents": [
+              3
+            ]
+          },
+          {
+            "id": "9b8a7c6",
+            "msg": "merge branch 'feature'",
+            "parents": [
+              2,
+              4
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 5
+          },
+          {
+            "name": "feature",
+            "node": 4
+          },
+          {
+            "name": "HEAD",
+            "node": 5,
+            "active": true
+          }
+        ],
+        "caption": "The merge commit links both histories with a second parent edge"
+      }
+    },
+    "syntax": "git merge <branch>",
+    "options": [
+      {
+        "flag": "--no-ff",
+        "desc": "Force a merge commit even when fast-forward is possible."
+      },
+      {
+        "flag": "--squash",
+        "desc": "Stitch the merged changes into one unstaged change — no merge commit."
+      },
+      {
+        "flag": "--abort",
+        "desc": "Cancel a conflicted merge and restore the pre-merge state."
+      },
+      {
+        "flag": "-m",
+        "desc": "Override the auto-generated merge message."
+      }
+    ],
+    "uses": [
+      "Integrating a feature branch back into main after review.",
+      "You want to preserve the exact branches in history (history is honest).",
+      "Combined with --no-ff for a visible 'merge bubble' in release branches."
+    ],
+    "aliases": [
+      {
+        "short": "g mg",
+        "full": "git merge",
+        "note": "Short merge alias."
+      },
+      {
+        "short": "g mnn",
+        "full": "git merge --no-ff",
+        "note": "Always create a merge commit — common for release branches."
+      },
+      {
+        "short": "g mg --abort",
+        "full": "git merge --abort",
+        "note": "Emergency exit from a messy conflict."
+      }
+    ],
+    "related": [
+      "git-rebase",
+      "git-pull",
+      "git-log"
+    ],
+    "proTip": "Conflicts are written to both the file AND to the index as 'unmerged' entries (one blob per stage). `git ls-files -u` shows the 3 stages: stage 1 base, stage 2 ours, stage 3 theirs. Every conflict resolver is just decision-making over these three blobs."
+  },
+  "git-rebase": {
+    "slug": "git-rebase",
+    "command": "git rebase",
+    "name": "git rebase",
+    "category": "branching",
+    "icon": "box",
+    "level": "advanced",
+    "tagline": "Re-apply your commits on top of a new base — and rewrite history.",
+    "what": "git rebase takes your commits, lifts them off your branch's old base, and replays them onto the tip of another branch — one by one, as new commits. The result is a linear history. Because everything is re-created, every moved commit gets a brand-new hash.",
+    "how": [
+      {
+        "title": "Old commits are recreated, not copied",
+        "body": "Rebase finds the common ancestor, collects your commits up to the branch tip, then for each one: reads its tree and message, re-diffs it against the new base, and writes a BRAND-NEW commit object. Identical content, different parent — different hash.",
+        "code": "before:\n  main  ▸ a                   feature ▸ a — x — y\n\nafter:\n  main  ▸ a — x — y                    (feature gone, replayed)\n  feature ▸ a — x — y                  (x' and y' new hashes)"
+      },
+      {
+        "title": "Every parent change rehashes the whole chain",
+        "body": "Since a commit's hash depends on its parent, replacing the first parent re-rolls the hash of every descendant. That's why rebasing rewrites 'your' commits but never the branch you rebased onto."
+      },
+      {
+        "title": "The three-way apply per commit",
+        "body": "For each commit, Git performs a mini three-way merge between the old base, your commit, and the new base. Conflicts pause the rebase so you can fix them before continuing."
+      },
+      {
+        "title": "Danger: you're editing shared history",
+        "body": "Rebasing changes hashes. Anyone who already pulled your old-hashed commits will have a divergent history that requires force-push reconciliation. Rule: rebase local work, never shared work."
+      }
+    ],
+    "visual": {
+      "kind": "rebased",
+      "spec": {
+        "action": "git rebase main",
+        "before": {
+          "animation": "log",
+          "nodes": [
+            {
+              "id": "a1b2c3d",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "e4f5a6b",
+              "msg": "main: fix nav",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c7d8e9f",
+              "msg": "feature: add btn",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "0a1b2cd",
+              "msg": "feature: wire API",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 1
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ]
+        },
+        "after": {
+          "animation": "log",
+          "nodes": [
+            {
+              "id": "a1b2c3d",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "e4f5a6b",
+              "msg": "main: fix nav",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "f1a2b3c",
+              "msg": "feature: add btn'",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "b2c3d4e",
+              "msg": "feature: wire API'",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 1
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ]
+        }
+      }
+    },
+    "syntax": "git rebase <branch>",
+    "options": [
+      {
+        "flag": "-i",
+        "desc": "Interactive mode — reorder, squash, fixup, drop commits."
+      },
+      {
+        "flag": "--onto <base>",
+        "desc": "Replay commits onto an arbitrary new base."
+      },
+      {
+        "flag": "--root",
+        "desc": "Also rebase the very first commit (requires interaction)."
+      },
+      {
+        "flag": "--abort",
+        "desc": "Cancel the process and restore the original branch."
+      }
+    ],
+    "uses": [
+      "Keeping a feature branch in sync with a fast-moving main before merging.",
+      "Squashing a pile of WIP commits into one clean commit with -i.",
+      "You want a perfectly linear history (GitHub squash-merge culture)."
+    ],
+    "aliases": [
+      {
+        "short": "g rb",
+        "full": "git rebase",
+        "note": "Plain rebase shorthand."
+      },
+      {
+        "short": "g rbi",
+        "full": "git rebase -i",
+        "note": "Interactive rewrite — the power button."
+      },
+      {
+        "short": "g rb main",
+        "full": "git rebase main",
+        "note": "Re-sync your feature onto updated main."
+      }
+    ],
+    "related": [
+      "git-merge",
+      "git-pull",
+      "git-reset",
+      "git-cherry-pick"
+    ],
+    "proTip": "Squash or fixup is the killer feature of interactive rebase for messy work: `git rebase -i main` then change 'pick' to 'fixup' on the commits you want folded. Your heavy WIP history becomes one elegant commit — but only before pushing."
+  },
+  "git-log": {
+    "slug": "git-log",
+    "command": "git log",
+    "name": "git log",
+    "category": "inspecting",
+    "icon": "history",
+    "level": "beginner",
+    "tagline": "Walk the chain of parent links and read your history.",
+    "what": "git log is a pure read operation: starting from HEAD, it follows each commit's parent pointer to the previous commit, forever. Every commit object is rendered as a line (or more) of metadata and its message. None of it touches your working tree.",
+    "how": [
+      {
+        "title": "It's a linked-list traversal",
+        "body": "Commits only know their parents. Log starts at a ref (say HEAD), prints it, jumps to parent, prints it, and continues. Merchant/rendering aside, that IS the algorithm.",
+        "code": "HEAD → 74d3b9f → parent → 4b7c2a5 → parent → 9a2f1c0 → <no parent>"
+      },
+      {
+        "title": "--oneline formats one commit as one hash + subject",
+        "body": "The short 7-character hashes come straight from the first 7 hex digits of the full 40-digit object hash. Two commits could theoretically collide in 7 digits — Git shows the abbreviated prefix only."
+      },
+      {
+        "title": "--graph draws the DAG",
+        "body": "Merges make the commit list a graph, not a line. --graph tracks which 'lane' each commit belongs to and draws the branch topology with ASCII (or, with --color, painted) box-drawing characters."
+      },
+      {
+        "title": "Range and filter syntax",
+        "body": "`git log main..feature` means 'commits reachable from feature but not from main' — read it as a set-difference over the DAG. `git log -p` appends the full diff of each commit."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "log",
+        "highlight": 2,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "c86d9ee",
+            "msg": "style layout",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "e1b5a09",
+            "msg": "fix nav menu",
+            "parents": [
+              2
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              3
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 4
+          },
+          {
+            "name": "HEAD",
+            "node": 4,
+            "active": true
+          }
+        ],
+        "caption": "A light beam sweeps down the parent pointers, printing each commit"
+      }
+    },
+    "syntax": "git log [<revision range>]",
+    "options": [
+      {
+        "flag": "--oneline",
+        "desc": "Each commit on one line: 7-char hash + subject."
+      },
+      {
+        "flag": "--graph",
+        "desc": "Paint the branch topology with ASCII lanes."
+      },
+      {
+        "flag": "-p",
+        "desc": "Show the full diff of every listed commit."
+      },
+      {
+        "flag": "-n <count>",
+        "desc": "Limit output to the newest n commits."
+      },
+      {
+        "flag": "--author=",
+        "desc": "Filter commits by author pattern."
+      },
+      {
+        "flag": "-S\"string\"",
+        "desc": "Only commits where that string was added or removed."
+      }
+    ],
+    "uses": [
+      "Answering 'what changed and when' — the daily archaeology of git.",
+      "Reviewing your own work before opening a PR: git log --oneline -10.",
+      "Finding when a bug appeared: git log -S\"buggyExpr\" -- file."
+    ],
+    "aliases": [
+      {
+        "short": "g lg",
+        "full": "git log --oneline --graph",
+        "note": "The one-liner history view everyone pastes into their config."
+      },
+      {
+        "short": "g lgg",
+        "full": "git log --all --graph --oneline --decorate",
+        "note": "Every branch, fully drawn, with ref names."
+      },
+      {
+        "short": "g lgp",
+        "full": "git log --oneline --stat",
+        "note": "Compact log with per-commit file stats."
+      },
+      {
+        "short": "g ls",
+        "full": "git log --stat -p",
+        "note": "Deep dive: what each commit did to each file."
+      }
+    ],
+    "related": [
+      "git-show",
+      "git-diff",
+      "git-reflog",
+      "git-blame"
+    ],
+    "proTip": "Add a lazy alias you'll use forever: `git config --global alias.tree \"log --graph --oneline --all --decorate\"`. Then `git tree` gives you the whole universe in one screen."
+  },
+  "git-show": {
+    "slug": "git-show",
+    "command": "git show",
+    "name": "git show",
+    "category": "inspecting",
+    "icon": "eye",
+    "level": "intermediate",
+    "tagline": "Dump the full anatomy of any single object.",
+    "what": "git show prints a git object in human-readable form. Give it a commit and you get its metadata plus the diff of what it introduced. You can also show tags, trees, or a single file from any revision — all read-only.",
+    "how": [
+      {
+        "title": "Every object type has a renderer",
+        "body": "git show is a dispatcher: it looks at the object type (commit / tree / blob / tag) and picks the matching pretty-printer. Commit → metadata + diff; blob → raw content; tag → tagger + message."
+      },
+      {
+        "title": "Revision:path reads a blob from history",
+        "body": "`git show HEAD~2:src/App.tsx` resolves HEAD~2 to a commit, reads its tree, walks to src/, and prints the blob verbatim — the file as it was two commits ago, without touching the working tree."
+      }
+    ],
+    "visual": {
+      "kind": "objects",
+      "caption": "git show renders a commit object's full anatomy"
+    },
+    "syntax": "git show <rev>[<:path>]",
+    "options": [
+      {
+        "flag": "--stat",
+        "desc": "Just a summary of files changed, not the full diff."
+      },
+      {
+        "flag": "--no-patch",
+        "desc": "Metadata only — identity, parents, message, nothing else."
+      },
+      {
+        "flag": "<rev>:<path>",
+        "desc": "Print that exact file's content at that revision."
+      }
+    ],
+    "uses": [
+      "Reviewing a single commit in full: `git show 74d3b9f`.",
+      "Pulling a file out of history: `git show release/1.0:configs/env.js > env.js`.",
+      "Inspecting a tag object to see who tagged and when."
+    ],
+    "aliases": [
+      {
+        "short": "g sh",
+        "full": "git show",
+        "note": "Common single-commit inspector alias."
+      },
+      {
+        "short": "g sh --stat",
+        "full": "git show --stat",
+        "note": "What files a commit touched, at a glance."
+      }
+    ],
+    "related": [
+      "git-log",
+      "git-blame",
+      "git-diff"
+    ],
+    "proTip": "The `rev:path` syntax is a secret file-recovery tool: accidentally deleted a file? `git show HEAD~1:path/to/file.js` brings it back without touching git history at all."
+  },
+  "git-diff": {
+    "slug": "git-diff",
+    "command": "git diff",
+    "name": "git diff",
+    "category": "inspecting",
+    "icon": "arrows-diff",
+    "level": "beginner",
+    "tagline": "Compare any two versions of your content.",
+    "what": "git diff highlights every difference between two states: working tree vs index, index vs HEAD, or any two arbitrary commits. It's the same engine that colors pull requests red and green. Read-only — it never changes a thing.",
+    "how": [
+      {
+        "title": "Blob-to-blob, using their SHA-1 hashes",
+        "body": "Git compares content by hashing. If both blobs are identical, the hash matches and the file is skipped instantly. Only differing pairs enter the diff algorithm."
+      },
+      {
+        "title": "The Myers diff algorithm",
+        "body": "Diffing is finding the shortest edit script between two sequences. Git uses the Myers diff (in the xdiff library): it hunts the minimal set of insertions/deletions to turn one blob into the other, capably finding moved-but-identical lines."
+      },
+      {
+        "title": "Hunks, not files",
+        "body": "The output is grouped into hunks — contiguous changed regions — prefixed with @@ -old +new @@ line numbers. This is the exact format git apply consumes, which is how patches become commits."
+      },
+      {
+        "title": "The three comparison modes",
+        "body": "Plain `git diff` compares the working tree against the index. `git diff --cached` compares the index against HEAD (what you've staged). `git diff A B` compares any two revisions."
+      }
+    ],
+    "visual": {
+      "kind": "diff",
+      "caption": "Two blob versions, reduced to an edit script"
+    },
+    "syntax": "git diff [<revA>] [<revB>]",
+    "options": [
+      {
+        "flag": "--cached",
+        "desc": "Diff the index against HEAD — what your next commit will do."
+      },
+      {
+        "flag": "--stat",
+        "desc": "Just which files change, as a compact bar chart."
+      },
+      {
+        "flag": "--name-only",
+        "desc": "Only the changed file names, nothing else."
+      },
+      {
+        "flag": "--word-diff",
+        "desc": "Highlight changes word-by-word instead of line-by-line."
+      }
+    ],
+    "uses": [
+      "Reviewing every edit you've made before staging: git diff.",
+      "Double-checking exactly what a commit changed: git diff HEAD~1 HEAD.",
+      "A quick sanity diff between two branches: git diff main..feature."
+    ],
+    "aliases": [
+      {
+        "short": "g d",
+        "full": "git diff",
+        "note": "Check unstaged changes."
+      },
+      {
+        "short": "g dc",
+        "full": "git diff --cached",
+        "note": "Staged changes — what's about to be committed."
+      },
+      {
+        "short": "g ds",
+        "full": "git diff --stat",
+        "note": "File-level summary without the noise."
+      },
+      {
+        "short": "g difw",
+        "full": "git diff --word-diff",
+        "note": "Robust for prose and docs editing."
+      }
+    ],
+    "related": [
+      "git-status",
+      "git-add",
+      "git-blame",
+      "git-log"
+    ],
+    "proTip": "Chain aliases for a standing review ceremony: `git config --global alias.review '!git diff; git diff --cached'` then `git review` shows both unstaged and staged work before every commit."
+  },
+  "git-blame": {
+    "slug": "git-blame",
+    "command": "git blame",
+    "name": "git blame",
+    "category": "inspecting",
+    "icon": "file",
+    "level": "intermediate",
+    "tagline": "Attribute every line of a file to the commit and author that made it.",
+    "what": "git blame walks the commit graph for one file and, line by line, reports which commit (and thus which author and when) last touched that line. It's the forensic tool for 'who wrote this and why.'",
+    "how": [
+      {
+        "title": "Backward diff walking",
+        "body": "Blame starts at the current version of the file and walks backwards commit by commit, diffing consecutive versions. When an old line disappears from the diff, Git credits the commit that introduced it.",
+        "code": "previous blob ──diff──> next blob\nlines removed leave a mark → attributed to that commit"
+      },
+      {
+        "title": "Renames and splices are tracked",
+        "body": "With follow mode (git blame -M -C), Git detects lines copied within a file or across files and re-attributes them to the origin commit — even through renames."
+      }
+    ],
+    "visual": {
+      "kind": "diff",
+      "caption": "Each line carries its origin commit — the effect of blame"
+    },
+    "syntax": "git blame <file>",
+    "options": [
+      {
+        "flag": "-L <start>,<end>",
+        "desc": "Only blame a line range (fast for large files)."
+      },
+      {
+        "flag": "-M",
+        "desc": "Detect lines moved within the same file."
+      },
+      {
+        "flag": "-C",
+        "desc": "Detect lines copied from other files."
+      },
+      {
+        "flag": "-w",
+        "desc": "Ignore whitespace changes when matching."
+      }
+    ],
+    "uses": [
+      "'Why is this line like this?' → blame it, read the message, see the PR.",
+      "Finding who last edited a risky function before you touch it.",
+      "Code archaeology over 10k-line files, focusing -L on the hot spot."
+    ],
+    "aliases": [
+      {
+        "short": "g bl",
+        "full": "git blame -L",
+        "note": "Blame a specific line range you care about."
+      },
+      {
+        "short": "g blame",
+        "full": "git blame -w -M",
+        "note": "Noise-reduced blame with move detection."
+      }
+    ],
+    "related": [
+      "git-log",
+      "git-show",
+      "git-diff"
+    ],
+    "proTip": "These days blame is a stepping stone: the second you identify a suspicious commit, jump to its message with `git show <hash>` — the message usually documents exactly why the line exists."
+  },
+  "git-reflog": {
+    "slug": "git-reflog",
+    "command": "git reflog",
+    "name": "git reflog",
+    "category": "inspecting",
+    "icon": "clock",
+    "level": "advanced",
+    "tagline": "Everything you did — even the things you rewrote away.",
+    "what": "git reflog is the undo-of-the-undo. It's a journal of every time HEAD moved: commits, resets, rebases, checkouts, amends — each logged as an entry with the previous and new position. Because it records what refs USED to point at, you can recover history git log no longer sees.",
+    "how": [
+      {
+        "title": "A reflog is just a log file",
+        "body": "Git appends one line per ref movement to .git/logs/HEAD. Each line records old-hash, new-hash, who, when, and why. No commits are deleted at reset time — only the reflog still remembers the old pointer.",
+        "code": "0000000 9a2f1c0 Ada <ada> 12:01 init: Repository created\n9a2f1c0 4b7c2a5 Ada <ada> 12:04 commit: add components\n4b7c2a5 74d3b9f Ada <ada> 12:07 commit: feat: dark mode\n74d3b9f 9a2f1c0 Ada <ada> 12:09 reset: moving to HEAD~2"
+      },
+      {
+        "title": "An 'old' commit stays until GC",
+        "body": "Commits that lose all refs become unreachable. Git keeps them alive for up to 90 days (default) before git gc prunes them — so reflog recovery works even days later."
+      },
+      {
+        "title": "Entry syntax: HEAD@{n}",
+        "body": "HEAD@{0} is 'now', HEAD@{1} is the previous HEAD position, and so on. You can also address by time: HEAD@{yesterday}, HEAD@{2.hours.ago}."
+      }
+    ],
+    "visual": {
+      "kind": "reflog",
+      "caption": "Every HEAD movement is journaled — scroll the list, never lose a commit"
+    },
+    "syntax": "git reflog [<ref>]",
+    "options": [
+      {
+        "flag": "--all",
+        "desc": "Show reflogs for every ref, not just HEAD."
+      },
+      {
+        "flag": "-n <count>",
+        "desc": "Show only the most recent n entries."
+      },
+      {
+        "flag": "--since=",
+        "desc": "Filter entries by the time they happened."
+      }
+    ],
+    "uses": [
+      "Hard-reset the wrong way? `git reset --hard HEAD~3` — recover with `git reset --hard HEAD@{1}`.",
+      "Rebased a branch and realized the original had the commit you need.",
+      "Diagnosing 'where did that commit go?' when a coworker force-pushed over your branch."
+    ],
+    "aliases": [
+      {
+        "short": "g rl",
+        "full": "git reflog",
+        "note": "The shortest rescue alias you'll ever need."
+      },
+      {
+        "short": "g rlg",
+        "full": "git reflog --oneline",
+        "note": "Compact, one-line reflog view."
+      }
+    ],
+    "related": [
+      "git-reset",
+      "git-commit",
+      "git-gc"
+    ],
+    "proTip": "The '#undo stack' mental model is exactly right: HEAD@{n} behaves like an undo history. After any destructive operation, the fix is typed as `git reset --hard HEAD@{1}`"
+  },
+  "git-gc": {
+    "slug": "git-gc",
+    "command": "git gc",
+    "name": "git gc",
+    "category": "inspecting",
+    "icon": "broom",
+    "level": "intermediate",
+    "tagline": "Sweep unreachable objects and compress your repository.",
+    "what": "git gc is Git's garbage collector. It deletes objects with no refs pointing to them (once they're old enough), repacks loose objects into efficient packfiles, and prunes the stale reflog. It shrinks .git and speeds up every subsequent operation.",
+    "how": [
+      {
+        "title": "Reachability rules",
+        "body": "An object is alive if it can be reached from a ref: branches, tags, the index, or the reflog. Anything else is a candidate for pruning — but only if it's aged past gc.reflogExpire (default 90 days).",
+        "code": "objects ──reachable via──> refs/heads/*, refs/tags/*,\n  reflog, index, HEAD\n  ↓ unreachable & old\n  pruned by git gc"
+      },
+      {
+        "title": "Loose objects → packfiles",
+        "body": "Loose objects are compressed individually (cheap to write, slow to read). git gc repacks them into a single packfile with delta compression — storing only the differences between similar blobs. Massive space savings."
+      },
+      {
+        "title": "It runs automatically",
+        "body": "Git auto-runs a light gc whenever it senses too many loose objects (about 7,000). You rarely need to invoke it by hand — but --aggressive helps a bloated repo."
+      }
+    ],
+    "visual": {
+      "kind": "objects",
+      "caption": "git gc collapses loose objects into one packed, delta-compressed packfile"
+    },
+    "syntax": "git gc [--aggressive]",
+    "options": [
+      {
+        "flag": "--aggressive",
+        "desc": "More thorough — find better deltas at the cost of time."
+      },
+      {
+        "flag": "--prune=<date>",
+        "desc": "Prune unreachable objects older than a date or in 'now'."
+      },
+      {
+        "flag": "--auto",
+        "desc": "Run the automatic routine Git uses internally."
+      }
+    ],
+    "uses": [
+      "A giant monorepo clone hanging → git gc --aggressive after fixing .gitignore.",
+      "You force-pushed away a big binary at a random commit → gc finally removes it from .git.",
+      "Sending a repo by zip: pack everything first with gc so the bundle is small."
+    ],
+    "aliases": [
+      {
+        "short": "g gca",
+        "full": "git gc --aggressive",
+        "note": "The full clean, when .git has become bloated."
+      },
+      {
+        "short": "g gc --prune=now",
+        "full": "git gc --prune=now",
+        "note": "Force-remove recoverable-but-really-dead commits."
+      }
+    ],
+    "related": [
+      "git-reflog",
+      "git-reset",
+      "git-fsck"
+    ],
+    "proTip": "Before gc, check what's truly dead: `git fsck --lost-found` lists dangling commits (unreachable but not yet pruned). You can watch a commit you 'deleted' linger there peacefully until gc reaps it."
+  },
+  "git-reset": {
+    "slug": "git-reset",
+    "command": "git reset",
+    "name": "git reset",
+    "category": "undoing",
+    "icon": "rotate-360",
+    "level": "intermediate",
+    "tagline": "Move the branch pointer and undo your staging decisions.",
+    "what": "git reset rewinds your branch to an older commit. Depending on the mode it also resets the index (mixed), the index AND working tree (hard), or neither (soft). It's the power tool for 'I went too far' — and, unlike a delete, it never touches your reflog, so it can always be undone.",
+    "how": [
+      {
+        "title": "Reset moves the branch ref — not HEADs file",
+        "body": "Reset takes the commit you're pointing at and rewrites refs/heads/<you> to an older hash. HEAD itself keeps pointing at the same branch file; the branch just moves backward.",
+        "code": "git reset --soft HEAD~2   # branch now at old commit\nmain:  9a2f1c0 ← 4b7c2a5 ← 74d3b9f(moved away)"
+      },
+      {
+        "title": "The three modes are all about the index",
+        "body": "Mixed (default) resets the branch AND the index. Soft moves only the branch (index stays staged). Hard moves branch, index AND rewrites the working tree. The mode picks which of the three stores (branch / index / worktree) gets rolled back."
+      },
+      {
+        "title": "The old commits aren't deleted",
+        "body": "Nothing is removed from objects/. Unlinked commits simply become unreachable — and the reflog still lists them. `git reset --hard HEAD@{1}` brings you straight back."
+      },
+      {
+        "title": "Never reset shared history",
+        "body": "Because reset rewinds the branch pointer, anyone who cloned that branch will see it vanish and require force-push reconciliation. Use git revert instead on shared branches."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "reset",
+        "highlight": 1,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "feat: dark mode",
+            "parents": [
+              1
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "HEAD",
+            "node": 1,
+            "active": true
+          },
+          {
+            "name": "main",
+            "node": 1
+          },
+          {
+            "name": "stale 74d3b9f",
+            "node": 2
+          }
+        ],
+        "caption": "--soft/mixed/hard pick how far back the branch, index and worktree go"
+      }
+    },
+    "syntax": "git reset [--soft|--mixed|--hard] <commit>",
+    "options": [
+      {
+        "flag": "--soft",
+        "desc": "Move the branch only; keep the index staged."
+      },
+      {
+        "flag": "--mixed",
+        "desc": "Default: move branch + unstage the index; keep files."
+      },
+      {
+        "flag": "--hard",
+        "desc": "Move branch, wipe the index AND the working tree."
+      },
+      {
+        "flag": "<path>",
+        "desc": "Reset just that path in the index from another revision."
+      }
+    ],
+    "uses": [
+      "You committed to the wrong branch: reset --soft to fix the pile and re-commit elsewhere.",
+      "Unstage everything: git reset (mixed) — the index-dance escape hatch.",
+      "Full revert of local-only mess: git reset --hard HEAD."
+    ],
+    "aliases": [
+      {
+        "short": "g res",
+        "full": "git reset",
+        "note": "Mixed reset — unstage but keep files."
+      },
+      {
+        "short": "g ressh",
+        "full": "git reset --soft HEAD~1",
+        "note": "Undo the last commit, keep it staged."
+      },
+      {
+        "short": "g reshard",
+        "full": "git reset --hard HEAD",
+        "note": "Discard ALL local uncommitted changes."
+      }
+    ],
+    "related": [
+      "git-reflog",
+      "git-revert",
+      "git-commit"
+    ],
+    "proTip": "Training rule for the three modes: SOFT forgets the commit, MIXED also forgets the staging, HARD also forgets the files. Memorize as 'the deeper the reset, the more you lose' — and that reflog can always rebuild it within 90 days."
+  },
+  "git-restore": {
+    "slug": "git-restore",
+    "command": "git restore",
+    "name": "git restore",
+    "category": "undoing",
+    "icon": "arrows-shuffle",
+    "level": "beginner",
+    "tagline": "Undo changes in your working tree or index — surgically.",
+    "what": "git restore brings back file contents from somewhere else: from the index, from HEAD, or any commit. It's the file-scoped half of the old checkout, with zero branch-switching ambiguity. Discard edits, or unstage — cleanly, by path.",
+    "how": [
+      {
+        "title": "Two directions, one command",
+        "body": "`git restore <file>` writes the file from the index over the working copy — discarding your edits. `git restore --staged <file>` writes HEAD's version into the index — unstaging it. Either way it copies a blob to a destination."
+      },
+      {
+        "title": "Like checkout --, but explicit",
+        "body": "Restore exists because `git checkout <path>` was the source of countless grand mysteries. Restore separates 'change what I'm on' (switch) from 'change these files' (restore)."
+      },
+      {
+        "title": "Any source is fair game",
+        "body": "`git restore --source=HEAD~2 file` resurrects the file as it was two commits ago. Restore reads that blob and writes it to the worktree (or index with --staged)."
+      }
+    ],
+    "visual": {
+      "kind": "staging",
+      "staged": [
+        "src/bug.js"
+      ],
+      "mode": "restore",
+      "caption": "restore copies file blobs back from the index or HEAD into the working tree"
+    },
+    "syntax": "git restore <path>",
+    "options": [
+      {
+        "flag": "--staged",
+        "desc": "Restore the INDEX version — i.e. unstage the path."
+      },
+      {
+        "flag": "--source=<rev>",
+        "desc": "Restore from an arbitrary commit instead of HEAD."
+      },
+      {
+        "flag": "--worktree",
+        "desc": "Restore only the working-tree copy (default interaction)."
+      }
+    ],
+    "uses": [
+      "You mangled a file and want HEAD's version back, instantly.",
+      "You staged a file by accident — restore --staged to unstage just it.",
+      "Pulling a single old version of a file out of history with --source."
+    ],
+    "aliases": [
+      {
+        "short": "g rest",
+        "full": "git restore",
+        "note": "Restore a file to last commit state."
+      },
+      {
+        "short": "g ihrs",
+        "full": "git restore --staged",
+        "note": "Unstage. Pro tip: some call it 'ihrs' after a famous config."
+      },
+      {
+        "short": "g rest --source=HEAD^",
+        "full": "git restore --source=HEAD^ file",
+        "note": "Reincarnate a file from the previous commit."
+      }
+    ],
+    "related": [
+      "git-checkout",
+      "git-add",
+      "git-reset"
+    ],
+    "proTip": "Naming is the whole game: `git switch` changes branches, `git restore` changes files, and `git reset` changes the branch + index pointer. Three commands, no ambiguity — this modern trio replaces most checkout usage."
+  },
+  "git-revert": {
+    "slug": "git-revert",
+    "command": "git revert",
+    "name": "git revert",
+    "category": "undoing",
+    "icon": "rotate-clockwise",
+    "level": "intermediate",
+    "tagline": "Undo a commit by adding a NEW commit that does the opposite.",
+    "what": "git revert builds an inverse of an old commit — a commit that reverses every change it made — and appends it to your history. History stays linear and shared-safe. You never rewrite, you never remove, you simply add a correction.",
+    "how": [
+      {
+        "title": "It's a three-way merge — almost",
+        "body": "To revert commit X, Git computes the diff between X's parent and X, then applies that diff in reverse on top of the current tree. The result is a brand-new commit whose parent is your current HEAD.",
+        "code": "A — B — C — D(you)\nrevert C:\nA — B — C — D — C⁻   (C⁻ undoes C's changes)"
+      },
+      {
+        "title": "Conflicts possible even though it's reverse",
+        "body": "If later commit D also touched the lines C changed, reversing C conflicts with D's version. Git stops and lets you reconcile — exactly like a merge conflict."
+      },
+      {
+        "title": "The commit is preserved in history",
+        "body": "Unlike reset's amputation, revert leaves C in place. The reflog never matters, the history tells the story truthfully: 'someone added this, then someone reversed it.'"
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "merge",
+        "highlight": 4,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "add components",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "74d3b9f",
+            "msg": "dead: old login",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "e1b5a09",
+            "msg": "feature A",
+            "parents": [
+              2
+            ]
+          },
+          {
+            "id": "8c4f2e9",
+            "msg": "revert \"dead: old login\"",
+            "parents": [
+              3
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 4
+          },
+          {
+            "name": "HEAD",
+            "node": 4,
+            "active": true
+          }
+        ],
+        "caption": "An inverse commit is appended — nothing in history is rewritten"
+      }
+    },
+    "syntax": "git revert <commit>",
+    "options": [
+      {
+        "flag": "--no-commit",
+        "desc": "Apply the reverse changes but don't commit — batch several reverts."
+      },
+      {
+        "flag": "-m <parent>",
+        "desc": "Revert a MERGE commit — the given parent becomes 'theirs'."
+      },
+      {
+        "flag": "-n",
+        "desc": "Do not auto-commit, so you can review the result."
+      }
+    ],
+    "uses": [
+      "A bug went live on shared main — undo it without a force-push: git revert <hash>.",
+      "CI is red due to a merged feature: revert it, fix, re-revert the revert later.",
+      "Rolling back a merge that broke a release."
+    ],
+    "aliases": [
+      {
+        "short": "g rv",
+        "full": "git revert",
+        "note": "Reverse a commit safely."
+      },
+      {
+        "short": "g rv -n",
+        "full": "git revert --no-commit",
+        "note": "Apply multiple reversions before a single commit."
+      }
+    ],
+    "related": [
+      "git-reset",
+      "git-cherry-pick",
+      "git-merge"
+    ],
+    "proTip": "The mental rule: RESET rewinds (rewrites local history), REVERT reverses (adds a correcting commit), CHERRY-PICK reproduces (copies a commit elsewhere). On a shared branch, only revert or cherry-pick are polite."
+  },
+  "git-stash": {
+    "slug": "git-stash",
+    "command": "git stash",
+    "name": "git stash",
+    "category": "undoing",
+    "icon": "archive",
+    "level": "intermediate",
+    "tagline": "Park your uncommitted changes and get a clean working tree.",
+    "what": "git stash sweeps your staged and unstaged changes out of the working tree and stores them as specially-marked commit objects on the stash stack. Your worktree becomes clean instantly. You can pop the stash back anytime — even days later, even on another branch.",
+    "how": [
+      {
+        "title": "A stash is a pair of commits",
+        "body": "Git commits your index as one commit and your working-tree changes as a second, both hanging off your current HEAD under a special stash ref. That ref moves like a stack: push (stash) / pop (stash pop).",
+        "code": "W-index = stash of staged\nW's-worktree = stash of unstaged\nstash@{0} → parent → your HEAD"
+      },
+      {
+        "title": "The working tree is then forced clean",
+        "body": "After recording, git stash resets the worktree to HEAD — quietly running the same file-discard logic as restore. Files that only existed locally become untracked unless -u was given."
+      },
+      {
+        "title": "The stack is ordered, not merged",
+        "body": "stash@{0} is the newest. git stash pop applies and drops, git stash apply applies and keeps, git stash list shows all. Stashes are unmerged unless you explicitly apply."
+      }
+    ],
+    "visual": {
+      "kind": "stash",
+      "caption": "Changes are packed into a stash object and emptied from the worktree"
+    },
+    "syntax": "git stash",
+    "options": [
+      {
+        "flag": "-u",
+        "desc": "Also stash untracked files (otherwise they stay around)."
+      },
+      {
+        "flag": "push -m <msg>",
+        "desc": "Name the stash so you remember what it was."
+      },
+      {
+        "flag": "pop",
+        "desc": "Apply the newest stash and remove it from the stack."
+      },
+      {
+        "flag": "list / show",
+        "desc": "Inspect the stack without touching anything."
+      },
+      {
+        "flag": "branch <name>",
+        "desc": "Create a branch at the stash's base and apply — conflict-annihilation."
+      }
+    ],
+    "uses": [
+      "A client calls mid-feature; you need to switch branches NOW: stash, switch, work, switch back, pop.",
+      "You want to test one set of changes in isolation.",
+      "Your stash stack becomes a lightweight scratchpad of work-in-progress."
+    ],
+    "aliases": [
+      {
+        "short": "g s",
+        "full": "git stash -u --include-untracked",
+        "note": "Oh-my-zsh's default stash — safe, catches untracked files too."
+      },
+      {
+        "short": "g sa",
+        "full": "git stash apply",
+        "note": "Re-apply without popping (stack stays)."
+      },
+      {
+        "short": "g sl",
+        "full": "git stash list",
+        "note": "Survey the whole stack."
+      },
+      {
+        "short": "g sp",
+        "full": "git stash pop",
+        "note": "Restore the newest stash and drop it."
+      }
+    ],
+    "related": [
+      "git-switch",
+      "git-restore",
+      "git-branch"
+    ],
+    "proTip": "A stash is the only commit that belongs to no branch — dream state. If you never pop it, it's garbage-collected in 30 days by default (stash.stashExpire). Also: `git stash branch fix <stash>` makes conflicts vanish by placing the stash back where it belongs."
+  },
+  "git-cherry-pick": {
+    "slug": "git-cherry-pick",
+    "command": "git cherry-pick",
+    "name": "git cherry-pick",
+    "category": "undoing",
+    "icon": "point",
+    "level": "intermediate",
+    "tagline": "Re-apply one specific commit onto your current branch.",
+    "what": "git cherry-pick takes the changes introduced by any commit and replays them as a NEW commit on your current branch. It's your survival tool for 'get that one fix over here' across branches — without merging or rebasing whole histories.",
+    "how": [
+      {
+        "title": "A narrowed three-way merge",
+        "body": "Cherry-pick diffs the picked commit against its own parent, then three-way-merges that diff onto your current HEAD. The result is a new commit with fresh hash and a fresh parent — but identical content change.",
+        "code": "main — A — B\npicked commit: X (on feature)\nresult: A — B — X'   X' has same diff, new identity"
+      },
+      {
+        "title": "Cherry-picking a range",
+        "body": "`git cherry-pick A..B` replays every commit in that range, in order — a poor-man's selective rebase. Useful when a branch has exactly the fixes you want and nothing else."
+      },
+      {
+        "title": "Conflicts behave like merge conflicts",
+        "body": "If 'your' current branch already changed the same lines, cherry-pick stops and asks you to resolve — markers in the file, then git cherry-pick --continue (or --abort)."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "merge",
+        "highlight": 4,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "main: base",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "c1d8e2f",
+            "msg": "fix: hotfix #42",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "e5f6a7b",
+            "msg": "main: ship v1",
+            "parents": [
+              1
+            ]
+          },
+          {
+            "id": "0a9b8c7",
+            "msg": "fix: hotfix #42'",
+            "parents": [
+              3
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "release",
+            "node": 4
+          },
+          {
+            "name": "hotfix",
+            "node": 2
+          },
+          {
+            "name": "HEAD",
+            "node": 4,
+            "active": true
+          }
+        ],
+        "caption": "The fix commit is duplicated onto release with the identical diff but a new hash"
+      }
+    },
+    "syntax": "git cherry-pick <commit>",
+    "options": [
+      {
+        "flag": "-n",
+        "desc": "Apply the changes but don't commit — merge a few picks first."
+      },
+      {
+        "flag": "--continue / --abort",
+        "desc": "Finish or bail out of a conflicted pick."
+      },
+      {
+        "flag": "-x",
+        "desc": "Add '(cherry picked from commit …)' to the message as provenance."
+      }
+    ],
+    "uses": [
+      "A hotfix commit landed on main but the release branch needs it right now.",
+      "You committed to the wrong branch: cherry-pick it out, then reset the wrong branch.",
+      "Selectively assembling a release from several feature branches."
+    ],
+    "aliases": [
+      {
+        "short": "g cp",
+        "full": "git cherry-pick",
+        "note": "The classic rescue alias."
+      },
+      {
+        "short": "g cp -x",
+        "full": "git cherry-pick -x",
+        "note": "Keep provenance — traces back to the original fix."
+      }
+    ],
+    "related": [
+      "git-rebase",
+      "git-revert",
+      "git-reset"
+    ],
+    "proTip": "Committed to the wrong branch? `git cherry-pick <hash>` onto the right branch, then `git reset --hard HEAD~1` on the wrong one. That two-step is one of the most common recovery dances in a working day."
+  },
+  "git-clean": {
+    "slug": "git-clean",
+    "command": "git clean",
+    "name": "git clean",
+    "category": "undoing",
+    "icon": "broom",
+    "level": "intermediate",
+    "tagline": "Delete untracked, unignored files from your working tree.",
+    "what": "git clean removes files that Git has never tracked and that .gitignore does not protect: build artifacts, stray logs, unneeded temp files. Because deletion is permanent, every sane workflow pairs git clean with a dry-run first (-n).",
+    "how": [
+      {
+        "title": "It walks the worktree, not the repo",
+        "body": "Clean scans the working tree for paths with no index entry, then removes them. It writes the *deletion* as real file removal — there is no undo, no reflog, no staging. That's why -n (dry run) is the reflex."
+      },
+      {
+        "title": "-f is a guard, -d descends into dirs, -x adds ignored",
+        "body": "By default clean won't touch directories (needs -d) and never touches ignored files (-n/-f only shown unignored). -x widens it to INCLUDING ignored files — the true remove-everything button."
+      },
+      {
+        "title": "Clean + reset = the nuclear combo",
+        "body": "`git reset --hard` handles tracked changes; `git clean -fdx` handles everything untracked. Together they produce a pristine worktree — a real project-whisperer move before a fresh branch."
+      }
+    ],
+    "visual": {
+      "kind": "status",
+      "caption": "git clean finds and permanently deletes untracked files"
+    },
+    "syntax": "git clean -fd",
+    "options": [
+      {
+        "flag": "-n",
+        "desc": "Dry run: list what would be deleted, delete nothing."
+      },
+      {
+        "flag": "-d",
+        "desc": "Remove untracked directories as well as files."
+      },
+      {
+        "flag": "-x",
+        "desc": "Also remove ignored files (the full nuclear option)."
+      },
+      {
+        "flag": "-f",
+        "desc": "Actually do the deleting."
+      }
+    ],
+    "uses": [
+      "Clearing out build artifacts and node_modules before zipping a folder.",
+      "You deleted a file but git status still shows it? clean -f nukes the leftover copies from ignored dirs.",
+      "The pristine-worktree reset combo before starting fresh work."
+    ],
+    "aliases": [
+      {
+        "short": "g clean -n",
+        "full": "git clean -n",
+        "note": "Always preview first — the safe version!"
+      },
+      {
+        "short": "g cluxe",
+        "full": "git clean -fdx",
+        "note": "The full sweep: files, dirs, ignored. Known in hushed tones."
+      }
+    ],
+    "related": [
+      "git-restore",
+      "git-reset",
+      "git-status"
+    ],
+    "proTip": "Make the safe default the default: `git config --global alias.accurate \"clean -n\"` and habitually run it before any real -fdx. One dry-run of `git clean -fdx` in a new clone reads like a horror list of everything you did NOT want to lose."
+  },
+  "git-clone": {
+    "slug": "git-clone",
+    "command": "git clone",
+    "name": "git clone",
+    "category": "sharing",
+    "icon": "copy",
+    "level": "beginner",
+    "tagline": "Copy an entire repository — history, refs, branches — to your machine.",
+    "what": "git clone connects to a remote, downloads every object in its object store, and reconstructs the repository locally: all commits, all trees, all blobs, all tags. It then checks out the default branch so you have a working copy, and records the source as origin.",
+    "how": [
+      {
+        "title": "It's a fetch plus a checkout",
+        "body": "Under the hood, clone = git fetch (download all reachable objects into your local object store) + git checkout (materialize the default branch into a working tree). One command, two classic operations."
+      },
+      {
+        "title": "Remote-tracking refs are created",
+        "body": "Clone writes refs/remotes/origin/main pointing at the remote's default branch, and sets main's upstream to origin/main. That wiring is what makes 'ahead/behind' and straightforward git pull work from day one."
+      },
+      {
+        "title": "All of history comes down",
+        "body": "Cloning is full-depth by default: every commit, blob and tree arrives as loose objects or packfiles. That's why your .git folder is often bigger than the checkout — it holds the entire past of the project."
+      },
+      {
+        "title": "--depth skips history for speed",
+        "body": "Shallow clones (--depth 1) download only one commit's worth of objects. Great for a quick look, a tax later: many operations lose reachability context and need --unshallow to heal."
+      }
+    ],
+    "visual": {
+      "kind": "remote",
+      "remote": "origin",
+      "branch": "main",
+      "mo": "clone",
+      "caption": "The remote's whole object database streams down; a copy is materialized"
+    },
+    "syntax": "git clone <url> [<dir>]",
+    "options": [
+      {
+        "flag": "<url>",
+        "desc": "HTTPS or SSH URL (https://github.com/org/repo.git)."
+      },
+      {
+        "flag": "--depth 1",
+        "desc": "Shallow clone — just the latest snapshot."
+      },
+      {
+        "flag": "--branch <b>",
+        "desc": "Skip to a specific branch as the initial checkout."
+      },
+      {
+        "flag": "--bare",
+        "desc": "Mirror the repo with no working directory (server-side)."
+      }
+    ],
+    "uses": [
+      "Grabbing a project to work on: git clone git@github.com:user/repo.git.",
+      "Creating a backup mirror of a repo with --bare or --mirror.",
+      "Speeding up CI by shallow-cloning in build images."
+    ],
+    "aliases": [
+      {
+        "short": "g cl",
+        "full": "git clone",
+        "note": "The universal clone alias."
+      },
+      {
+        "short": "g cl --depth=1",
+        "full": "git clone --depth 1",
+        "note": "One-commit clone — the CI workflow staple."
+      }
+    ],
+    "related": [
+      "git-remote",
+      "git-fetch",
+      "git-pull",
+      "git-push"
+    ],
+    "proTip": "After clone, origin is just a name your git config maps to a URL: `git config --get remote.origin.url`. You can rename it (git remote rename upstream origin) and re-point any remote at will."
+  },
+  "git-remote": {
+    "slug": "git-remote",
+    "command": "git remote",
+    "name": "git remote",
+    "category": "sharing",
+    "icon": "satellite",
+    "level": "beginner",
+    "tagline": "Manage the bookmarks that point at other repositories.",
+    "what": "git remote is a thin config manager: it lists, adds, renames and removes remote bookmarks. Each remote is just a name → URL mapping stored in .git/config. The commands git fetch, pull and push all read that mapping when you say 'origin'.",
+    "how": [
+      {
+        "title": "A remote is two lines of config",
+        "body": "git remote add origin <url> writes a section into .git/config. Nothing is transferred, no network happens — it's a bookmark.",
+        "code": "[remote \"origin\"]\n  url = git@github.com:user/repo.git\n  fetch = +refs/heads/*:refs/remotes/origin/*"
+      },
+      {
+        "title": "Fetch lines become remote-tracking refs",
+        "body": "The fetch refspec says 'take remote heads and store them locally under refs/remotes/origin/'. That's why `git fetch` later creates local read-only copies of every remote branch."
+      }
+    ],
+    "visual": {
+      "kind": "remote",
+      "remote": "origin",
+      "branch": "main",
+      "mo": "clone",
+      "caption": "git remote wires origin in the config — the bookmark for the outside world"
+    },
+    "syntax": "git remote add <name> <url>",
+    "options": [
+      {
+        "flag": "add",
+        "desc": "Bookmark a new repository."
+      },
+      {
+        "flag": "-v",
+        "desc": "List remotes with their fetch/push URLs."
+      },
+      {
+        "flag": "remove",
+        "desc": "Delete a bookmark (doesn't touch the remote repo)."
+      },
+      {
+        "flag": "rename",
+        "desc": "Change a remote's name."
+      },
+      {
+        "flag": "set-url",
+        "desc": "Repoint a remote's URL (e.g. HTTPS → SSH)."
+      }
+    ],
+    "uses": [
+      "Forking workflow: add an upstream remote pointing at the original repo.",
+      "Switching from HTTPS to SSH auth: git remote set-url origin git@….",
+      "Checking where 'origin' actually lives before pushing somewhere sensitive."
+    ],
+    "aliases": [
+      {
+        "short": "g rm",
+        "full": "git remote",
+        "note": "List remote bookmarks."
+      },
+      {
+        "short": "g rmv",
+        "full": "git remote -v",
+        "note": "List WITH their URLs — the honest view."
+      },
+      {
+        "short": "g rma",
+        "full": "git remote add upstream <url>",
+        "note": "The fork-flow standard: add upstream."
+      }
+    ],
+    "related": [
+      "git-clone",
+      "git-fetch",
+      "git-pull",
+      "git-push"
+    ],
+    "proTip": "The fork workflow lives on remotes: `origin` = yours, `upstream` = the original. Keep both, fetch upstream, merge upstream/main into your feature, and the project's maintainers can merge your PR cleanly."
+  },
+  "git-fetch": {
+    "slug": "git-fetch",
+    "command": "git fetch",
+    "name": "git fetch",
+    "category": "sharing",
+    "icon": "download",
+    "level": "intermediate",
+    "tagline": "Download the remote's objects — without merging, without touching your work.",
+    "what": "git fetch connects to a remote, downloads whatever objects it has that you don't, and updates your remote-tracking refs (refs/remotes/origin/*). Your working tree, your index, your own branches — all untouched. Pull's harmless, half-remembered cousin; the one that never surprises you.",
+    "how": [
+      {
+        "title": "Object negotiation first",
+        "body": "Fetch tells the remote which objects it already has ('want/dontwant'), so only the missing ones stream down — usually packed into one packfile, delta-compressed."
+      },
+      {
+        "title": "Refs update, branches don't",
+        "body": "After objects land, fetch moves refs/remotes/origin/main forward (non-fast-forward refs are rejected as 'forced update' unless configured). Your local main still points at your own commits. Observe: nothing you're stood on moves."
+      },
+      {
+        "title": "The quiet inspection",
+        "body": "`git fetch && git diff origin/main` is the 'show me what's coming WITHOUT changing anything' pattern — peer-reviewed-by-nobody-proof you can always see the future before you commit to it."
+      }
+    ],
+    "visual": {
+      "kind": "remote",
+      "remote": "origin",
+      "branch": "main",
+      "mo": "fetch",
+      "caption": "Only new objects travel down; your branch and worktree stay put"
+    },
+    "syntax": "git fetch [<remote>]",
+    "options": [
+      {
+        "flag": "--all",
+        "desc": "Fetch from every configured remote at once."
+      },
+      {
+        "flag": "--prune",
+        "desc": "Delete local refs whose remote counterparts vanished."
+      },
+      {
+        "flag": "<remote> <refspec>",
+        "desc": "Fetch specific branches only."
+      }
+    ],
+    "uses": [
+      "Just looking: see origin/main's new commits before you rebase onto them.",
+      "Syncing remote-tracking info when you're on a worktree you must not disturb.",
+      "Multi-remote projects: fetch upstream to keep the fork current."
+    ],
+    "aliases": [
+      {
+        "short": "g f",
+        "full": "git fetch --all --prune",
+        "note": "The always-safe sync: everything, cleaned."
+      },
+      {
+        "short": "g fa",
+        "full": "git fetch --all",
+        "note": "Every remote, no pruning."
+      },
+      {
+        "short": "g fap",
+        "full": "git fetch --all --prune",
+        "note": "Oh-my-zsh convention: fetch everything, drop the ghosts."
+      }
+    ],
+    "related": [
+      "git-pull",
+      "git-clone",
+      "git-remote",
+      "git-diff"
+    ],
+    "proTip": "To see the future without changing a thing: `git fetch` then `git log HEAD..origin/main --oneline`. Range syntax 'HEAD..origin/main' means 'commits I don't have yet' — a pure, side-effect-free preview of the pull you're about to do."
+  },
+  "git-pull": {
+    "slug": "git-pull",
+    "command": "git pull",
+    "name": "git pull",
+    "category": "sharing",
+    "icon": "download",
+    "level": "intermediate",
+    "tagline": "Fetch the remote and fold it into your current branch.",
+    "what": "git pull is two commands in one coat: a fetch (download remote objects + update remote-tracking refs) followed by a merge of those updates into your current branch. You can configure it to rebase instead of merge — either way your branch advances to include the remote work.",
+    "how": [
+      {
+        "title": "Fetch + merge (default)",
+        "body": "git pull = git fetch (get origin/main's new commits as refs/remotes/origin/main) then git merge origin/main on your side. The merge may be a fast-forward or create a merge commit — same logic as any merge."
+      },
+      {
+        "title": "Fast-forward is the typical happy path",
+        "body": "If you've made no local commits, pulling is a pure pointer move: your branch slides to the remote's tip. No merge commit, linear history preserved."
+      },
+      {
+        "title": "--rebase is the linearity savior",
+        "body": "git pull --rebase fetches, then replays your local commits on top of the remote's without creating a merge bubble. Configure pull.rebase true and your branch history stays a clean train."
+      },
+      {
+        "title": "Divergence means conflict work",
+        "body": "If both you and the remote changed the same lines, the pull stops with conflicts. Resolve → git add → git commit (or git rebase --continue with --rebase)."
+      }
+    ],
+    "visual": {
+      "kind": "remote",
+      "remote": "origin",
+      "branch": "main",
+      "mo": "pull",
+      "caption": "New objects travel down, then a merge integrates them into your branch"
+    },
+    "syntax": "git pull [--rebase]",
+    "options": [
+      {
+        "flag": "--rebase",
+        "desc": "Replay your commits on the remote's new base instead of merging."
+      },
+      {
+        "flag": "--ff-only",
+        "desc": "Refuse a non-fast-forward merge — fail rather than diverge."
+      },
+      {
+        "flag": "--tags",
+        "desc": "Also pull tags from the remote."
+      }
+    ],
+    "uses": [
+      "Daily sync with the team: git pull before starting a workday block.",
+      "git pull --rebase main keeps your WIP branch linear against a fast-moving main.",
+      "git pull --ff-only when you want an explicit 'stay in sync, never diverge' discipline."
+    ],
+    "aliases": [
+      {
+        "short": "g up",
+        "full": "git pull --rebase",
+        "note": "The linear-history pull — rebase'd, no merge bubbles."
+      },
+      {
+        "short": "g pl",
+        "full": "git pull",
+        "note": "Plain pull shorthand."
+      },
+      {
+        "short": "g uff",
+        "full": "git pull --ff-only",
+        "note": "Sync or loudly fail — perfect in scripts."
+      },
+      {
+        "short": "g gl",
+        "full": "git pull -r",
+        "note": "Another popular rebase-pull alias."
+      }
+    ],
+    "related": [
+      "git-fetch",
+      "git-merge",
+      "git-rebase",
+      "git-push"
+    ],
+    "proTip": "Set `git config --global pull.rebase true` and `pull.ff only` once, and git pull becomes a philosophical position: bring the remote together with your work, rebase locally, never surprised by a surprise merge commit."
+  },
+  "git-push": {
+    "slug": "git-push",
+    "command": "git push",
+    "name": "git push",
+    "category": "sharing",
+    "icon": "upload",
+    "level": "intermediate",
+    "tagline": "Upload your branch's commits and advance the remote branch.",
+    "what": "git push sends your local commits (objects your remote doesn't have) up the wire, then updates the remote's branch ref to match yours. By default it only pushes the current branch to its upstream. The remote's version of you is updated; nothing local is changed.",
+    "how": [
+      {
+        "title": "Upload-pack negotiation, reversed",
+        "body": "Push tells the remote what you have; the remote answers with what it still lacks; only the missing objects are sent — packed and delta-compressed."
+      },
+      {
+        "title": "The ref update is a claim of ancestry",
+        "body": "Pushing branch main means: 'here are my objects, and my main is a descendant of your main.' If it's NOT (you're behind), the remote refuses with a rejected/non-fast-forward error — protecting the remote history from being orphaned."
+      },
+      {
+        "title": "Force-push overrides the guard",
+        "body": "`git push --force` ignores the ancestry check. That's the forbidden-words of git: it rewrites the remote branch. Always --force-with-lease, which only forces if the remote matches what you last saw — making accidental history-wipes nearly impossible."
+      },
+      {
+        "title": "Tags travel separately",
+        "body": "Branches push branches; tags need `git push --tags` (or --follow-tags) to ride along. The refspec syntax `git push origin main:feature` lets you publish your main as a different branch name on the remote."
+      }
+    ],
+    "visual": {
+      "kind": "remote",
+      "remote": "origin",
+      "branch": "main",
+      "mo": "push",
+      "caption": "Your new objects travel up; the remote branch ref advances to match you"
+    },
+    "syntax": "git push [<remote>] [<branch>]",
+    "options": [
+      {
+        "flag": "-u",
+        "desc": "Set upstream — link local branch to remote one for future pulls/pushes."
+      },
+      {
+        "flag": "--force-with-lease",
+        "desc": "Force the update only if the remote matches what you last fetched."
+      },
+      {
+        "flag": "--tags",
+        "desc": "Push all tags along with branches."
+      },
+      {
+        "flag": "--delete <b>",
+        "desc": "Delete a branch on the remote."
+      }
+    ],
+    "uses": [
+      "Publishing a feature branch for a PR: git push -u origin feature/x.",
+      "Sharing your newest local commits with the team after pulling and rebasing clean.",
+      "Cleaning up a merged remote branch: git push origin --delete feature/x."
+    ],
+    "aliases": [
+      {
+        "short": "g pu",
+        "full": "git push",
+        "note": "Push the current branch."
+      },
+      {
+        "short": "g puf",
+        "full": "git push -u origin HEAD",
+        "note": "First-time push: sets upstream and publishes in one."
+      },
+      {
+        "short": "g pushf",
+        "full": "git push --force-with-lease",
+        "note": "The SURVIVAL push — only overwrite what you saw."
+      },
+      {
+        "short": "g pd",
+        "full": "git push origin --delete",
+        "note": "Delete a remote branch from the terminal."
+      }
+    ],
+    "related": [
+      "git-fetch",
+      "git-pull",
+      "git-remote",
+      "git-rebase"
+    ],
+    "proTip": "Rejected upstream? You tried to fast-forward nothing — the remote is ahead. `git pull --rebase` first, then push. That two-step rhythm (pull --rebase, push) is the daily heartbeat of collaborative branches, and it never force-pushes by accident."
+  },
+  "git-tag": {
+    "slug": "git-tag",
+    "command": "git tag",
+    "name": "git tag",
+    "category": "sharing",
+    "icon": "tag",
+    "level": "intermediate",
+    "tagline": "Plant a permanent, named marker on a commit.",
+    "what": "git tag creates an immutable name pointing at a specific commit — v1.0.0, v2.3.1 — a release anchor that branches are free to move away from. Lightweight tags are just a ref file with a hash; annotated tags are full objects with message, tagger and date.",
+    "how": [
+      {
+        "title": "Lightweight: a ref that never moves",
+        "body": "`git tag v1.0.0` writes a file refs/tags/v1.0.0 containing a commit hash. Same mechanism as a branch, minus the movement: tags are not updated by any commit."
+      },
+      {
+        "title": "Annotated: a full tag object",
+        "body": "`git tag -a v1.0.0 -m \"release\"` creates a TAG OBJECT (type tag) that holds tagger, message, date, and points to the commit. The ref then points at the tag object — richer, cryptographically signed (git tag -s) metadata."
+      },
+      {
+        "title": "Tags move with clones if you push them",
+        "body": "Tags aren't pushed by default with the branch push. `git push --follow-tags` (or --tags) ships them. Cloning brings every reachable tag, so releases travel with the repo."
+      }
+    ],
+    "visual": {
+      "kind": "graph",
+      "spec": {
+        "animation": "tag",
+        "highlight": 2,
+        "nodes": [
+          {
+            "id": "9a2f1c0",
+            "msg": "init project",
+            "parents": []
+          },
+          {
+            "id": "4b7c2a5",
+            "msg": "v1.0 candidate",
+            "parents": [
+              0
+            ]
+          },
+          {
+            "id": "e1b5a09",
+            "msg": "ship it",
+            "parents": [
+              1
+            ]
+          }
+        ],
+        "refs": [
+          {
+            "name": "main",
+            "node": 2
+          },
+          {
+            "name": "HEAD",
+            "node": 2,
+            "active": true
+          },
+          {
+            "name": "v1.0.0",
+            "node": 1
+          }
+        ],
+        "caption": "A tag pins a commit forever, indifferent to branch movement"
+      }
+    },
+    "syntax": "git tag -a <name> -m \"<msg>\"",
+    "options": [
+      {
+        "flag": "-a + -m",
+        "desc": "Annotated tag with a release message."
+      },
+      {
+        "flag": "-s",
+        "desc": "Sign the tag with your GPG key (provenance!)."
+      },
+      {
+        "flag": "push origin --tags",
+        "desc": "Publish tags to the remote."
+      },
+      {
+        "flag": "list",
+        "desc": "Show all tags, lexically ordered."
+      }
+    ],
+    "uses": [
+      "Marking releases: v1.0.0, v2.1.3 — the only true immovable milestones.",
+      "Rollback anchors: git checkout v1.2.0 to run a released state.",
+      "The npm/package.json version bump paired with a matching tag."
+    ],
+    "aliases": [
+      {
+        "short": "g tg",
+        "full": "git tag -a -m",
+        "note": "Annotated tag with message in one alias."
+      },
+      {
+        "short": "g tgp",
+        "full": "git push origin --follow-tags",
+        "note": "Publish your tags alongside the branch push."
+      },
+      {
+        "short": "g tgl",
+        "full": "git tag -l",
+        "note": "List all tags quickly."
+      }
+    ],
+    "related": [
+      "git-checkout",
+      "git-push",
+      "git-show"
+    ],
+    "proTip": "`git describe` reads the nearest tag a commit is downstream of — it's how many tools (and git itself) produce human-ish version strings like v1.2.0-4-g8a9f7c1 (4 commits after v1.2.0)."
+  }
+}

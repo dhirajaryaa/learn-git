@@ -1,26 +1,109 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #18181b;
+  --accent: #ef4f2f;
+  --accent-soft: #fef1ec;
+  --line: #ececee;
+  --muted: #71717a;
+
+  /* GitGraph theme tokens (flip with .dark) */
+  --graph-edge: #e4e4e7;
+  --graph-node: #fafafa;
+  --graph-node-stroke: #d4d4d8;
+  --graph-chip: #f4f4f5;
+  --graph-chip-stroke: #e4e4e7;
+  --graph-chip-text: #52525b;
+  --graph-msg: #3f3f46;
+  --graph-id: #a1a1aa;
+}
+
+.dark {
+  --background: #0b0b0d;
+  --foreground: #ededf0;
+  --accent: #ff5a38;
+  --accent-soft: #20110c;
+  --line: #232327;
+  --muted: #9c9ca6;
+  color-scheme: dark;
+
+  --graph-edge: #2b2b30;
+  --graph-node: #161619;
+  --graph-node-stroke: #45454c;
+  --graph-chip: #1f1f24;
+  --graph-chip-stroke: #3a3a40;
+  --graph-chip-text: #d4d4d8;
+  --graph-msg: #e4e4e7;
+  --graph-id: #63636b;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-ink: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-line: var(--line);
+  --color-muted: var(--muted);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-geist-sans), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: #fff;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .text-pretty {
+    text-wrap: pretty;
+  }
+
+  /* hairline grid backdrop for hero sections */
+  .bg-grid {
+    background-image: linear-gradient(to right, #f1f1f3 1px, transparent 1px),
+      linear-gradient(to bottom, #f1f1f3 1px, transparent 1px);
+    background-size: 44px 44px;
+  }
+
+  .dark .bg-grid {
+    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  }
+
+  .bg-dots {
+    background-image: radial-gradient(#e5e5e7 1px, transparent 1px);
+    background-size: 22px 22px;
+  }
+
+  .dark .bg-dots {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  }
+
+  .glow-accent {
+    box-shadow: 0 0 0 1px rgba(239, 79, 47, 0.08),
+      0 24px 60px -24px rgba(239, 79, 47, 0.35);
+  }
 }

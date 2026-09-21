@@ -1,0 +1,25 @@
+{
+  "acts": [
+    { "kicker": "Act 1", "title": "Pehla commit", "sub": "Repo ko bilkul careful insaan ki tarah banayen — ek saaf chore commit." },
+    { "kicker": "Act 2", "title": "Teen changes, teen commits", "sub": "Gadbad waali working session ko chhote, reviewable, atomic commits me baant do." },
+    { "kicker": "Act 3", "title": "Shaanti se ship karo", "sub": "Experiment branch par rakho, phir bina drama ke merge karo." }
+  ],
+  "steps": [
+    { "title": "Ek khaali directory — poori ummeedein", "body": "Aap scratch se ek chhoti website banane ja rahe hain. Pehla asli git kaam hai repo banana — git tab tak kuch kaam ka nahi hai jab tak repo nahi hai." },
+    { "title": "Tay karo kya repo me NAHI aayega", "body": "Pehle commit se pehle .gitignore banao. Node_modules, build output, aur woh bhatka hua debug.log kabhi tracked nahi hone chahiye. Bahar rakhna bhi discipline ka hissa hai." },
+    { "title": "Scaffold stage karo, phir ruk jao", "body": "Ab project shell banane waale teen files stage karo: package.json, lockfile aur README. Craft dhyan se dekho: aap sirf wahi stage kar rahe ho jo IS commit ka hissa hai — 'jo bhi exist karta hai' nahi." },
+    { "title": "Pehla commit", "body": "Shell ko ek logical unit ki tarah commit karo. Prefix chore matlab housekeeping — abhi user ko dikhe wala koi behavior nahi. Aur subject chhota hai: 26 characters, 50 ke bahut neeche." },
+    { "title": "50 / 72 rule", "body": "Human-readable commit aapke future self ko diya hua tohfa hai. Subject 50 characters se chhota rakho — listings me padhne layak. Detail lines 72 par wrap karo. Agar message ko paragraph chahiye, toh uski apni commit banti hai." },
+    { "title": "Jaal: chhe files, ek commit", "body": "Asli kaam wala session tree ko gandha chhod deta hai. Yahan: ek bug fix, ek chhoti feature, kuch styling, aur ek stray debug.log — sab ek saath. Kaamchor commit — git add -A; git commit -m \"update\" — sab kuch ek blob ke neeche daba deta hai." },
+    { "title": "Logical change ke hisaab se group karo", "body": "Files ko waise sort karo jaise reviewer sochta hai: bug fix akela, feature ki do files saath, styling akeli — aur debug.log ignore, kabhi committed nahi. Teen logical changes, teen commits. Jaldi ki koi zaroorat nahi." },
+    { "title": "Fix commit karo — chhota aur atomic", "body": "Ek fix, ek commit, prefix jo kahe fix, subject jo kahe WHAT na ki HOW. Reviewer is line ko padhke turant decide kar sakta hai ki safe hai. Atomic commit ka poora matlab yahi hai." },
+    { "title": "Feature agli hai waari", "body": "Feature do files me phaili hai, toh dono ko saath stage karo: nav.tsx aur nav.css EK change hain — sidebar apne styles ke bina adhoora hai. Phir feat prefix ke saath commit karo." },
+    { "title": "Style apna chore hai", "body": "Sirf visual tweaks ko style prefix milta hai — woh kisi ka behavior nahi badalte, aur prefix sabko ek nazar me bata deta hai. Ab teen commits: chore, fix, feat — har ek seconds me review ho jata hai." },
+    { "title": "Ise changelog ki tarah padho", "body": "git log --oneline --graph history ko story bana deta hai: chore → fix → feat → style. Har commit itna chhota hai ki soch aaye, aur har prefix ek filter hai. Usse compare karo ek giant 'update stuff' blob se — koi muqaabla nahi." },
+    { "title": "Branch par experiment karo", "body": "Agli feature risky hai, isliye apni branch par rahegi. git switch -c dono kaam karta hai — banata bhi aur jump karta bhi feat/avatar par. main saaf aur shippable rehta hai jab tak aap experiment karte ho." },
+    { "title": "Kaam branch par hota hai", "body": "Commit feat/avatar par utarta hai, aur main bilkul nahi hilta. Risky kaam trunk ko nahi, branch ko pitata hai. Wahi atomic discipline: ek feature, ek commit." },
+    { "title": "Wapas safe line par aao", "body": "git switch main HEAD ko wapas main line par le jaata hai. Jo kuch banaya woh branch par safe hai — lekin working tree ab shippable trunk dikhata hai. Graph fork hone lagta hai." },
+    { "title": "Kahaniyon ko jodo", "body": "Feature review ke baad ready hai. git merge --no-ff ek explicit merge commit banata hai jo join ko record karta hai — graph ka fork hamesha visible rahta hai, aur team ko baad me padhna aasaani hoti hai." },
+    { "title": "Poore din ki ek saaf story", "body": "git log --oneline --graph din ka kaam waise dikhata hai jaise insaan ne kiya: chore scaffold, teen atomic changes, ek forked experiment, ek explicit merge. Chhote commits. Saaf prefixes. Koi 50-file blob nahi. Professionals yahi karte hain." }
+  ]
+}

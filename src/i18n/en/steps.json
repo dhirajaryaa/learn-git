@@ -1,0 +1,1978 @@
+{
+  "git-init": [
+    {
+      "title": "Choose an empty room",
+      "body": "Point git at any folder — even one with nothing in it yet.",
+      "cmd": "git init",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "A bare folder, before git arrives"
+      }
+    },
+    {
+      "title": "The .git folder appears",
+      "body": "Git creates the entire repository in a hidden .git directory: objects/ (empty), refs/ (empty), HEAD, and the index.",
+      "cmd": "ls -a",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "Four core structures materialize"
+      }
+    },
+    {
+      "title": "Nothing is tracked yet",
+      "body": "No objects, no commits. Git is only ready, waiting for your first git add and git commit.",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "An empty museum, waiting for its first exhibit"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-status": [
+    {
+      "title": "Look",
+      "body": "You want to know what changed. Just run git status — it compares three snapshots: your files, the index, and the last commit.",
+      "cmd": "git status",
+      "visual": {
+        "kind": "status",
+        "caption": "Git reports where every file stands"
+      }
+    },
+    {
+      "title": "Read the columns",
+      "body": "Each file gets a state marker. ✚ staged = ready to commit. ✏ modified = changed on disk. Blue = brand new, never tracked.",
+      "visual": {
+        "kind": "status",
+        "caption": "Green = in the index · Red = changed · Blue = untracked"
+      }
+    },
+    {
+      "title": "The comparison trick",
+      "body": "Status never reads whole files — it compares a fast hash from the index with a hash of the disk file. Identical hashes? Unchanged.",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/button.tsx"
+        ],
+        "dirty": [
+          "src/theme.css"
+        ],
+        "untracked": [
+          "notes.md"
+        ],
+        "mode": "add",
+        "caption": "Status is a diff across three places"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-add": [
+    {
+      "title": "Change a file",
+      "body": "You edit src/button.tsx. Git sees the worktree no longer matches the index — the file is 'modified' but not staged.",
+      "cmd": "git add src/button.tsx",
+      "visual": {
+        "kind": "staging",
+        "staged": [],
+        "dirty": [
+          "src/button.tsx"
+        ],
+        "mode": "add",
+        "caption": "Your edit lives in the working tree only"
+      }
+    },
+    {
+      "title": "Run git add",
+      "body": "The file's content is hashed into a blob object, and the index stores path → blob-hash. Your file now belongs to the 'next commit' preview.",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/button.tsx"
+        ],
+        "dirty": [],
+        "mode": "add",
+        "caption": "git add copies the snapshot into the index"
+      }
+    },
+    {
+      "title": "Nothing moved on disk",
+      "body": "The working file stays exactly as it was. Staging only writes the index — it's a note saying 'this content is the next snapshot'.",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/button.tsx"
+        ],
+        "dirty": [],
+        "mode": "add",
+        "caption": "The file remains untouched — only the index changed"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-commit": [
+    {
+      "title": "Stage first",
+      "body": "Before a commit, files live in the index (staging). The index is a preview of what the commit will contain.",
+      "cmd": "git add .",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/button.tsx",
+          "src/theme.css"
+        ],
+        "dirty": [],
+        "mode": "add",
+        "caption": "The index holds your next snapshot"
+      }
+    },
+    {
+      "title": "Run git commit",
+      "body": "Git wraps the index into a tree object, then builds a commit object that points to that tree and to the previous commit (its parent).",
+      "cmd": "git commit -m \"feat: dark mode\"",
+      "visual": {
+        "kind": "objects",
+        "caption": "tree + parent + author + message, then hashed"
+      }
+    },
+    {
+      "title": "Watch the commit appear",
+      "body": "A new commit object joins the graph. The branch pointer slides forward and HEAD follows it. History is one node longer.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "feat: dark mode",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "build",
+          "highlight": 3,
+          "caption": "The branch and HEAD move forward onto the new commit"
+        }
+      }
+    }
+  ],
+  "git-config": [
+    {
+      "title": "Set your name",
+      "body": "Before your first commit, Git needs an identity — the name and email written into every commit you make.",
+      "cmd": "git config --global user.name \"Your Name\"",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "Identity lives in git config, applied from the narrowest scope"
+      }
+    },
+    {
+      "title": "Set your email",
+      "body": "Commits are stamped with this identity as author and committer lines — baked into the commit object forever.",
+      "cmd": "git config --global user.email you@example.com",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "user.email joins user.name; both are baked into commits"
+      }
+    },
+    {
+      "title": "See every alias",
+      "body": "Config is a cascade: this repo → your user (~/.gitconfig) → the machine. The nearest one wins.",
+      "cmd": "git config --list",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "Scopes cascade: system → global → local"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-branch": [
+    {
+      "title": "Pick your starting point",
+      "body": "A branch is just a pointer to a commit. From wherever HEAD is, you can hang a new name.",
+      "cmd": "git branch feature",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 2
+        }
+      }
+    },
+    {
+      "title": "Run git branch",
+      "body": "A tiny ref file is written with the current commit's hash. Now two names point at the same commit.",
+      "cmd": "git branch feature",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            },
+            {
+              "name": "feature",
+              "node": 2
+            }
+          ],
+          "animation": "branch",
+          "highlight": 2,
+          "caption": "feature is a second pointer — one commit, two names"
+        }
+      }
+    },
+    {
+      "title": "You're still on main",
+      "body": "Branch only creates the pointer — it doesn't move you. That's git switch's job.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "feature",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "headmove",
+          "highlight": 2
+        }
+      },
+      "min": "junior"
+    }
+  ],
+  "git-checkout": [
+    {
+      "title": "Where do you want to stand?",
+      "body": "Checkout flips HEAD from one branch to another — and rewrites your working files to match that branch.",
+      "cmd": "git checkout feature",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "feat: dark mode",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "feature",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "headmove",
+          "highlight": 2,
+          "caption": "HEAD is about to glide to feature"
+        }
+      }
+    },
+    {
+      "title": "HEAD moves, files follow",
+      "body": "The HEAD file now says ref: refs/heads/feature. Blobs from feature's commit are copied onto disk so your worktree matches.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "feat: dark mode",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "feature",
+              "node": 2
+            },
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "headmove",
+          "highlight": 2,
+          "caption": "HEAD now rests on feature — the worktree rebuilt itself"
+        }
+      }
+    },
+    {
+      "title": "Safety first",
+      "body": "If a file has unsaved edits, checkout refuses instead of destroying them. -f means 'I really mean it'.",
+      "min": "developer"
+    }
+  ],
+  "git-switch": [
+    {
+      "title": "A focused checkout",
+      "body": "SWITCH is checkout's branch-only half. One job: move HEAD between branches.",
+      "cmd": "git switch feature",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "feature",
+              "node": 1
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "headmove",
+          "highlight": 1
+        }
+      }
+    },
+    {
+      "title": "The whole hop is one pointer edit",
+      "body": "HEAD.txt is rewritten to name the other branch. Files on disk are synchronized from that branch's blobs.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "feature",
+              "node": 1
+            },
+            {
+              "name": "HEAD",
+              "node": 1,
+              "active": true
+            }
+          ],
+          "animation": "headmove",
+          "highlight": 1,
+          "caption": "One file rewrite + a worktree sync — done"
+        }
+      }
+    },
+    {
+      "title": "Create and hop in one",
+      "body": "git switch -c name does branch + switch together — the modern replacement for checkout -b.",
+      "cmd": "git switch -c wip/idea",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            },
+            {
+              "name": "wip/idea",
+              "node": 2
+            }
+          ],
+          "animation": "branch",
+          "highlight": 2
+        }
+      },
+      "min": "junior"
+    }
+  ],
+  "git-merge": [
+    {
+      "title": "Two branches, two timelines",
+      "body": "Your feature branch and main have both moved since they split from the same commit.",
+      "cmd": "git merge feature",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "main: dark mode",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "c1d8e2f",
+              "msg": "feature: login",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "Diverged from commit 4b7c2a5 — the merge base"
+        }
+      }
+    },
+    {
+      "title": "Three-way merge",
+      "body": "Git compares the base commit against BOTH tips, then combines the two sets of changes. Different regions merge themselves automatically.",
+      "cmd": "git commit",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "main: dark mode",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "c1d8e2f",
+              "msg": "feature: login",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "0f9e8d7",
+              "msg": "merge branch 'feature'",
+              "parents": [
+                2,
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 4
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "merge",
+          "highlight": 4,
+          "caption": "A merge commit joins both parents — history preserved"
+        }
+      }
+    },
+    {
+      "title": "Conflict time",
+      "body": "Both sides edited the same lines? Git refuses to guess and shows them both with <<<<<<< and >>>>>>> markers.",
+      "cmd": "git add . && git commit",
+      "visual": {
+        "kind": "diff",
+        "caption": "Conflicts show 'ours' vs 'theirs' — you decide, then commit"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-rebase": [
+    {
+      "title": "Newer base, same ideas",
+      "body": "You want your feature to sit on top of the newest main — not on a stale fork point.",
+      "cmd": "git rebase main",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "a1b2c3d",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "e4f5a6b",
+              "msg": "main: fix nav",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c7d8e9f",
+              "msg": "feature: add btn",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "0a1b2cd",
+              "msg": "feature: wire API",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 1
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "feature grew from the old main"
+        }
+      }
+    },
+    {
+      "title": "Replay, don't copy",
+      "body": "Each feature commit is re-created on top of main's new tip. Same diff, new parent, new hash. Same changes, cleaner story.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "a1b2c3d",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "e4f5a6b",
+              "msg": "main: fix nav",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "f1a2b3c",
+              "msg": "feature: add btn'",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "b2c3d4e",
+              "msg": "feature: wire API'",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 1
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "feature now sits on the newest main — linear history"
+        }
+      }
+    },
+    {
+      "title": "Handle conflicts one commit at a time",
+      "body": "If a replayed commit collides, the rebase pauses so you fix it, then continue. Commit by commit.",
+      "cmd": "git rebase --continue",
+      "visual": {
+        "kind": "diff",
+        "caption": "Paused mid-replay: resolve, then git rebase --continue"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "Rewrite rule",
+      "body": "Rebased commits get new hashes. Never rebase what others have pulled — that's how force-pushes are born.",
+      "min": "developer"
+    }
+  ],
+  "git-log": [
+    {
+      "title": "Ask who did what",
+      "body": "git log starts at HEAD and follows every parent pointer, printing each commit.",
+      "cmd": "git log --oneline --graph",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "feat: dark mode",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "The newest commit is on top"
+        }
+      }
+    },
+    {
+      "title": "It's a linked list",
+      "body": "The trick: commits only know their parents. Log is just walking that chain — down, down, down to the first commit.",
+      "cmd": "git log --all --decorate",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "feat: dark mode",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 0,
+          "caption": "Follow the parent pointers to rewind time"
+        }
+      },
+      "min": "junior"
+    }
+  ],
+  "git-show": [
+    {
+      "title": "Open one commit",
+      "body": "git show displays the full anatomy of a single object — for a commit, that's metadata plus its diff.",
+      "cmd": "git show 74d3b9f",
+      "visual": {
+        "kind": "objects",
+        "caption": "tree, parent, author, committer, message — then the diff"
+      }
+    },
+    {
+      "title": "Pull a file from the past",
+      "body": "The rev:path syntax prints any file exactly as it existed: git show HEAD~2:src/App.tsx.",
+      "cmd": "git show HEAD^:README.md",
+      "visual": {
+        "kind": "objects",
+        "caption": "Any object can be shown: commits, tags, trees, blobs"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-diff": [
+    {
+      "title": "What did I touch?",
+      "body": "git diff compares your working files against the index — every edit you haven't staged yet.",
+      "cmd": "git diff",
+      "visual": {
+        "kind": "diff",
+        "caption": "Worktree vs index = the red and green you just made"
+      }
+    },
+    {
+      "title": "See what's staged",
+      "body": "git diff --cached compares the index against HEAD — a preview of your next commit.",
+      "cmd": "git diff --cached",
+      "visual": {
+        "kind": "diff",
+        "caption": "Index vs HEAD = exactly what the commit will change"
+      }
+    },
+    {
+      "title": "Blob hashing shortcuts the work",
+      "body": "Identical content means identical SHA-1 — matching blobs are skipped instantly. Only changed files enter the diff engine.",
+      "visual": {
+        "kind": "diff",
+        "caption": "Same content → same hash → skipped"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-blame": [
+    {
+      "title": "Find the culprit (politely)",
+      "body": "git blame walks the file's history backwards and marks every line with the commit that introduced it.",
+      "cmd": "git blame src/main.ts",
+      "visual": {
+        "kind": "diff",
+        "caption": "Every line now wears its origin commit"
+      }
+    },
+    {
+      "title": "Follow the trail",
+      "body": "Jump from the blamed commit to its message with git show — the 'why' is usually written right there.",
+      "cmd": "git show 4b7c2a5",
+      "visual": {
+        "kind": "objects",
+        "caption": "blame → show → the story"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-reflog": [
+    {
+      "title": "The undo stack",
+      "body": "Every time HEAD moves — commit, reset, rebase, checkout, amend — git journals it. git reflog prints that journal.",
+      "cmd": "git reflog",
+      "visual": {
+        "kind": "reflog",
+        "caption": "HEAD@{n} = where you were n moves ago"
+      }
+    },
+    {
+      "title": "Recover anything",
+      "body": "Hard-reset too far? Find the old position in the reflog and point HEAD back at it. The commit is still in objects/.",
+      "cmd": "git reset --hard HEAD@{1}",
+      "visual": {
+        "kind": "reflog",
+        "caption": "A hard reset only forgets the pointer — the reflog remembers"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "The 90-day window",
+      "body": "Unreachable commits aren't deleted — they just wait. git gc finally prunes them after the default 90 days.",
+      "visual": {
+        "kind": "objects",
+        "caption": "Until gc, 'lost' commits are recoverable"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-gc": [
+    {
+      "title": "The repository gets fat",
+      "body": "Every add and commit writes loose, individually-compressed files. Thousands later, .git bloats and slows.",
+      "cmd": "git gc --aggressive",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "Loose objects pile up as you work"
+      }
+    },
+    {
+      "title": "Compress and prune",
+      "body": "git gc packs loose objects into one delta-compressed packfile and deletes unreachable, aged-out objects.",
+      "visual": {
+        "kind": "objects",
+        "caption": "Packed: only the differences between versions are stored"
+      }
+    }
+  ],
+  "git-reset": [
+    {
+      "title": "Too far, too fast",
+      "body": "A bad commit sits at the tip of your branch. You want the branch pointer to slide back over it.",
+      "cmd": "git reset --hard HEAD~1",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "oops: broken build",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "The oops commit is on top"
+        }
+      }
+    },
+    {
+      "title": "The pointer rewinds",
+      "body": "The branch file is rewritten to point at the older commit. The oops commit is still in objects/ — just unreachable.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "oops: broken build",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "reset",
+          "highlight": 2,
+          "caption": "main + HEAD slide back; the oops commit dangles"
+        }
+      }
+    },
+    {
+      "title": "Three depths of regret",
+      "body": "soft keeps things staged, mixed (default) unstages, hard also reverts your files.",
+      "cmd": "git reset <commit>",
+      "visual": {
+        "kind": "staging",
+        "staged": [],
+        "dirty": [],
+        "mode": "restore",
+        "caption": "--soft / --mixed / --hard = which stores to roll back"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-restore": [
+    {
+      "title": "Messed up a file",
+      "body": "Your working copy of src/bug.js is broken. Restore rewrites it from the index (or HEAD).",
+      "cmd": "git restore src/bug.js",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/bug.js"
+        ],
+        "dirty": [],
+        "mode": "restore",
+        "caption": "The index copy is healthy — let's take it back"
+      }
+    },
+    {
+      "title": "Unstage by accident?",
+      "body": "restore --staged pulls HEAD's version back into the index, unstaging the file without touching disk.",
+      "cmd": "git restore --staged src/bug.js",
+      "visual": {
+        "kind": "staging",
+        "staged": [],
+        "dirty": [],
+        "mode": "add",
+        "caption": "--staged = undo the staging"
+      }
+    },
+    {
+      "title": "Resurrect from history",
+      "body": "--source lets you pull any revision's blob. Gone file, old version, whatever — read it back out.",
+      "cmd": "git restore --source=HEAD~2 file.ts",
+      "visual": {
+        "kind": "objects",
+        "caption": "--source=<rev> = restore from any commit"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-revert": [
+    {
+      "title": "Shared branch, broken commit",
+      "body": "A bad commit already went to every teammate. Rewriting it with reset would break their clones — so we add instead.",
+      "cmd": "git revert 74d3b9f",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "dead: old login",
+              "parents": [
+                2
+              ]
+            },
+            {
+              "id": "e1b5a09",
+              "msg": "feature A",
+              "parents": [
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 4
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "The target: a bad commit buried in history"
+        }
+      }
+    },
+    {
+      "title": "A correction, not an erasure",
+      "body": "git revert applies the reverse diff as a brand-new commit on top. The bad commit stays in history — truthfully.",
+      "cmd": "git commit",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "dead: old login",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e1b5a09",
+              "msg": "feature A",
+              "parents": [
+                2
+              ]
+            },
+            {
+              "id": "8c4f2e9",
+              "msg": "revert old login",
+              "parents": [
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 4
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "merge",
+          "highlight": 4,
+          "caption": "The inverse commit neutralizes the damage"
+        }
+      }
+    }
+  ],
+  "git-stash": [
+    {
+      "title": "Interrupted mid-feature",
+      "body": "Half-finished changes sit in your worktree, but you must switch branches now.",
+      "cmd": "git stash",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/wip.ts",
+          "docs/notes.md"
+        ],
+        "dirty": [],
+        "mode": "add",
+        "caption": "Uncommitted work you don't want to lose"
+      }
+    },
+    {
+      "title": "Parked in a box",
+      "body": "Your changes are recorded as special commits on the stash stack, and the worktree is reset to a clean HEAD.",
+      "visual": {
+        "kind": "stash",
+        "caption": "stash@{0} holds the WIP — the worktree is clean"
+      }
+    },
+    {
+      "title": "Come back to it later",
+      "body": "Any branch, any time: git stash pop reapplies the top of the stack and removes it.",
+      "cmd": "git stash pop",
+      "visual": {
+        "kind": "stash",
+        "caption": "pop = apply + drop · apply = keep it on the stack"
+      }
+    }
+  ],
+  "git-cherry-pick": [
+    {
+      "title": "One fix, other branch too",
+      "body": "A hotfix landed on main, but the release branch needs it right now — without merging all of main.",
+      "cmd": "git cherry-pick c1d8e2f",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "base",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c1d8e2f",
+              "msg": "fix: hotfix #42",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e5f6a7b",
+              "msg": "release v1",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "release",
+              "node": 3
+            },
+            {
+              "name": "hotfix",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 2,
+          "caption": "The fix commit — about to travel"
+        }
+      }
+    },
+    {
+      "title": "Replayed on release",
+      "body": "A new commit lands on release with the identical change but a brand-new hash and parent.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "base",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c1d8e2f",
+              "msg": "fix: hotfix #42",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e5f6a7b",
+              "msg": "release v1",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "0a9b8c7",
+              "msg": "fix: hotfix #42'",
+              "parents": [
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "release",
+              "node": 4
+            },
+            {
+              "name": "hotfix",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "merge",
+          "highlight": 4,
+          "caption": "The fix now exists on both branches"
+        }
+      }
+    }
+  ],
+  "git-clean": [
+    {
+      "title": "Stray files everywhere",
+      "body": "Untracked files and build junk litter your worktree. First, preview what clean would remove.",
+      "cmd": "git clean -n",
+      "visual": {
+        "kind": "status",
+        "caption": "??? = untracked · clean only touches these"
+      }
+    },
+    {
+      "title": "The full sweep",
+      "body": "clean -fd deletes untracked files AND directories; -x also removes ignored ones. Permanent, so preview first.",
+      "cmd": "git clean -fd",
+      "visual": {
+        "kind": "status",
+        "caption": "clean -fd: files + dirs · clean -fdx: plus ignored"
+      }
+    }
+  ],
+  "git-clone": [
+    {
+      "title": "Grab the whole project",
+      "body": "You point at a remote URL. Everything — every commit, branch, tag — is about to flow down to you.",
+      "cmd": "git clone git@github.com:user/repo.git",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "clone",
+        "caption": "The object database streams down"
+      }
+    },
+    {
+      "title": "Fetch + checkout in one",
+      "body": "Clone is literally a fetch (download all objects) followed by a checkout (materialize the default branch).",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "pull",
+        "caption": "Objects land, then the working tree is built"
+      }
+    },
+    {
+      "title": "Origin is wired for you",
+      "body": "refs/remotes/origin/main is created and your main learns to track it — that's what makes git pull work on day one.",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "fetch",
+        "caption": "origin remote is bookmarked in your config"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-remote": [
+    {
+      "title": "Bookmark another repo",
+      "body": "A remote is just a name → URL note. No network happens until you fetch or push.",
+      "cmd": "git remote add origin git@github.com:user/repo.git",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "clone",
+        "caption": "git remote add links a name to a URL"
+      }
+    },
+    {
+      "title": "The fork workflow",
+      "body": "origin is yours, upstream is the original. Keep both bookmarks and you can sync from anywhere.",
+      "cmd": "git remote -v",
+      "visual": {
+        "kind": "remote",
+        "remote": "upstream",
+        "branch": "main",
+        "mo": "fetch",
+        "caption": "Two bookmarks, one project"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-fetch": [
+    {
+      "title": "See without changing",
+      "body": "You want to peek at the remote's new commits without disturbing anything you're doing.",
+      "cmd": "git fetch",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "fetch",
+        "caption": "Objects download; your branch and files stay put"
+      }
+    },
+    {
+      "title": "Remote refs update, you don't",
+      "body": "refs/remotes/origin/main slides forward. Your own main, index and worktree are untouched.",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "fetch",
+        "caption": "Only the remote-tracking ref moved"
+      }
+    },
+    {
+      "title": "Preview the future",
+      "body": "git diff HEAD..origin/main shows what a pull would bring — before you commit to it.",
+      "cmd": "git log HEAD..origin/main",
+      "visual": {
+        "kind": "diff",
+        "caption": "HEAD..origin/main = 'what's coming'"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-pull": [
+    {
+      "title": "Sync with the team",
+      "body": "git pull fetches the remote's new work, then merges it into your current branch.",
+      "cmd": "git pull",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "pull",
+        "caption": "Objects come down…"
+      }
+    },
+    {
+      "title": "…then a merge folds it in",
+      "body": "If you made no local commits, main just fast-forwards. If you did, a merge commit (or a rebase) joins them.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "main: upstream work",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e5f6a7b",
+              "msg": "your local edit",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "0f9e8d7",
+              "msg": "merge",
+              "parents": [
+                2,
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 4
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "merge",
+          "highlight": 4,
+          "caption": "Both histories now belong to your branch"
+        }
+      }
+    },
+    {
+      "title": "Rebase instead of merge",
+      "body": "git pull --rebase replays your local edits on top instead of merging — a clean, straight line.",
+      "visual": {
+        "kind": "rebased",
+        "spec": {
+          "action": "git pull --rebase",
+          "before": {
+            "animation": "log",
+            "nodes": [
+              {
+                "id": "a1b2c3d",
+                "msg": "init",
+                "parents": []
+              },
+              {
+                "id": "e4f5a6b",
+                "msg": "upstream main",
+                "parents": [
+                  0
+                ]
+              },
+              {
+                "id": "c7d8e9f",
+                "msg": "your edit",
+                "parents": [
+                  0
+                ]
+              }
+            ],
+            "refs": [
+              {
+                "name": "main",
+                "node": 1
+              },
+              {
+                "name": "HEAD",
+                "node": 2,
+                "active": true
+              }
+            ]
+          },
+          "after": {
+            "animation": "log",
+            "nodes": [
+              {
+                "id": "a1b2c3d",
+                "msg": "init",
+                "parents": []
+              },
+              {
+                "id": "e4f5a6b",
+                "msg": "upstream main",
+                "parents": [
+                  0
+                ]
+              },
+              {
+                "id": "f1a2b3c",
+                "msg": "your edit'",
+                "parents": [
+                  1
+                ]
+              }
+            ],
+            "refs": [
+              {
+                "name": "main",
+                "node": 2
+              },
+              {
+                "name": "HEAD",
+                "node": 2,
+                "active": true
+              }
+            ]
+          }
+        }
+      },
+      "min": "junior"
+    }
+  ],
+  "git-push": [
+    {
+      "title": "Share your commits",
+      "body": "You've committed locally. The remote doesn't have those objects yet — they're about to travel up.",
+      "cmd": "git push",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "push",
+        "caption": "Your branch is ahead — the upload starts"
+      }
+    },
+    {
+      "title": "Upload + advance",
+      "body": "Your new objects stream to the remote, and origin/main advances to match your branch.",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "push",
+        "caption": "Remote branch ref slides to your tip"
+      }
+    },
+    {
+      "title": "Rejected? You're behind",
+      "body": "The remote refuses to lose history. Pull --rebase first, then push — the daily rhythm of shared branches.",
+      "cmd": "git pull --rebase",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "pull",
+        "caption": "'non-fast-forward' = the remote moved first"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "Force-pushing, safely",
+      "body": "Need to rewrite a remote branch? Only --force-with-lease: it forces only if the remote matches what you last saw.",
+      "cmd": "git push --force-with-lease",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "push",
+        "caption": "--force-with-lease: forced, but never blind"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-tag": [
+    {
+      "title": "Freeze a milestone",
+      "body": "You shipped v1.0.0. A branch would drift — you need a name that never moves.",
+      "cmd": "git tag -a v1.0.0 -m \"production release\"",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e1b5a09",
+              "msg": "ship it",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "Time to pin this moment"
+        }
+      }
+    },
+    {
+      "title": "The pin drops",
+      "body": "A tag ref points at that commit forever — even when main races ahead, v1.0.0 still points here.",
+      "cmd": "git push origin --tags",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e1b5a09",
+              "msg": "ship it",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            },
+            {
+              "name": "v1.0.0",
+              "node": 3
+            }
+          ],
+          "animation": "tag",
+          "highlight": 3,
+          "caption": "A permanent landmark on the commit"
+        }
+      }
+    }
+  ]
+}

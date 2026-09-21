@@ -1,0 +1,1978 @@
+{
+  "git-init": [
+    {
+      "title": "Ek khali room chuno",
+      "body": "Git ko kisi bhi folder par point karo — jisme abhi kuch bhi na ho.",
+      "cmd": "git init",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "A bare folder, before git arrives"
+      }
+    },
+    {
+      "title": ".git folder dikhta hai",
+      "body": "Git poora repository ek chhupe .git directory me banata hai: objects/ (khali), refs/ (khali), HEAD, aur index.",
+      "cmd": "ls -a",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "Four core structures materialize"
+      }
+    },
+    {
+      "title": "Abhi kuch track nahi hota",
+      "body": "Na koi objects, na koi commits. Git sirf ready hai — aapke pehle git add aur git commit ka intezaar kar raha hai.",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "An empty museum, waiting for its first exhibit"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-status": [
+    {
+      "title": "Dekho",
+      "body": "Jaanna hai ki kya badla. Bas git status chalao — ye teen snapshots compare karta hai: aapki files, index, aur last commit.",
+      "cmd": "git status",
+      "visual": {
+        "kind": "status",
+        "caption": "Git reports where every file stands"
+      }
+    },
+    {
+      "title": "Columns padho",
+      "body": "Har file ko ek state marker milta hai. ✚ staged = commit ke liye ready. ✏ modified = disk par badla hua. Blue = bilkul nayi, kabhi track nahi hui.",
+      "visual": {
+        "kind": "status",
+        "caption": "Green = in the index · Red = changed · Blue = untracked"
+      }
+    },
+    {
+      "title": "Comparison ka trick",
+      "body": "Status poori files nahi padhta — index ki fast hash ko disk file ki hash se compare karta hai. Hash same? File unchanged.",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/button.tsx"
+        ],
+        "dirty": [
+          "src/theme.css"
+        ],
+        "untracked": [
+          "notes.md"
+        ],
+        "mode": "add",
+        "caption": "Status is a diff across three places"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-add": [
+    {
+      "title": "File change karo",
+      "body": "Aap src/button.tsx edit karte ho. Git dekhta hai ki worktree ab index se match nahi karti — file 'modified' hai lekin staged nahi.",
+      "cmd": "git add src/button.tsx",
+      "visual": {
+        "kind": "staging",
+        "staged": [],
+        "dirty": [
+          "src/button.tsx"
+        ],
+        "mode": "add",
+        "caption": "Your edit lives in the working tree only"
+      }
+    },
+    {
+      "title": "git add chalao",
+      "body": "File ka content blob object me hash hota hai, aur index path → blob-hash store karta hai. Aapki file ab 'next commit' preview ka hissa hai.",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/button.tsx"
+        ],
+        "dirty": [],
+        "mode": "add",
+        "caption": "git add copies the snapshot into the index"
+      }
+    },
+    {
+      "title": "Disk par kuch move nahi hua",
+      "body": "Working file bilkul waisi hi rehti hai. Staging sirf index likhta hai — ek note jo kehta hai 'ye content agla snapshot hai'.",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/button.tsx"
+        ],
+        "dirty": [],
+        "mode": "add",
+        "caption": "The file remains untouched — only the index changed"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-commit": [
+    {
+      "title": "Pehle stage karo",
+      "body": "Commit se pehle files index (staging) me hoti hain. Index commit ka preview hai.",
+      "cmd": "git add .",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/button.tsx",
+          "src/theme.css"
+        ],
+        "dirty": [],
+        "mode": "add",
+        "caption": "The index holds your next snapshot"
+      }
+    },
+    {
+      "title": "git commit chalao",
+      "body": "Git index ko tree object me wrap karta hai, phir commit object banata hai jo us tree aur previous commit (uska parent) ko point karta hai.",
+      "cmd": "git commit -m \"feat: dark mode\"",
+      "visual": {
+        "kind": "objects",
+        "caption": "tree + parent + author + message, then hashed"
+      }
+    },
+    {
+      "title": "Commit ko aate dekho",
+      "body": "Ek naya commit object graph me judta hai. Branch pointer aage slide karti hai aur HEAD follow karta hai. History ek node lambi ho gayi.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "feat: dark mode",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "build",
+          "highlight": 3,
+          "caption": "The branch and HEAD move forward onto the new commit"
+        }
+      }
+    }
+  ],
+  "git-config": [
+    {
+      "title": "Apna naam set karo",
+      "body": "Pehle commit se pehle Git ko identity chahiye — naam aur email jo aapke har commit me likha jaata hai.",
+      "cmd": "git config --global user.name \"Your Name\"",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "Identity lives in git config, applied from the narrowest scope"
+      }
+    },
+    {
+      "title": "Apni email set karo",
+      "body": "Commits is identity ke saath author aur committer lines ke roop me stamp hote hain — commit object me hamesha ke liye baked.",
+      "cmd": "git config --global user.email you@example.com",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "user.email joins user.name; both are baked into commits"
+      }
+    },
+    {
+      "title": "Saare aliases dekho",
+      "body": "Config ek cascade hai: ye repo → aapka user (~/.gitconfig) → machine. Jo sabse paas hai wohi jeet-ta hai.",
+      "cmd": "git config --list",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "Scopes cascade: system → global → local"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-branch": [
+    {
+      "title": "Apna starting point chuno",
+      "body": "Branch sirf commit ka pointer hai. HEAD jahan bhi ho, wahan naya naam hang kar sakte ho.",
+      "cmd": "git branch feature",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 2
+        }
+      }
+    },
+    {
+      "title": "git branch chalao",
+      "body": "Ek chhoti ref file current commit ke hash ke saath likhi jaati hai. Ab do naam ek hi commit ko point karte hain.",
+      "cmd": "git branch feature",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            },
+            {
+              "name": "feature",
+              "node": 2
+            }
+          ],
+          "animation": "branch",
+          "highlight": 2,
+          "caption": "feature is a second pointer — one commit, two names"
+        }
+      }
+    },
+    {
+      "title": "Aap ab bhi main par ho",
+      "body": "Branch sirf pointer banata hai — aapko move nahi karta. Wo kaam git switch ka hai.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "feature",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "headmove",
+          "highlight": 2
+        }
+      },
+      "min": "junior"
+    }
+  ],
+  "git-checkout": [
+    {
+      "title": "Kahan khade hona hai?",
+      "body": "Checkout HEAD ko ek branch se doosri par flip karta hai — aur working files ko us branch se match karne ke liye rewrite karta hai.",
+      "cmd": "git checkout feature",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "feat: dark mode",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "feature",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "headmove",
+          "highlight": 2,
+          "caption": "HEAD is about to glide to feature"
+        }
+      }
+    },
+    {
+      "title": "HEAD move hota hai, files follow karti hain",
+      "body": "HEAD file ab kehti hai ref: refs/heads/feature. Feature ke commit ke blobs disk par copy hote hain taaki aapka worktree match kare.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "feat: dark mode",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "feature",
+              "node": 2
+            },
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "headmove",
+          "highlight": 2,
+          "caption": "HEAD now rests on feature — the worktree rebuilt itself"
+        }
+      }
+    },
+    {
+      "title": "Safety pehle",
+      "body": "Agar file me unsaved edits hain, checkout unhe destroy karne ke bajaye mana kar deta hai. -f matlab 'main sach me karna chahta hoon'.",
+      "min": "developer"
+    }
+  ],
+  "git-switch": [
+    {
+      "title": "Focused checkout",
+      "body": "SWITCH checkout ka sirf branch-wala hissa hai. Ek kaam: HEAD ko branches ke beech move karna.",
+      "cmd": "git switch feature",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "feature",
+              "node": 1
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "headmove",
+          "highlight": 1
+        }
+      }
+    },
+    {
+      "title": "Poora hop ek pointer edit hai",
+      "body": "HEAD.txt doosri branch ke naam se rewritten hota hai. Disk par files us branch ke blobs se synchronized hoti hain.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "feature",
+              "node": 1
+            },
+            {
+              "name": "HEAD",
+              "node": 1,
+              "active": true
+            }
+          ],
+          "animation": "headmove",
+          "highlight": 1,
+          "caption": "One file rewrite + a worktree sync — done"
+        }
+      }
+    },
+    {
+      "title": "Create + hop ek saath",
+      "body": "git switch -c name branch plus switch do kaam ek me karta hai — checkout -b ka modern replacement.",
+      "cmd": "git switch -c wip/idea",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            },
+            {
+              "name": "wip/idea",
+              "node": 2
+            }
+          ],
+          "animation": "branch",
+          "highlight": 2
+        }
+      },
+      "min": "junior"
+    }
+  ],
+  "git-merge": [
+    {
+      "title": "Do branches, do timelines",
+      "body": "Aapki feature branch aur main dono move hui hain jab se same commit se split hui thi.",
+      "cmd": "git merge feature",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "main: dark mode",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "c1d8e2f",
+              "msg": "feature: login",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "Diverged from commit 4b7c2a5 — the merge base"
+        }
+      }
+    },
+    {
+      "title": "Three-way merge",
+      "body": "Git base commit ko dono tips se compare karta hai, phir dono sets of changes ko combine karta hai. Alag regions khud merge ho jaate hain.",
+      "cmd": "git commit",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "main: dark mode",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "c1d8e2f",
+              "msg": "feature: login",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "0f9e8d7",
+              "msg": "merge branch 'feature'",
+              "parents": [
+                2,
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 4
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "merge",
+          "highlight": 4,
+          "caption": "A merge commit joins both parents — history preserved"
+        }
+      }
+    },
+    {
+      "title": "Conflict ka waqt",
+      "body": "Dono sides ne same lines edit ki? Git guess nahi karta — dono ko <<<<<<< aur >>>>>>> markers ke saath dikhata hai.",
+      "cmd": "git add . && git commit",
+      "visual": {
+        "kind": "diff",
+        "caption": "Conflicts show 'ours' vs 'theirs' — you decide, then commit"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-rebase": [
+    {
+      "title": "Naya base, wahi ideas",
+      "body": "Aap chahte ho ki aapki feature newest main par baithe — kisi stale fork point par nahi.",
+      "cmd": "git rebase main",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "a1b2c3d",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "e4f5a6b",
+              "msg": "main: fix nav",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c7d8e9f",
+              "msg": "feature: add btn",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "0a1b2cd",
+              "msg": "feature: wire API",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 1
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "feature grew from the old main"
+        }
+      }
+    },
+    {
+      "title": "Replay karo, copy nahi",
+      "body": "Har feature commit main ke naye tip par re-create hota hai. Same diff, naya parent, naya hash. Wahi changes, cleaner story.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "a1b2c3d",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "e4f5a6b",
+              "msg": "main: fix nav",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "f1a2b3c",
+              "msg": "feature: add btn'",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "b2c3d4e",
+              "msg": "feature: wire API'",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 1
+            },
+            {
+              "name": "feature",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "feature now sits on the newest main — linear history"
+        }
+      }
+    },
+    {
+      "title": "Conflicts ek-ek commit par handle karo",
+      "body": "Agar replayed commit takra jaaye, rebase ruk jaata hai taaki aap fix karo, phir continue. Commit by commit.",
+      "cmd": "git rebase --continue",
+      "visual": {
+        "kind": "diff",
+        "caption": "Paused mid-replay: resolve, then git rebase --continue"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "Rewrite rule",
+      "body": "Rebased commits ko naye hashes milte hain. Jo doosron ne pull kar liya use kabhi rebase mat karo — aise force-pushes paida hote hain.",
+      "min": "developer"
+    }
+  ],
+  "git-log": [
+    {
+      "title": "Puchho kisne kya kiya",
+      "body": "git log HEAD se shuru hota hai aur har parent pointer follow karta hai, har commit print karta hai.",
+      "cmd": "git log --oneline --graph",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "feat: dark mode",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "The newest commit is on top"
+        }
+      }
+    },
+    {
+      "title": "Ye linked list hai",
+      "body": "Trick: commits sirf apne parents ko jaante hain. Log bas us chain par chal raha hai — neeche, neeche, first commit tak.",
+      "cmd": "git log --all --decorate",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "feat: dark mode",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 0,
+          "caption": "Follow the parent pointers to rewind time"
+        }
+      },
+      "min": "junior"
+    }
+  ],
+  "git-show": [
+    {
+      "title": "Ek commit kholo",
+      "body": "git show ek single object ka full anatomy dikhata hai — commit ke liye, metadata plus uska diff.",
+      "cmd": "git show 74d3b9f",
+      "visual": {
+        "kind": "objects",
+        "caption": "tree, parent, author, committer, message — then the diff"
+      }
+    },
+    {
+      "title": "Past se file nikalo",
+      "body": "rev:path syntax kisi bhi file ko bilkul waisa print karta hai jaise wo thi: git show HEAD~2:src/App.tsx.",
+      "cmd": "git show HEAD^:README.md",
+      "visual": {
+        "kind": "objects",
+        "caption": "Any object can be shown: commits, tags, trees, blobs"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-diff": [
+    {
+      "title": "Maine kya touch kiya?",
+      "body": "git diff aapki working files ko index se compare karta hai — har edit jo aapne abhi stage nahi kiya.",
+      "cmd": "git diff",
+      "visual": {
+        "kind": "diff",
+        "caption": "Worktree vs index = the red and green you just made"
+      }
+    },
+    {
+      "title": "Dekho kya staged hai",
+      "body": "git diff --cached index ko HEAD se compare karta hai — aapke next commit ka preview.",
+      "cmd": "git diff --cached",
+      "visual": {
+        "kind": "diff",
+        "caption": "Index vs HEAD = exactly what the commit will change"
+      }
+    },
+    {
+      "title": "Blob hashing kaam chhota karta hai",
+      "body": "Same content = same SHA-1 — matching blobs instantly skip hote hain. Sirf changed files diff engine me jaati hain.",
+      "visual": {
+        "kind": "diff",
+        "caption": "Same content → same hash → skipped"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-blame": [
+    {
+      "title": "Culprit dhundo (polite ho kar)",
+      "body": "git blame file ki history backward walk karta hai aur har line us commit se mark karta hai jisne usse introduce kiya.",
+      "cmd": "git blame src/main.ts",
+      "visual": {
+        "kind": "diff",
+        "caption": "Every line now wears its origin commit"
+      }
+    },
+    {
+      "title": "Trail follow karo",
+      "body": "Blamed commit se git show ke saath uske message par jump karo — 'kyun' aksar waheen likha hota hai.",
+      "cmd": "git show 4b7c2a5",
+      "visual": {
+        "kind": "objects",
+        "caption": "blame → show → the story"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-reflog": [
+    {
+      "title": "Undo stack",
+      "body": "Jab bhi HEAD move hota hai — commit, reset, rebase, checkout, amend — git usse journal karta hai. git reflog wahi journal print karta hai.",
+      "cmd": "git reflog",
+      "visual": {
+        "kind": "reflog",
+        "caption": "HEAD@{n} = where you were n moves ago"
+      }
+    },
+    {
+      "title": "Kuch bhi recover karo",
+      "body": "Hard-reset bahut door gaya? Reflog me purani position dhundo aur HEAD ko wapas point karo. Commit ab bhi objects/ me hai.",
+      "cmd": "git reset --hard HEAD@{1}",
+      "visual": {
+        "kind": "reflog",
+        "caption": "A hard reset only forgets the pointer — the reflog remembers"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "90-din ki window",
+      "body": "Unreachable commits delete nahi hote — bas wait karte hain. git gc unhe default 90 din ke baad finally prune karta hai.",
+      "visual": {
+        "kind": "objects",
+        "caption": "Until gc, 'lost' commits are recoverable"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-gc": [
+    {
+      "title": "Repository mota ho jaata hai",
+      "body": "Har add aur commit alag-alag compressed loose files likhta hai. Haazaron ke baad .git bloated aur slow ho jaata hai.",
+      "cmd": "git gc --aggressive",
+      "visual": {
+        "kind": "gitdir",
+        "caption": "Loose objects pile up as you work"
+      }
+    },
+    {
+      "title": "Compress aur prune",
+      "body": "git gc loose objects ko ek delta-compressed packfile me pack karta hai aur unreachable, aged-out objects delete karta hai.",
+      "visual": {
+        "kind": "objects",
+        "caption": "Packed: only the differences between versions are stored"
+      }
+    }
+  ],
+  "git-reset": [
+    {
+      "title": "Bahut door, bahut fast",
+      "body": "Ek ganda commit aapki branch ke tip par hai. Aap chahte ho branch pointer uspar se peeche slide kare.",
+      "cmd": "git reset --hard HEAD~1",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "oops: broken build",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "The oops commit is on top"
+        }
+      }
+    },
+    {
+      "title": "Pointer rewind karta hai",
+      "body": "Branch file purane commit ko point karne ke liye rewritten hoti hai. Oops commit ab bhi objects/ me hai — bas unreachable.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "oops: broken build",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 2,
+              "active": true
+            }
+          ],
+          "animation": "reset",
+          "highlight": 2,
+          "caption": "main + HEAD slide back; the oops commit dangles"
+        }
+      }
+    },
+    {
+      "title": "Regret ki teen gehrayi",
+      "body": "soft cheezein staged rakhta hai, mixed (default) unstage karta hai, hard aapki files ko bhi revert kar deta hai.",
+      "cmd": "git reset <commit>",
+      "visual": {
+        "kind": "staging",
+        "staged": [],
+        "dirty": [],
+        "mode": "restore",
+        "caption": "--soft / --mixed / --hard = which stores to roll back"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-restore": [
+    {
+      "title": "File kharab kar di?",
+      "body": "Aapki src/bug.js ki working copy tooti hui hai. Restore use index (ya HEAD) se rewrite karta hai.",
+      "cmd": "git restore src/bug.js",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/bug.js"
+        ],
+        "dirty": [],
+        "mode": "restore",
+        "caption": "The index copy is healthy — let's take it back"
+      }
+    },
+    {
+      "title": "Galti se unstage ho gaya?",
+      "body": "restore --staged HEAD ka version wapas index me kheenchta hai, file ko unstage karke — disk ko touch kiye bina.",
+      "cmd": "git restore --staged src/bug.js",
+      "visual": {
+        "kind": "staging",
+        "staged": [],
+        "dirty": [],
+        "mode": "add",
+        "caption": "--staged = undo the staging"
+      }
+    },
+    {
+      "title": "History se wapas lao",
+      "body": "--source kisi bhi revision ka blob nikala deta hai. Gayi file, purana version, jo bhi — read karke nikaal lo.",
+      "cmd": "git restore --source=HEAD~2 file.ts",
+      "visual": {
+        "kind": "objects",
+        "caption": "--source=<rev> = restore from any commit"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-revert": [
+    {
+      "title": "Shared branch, toota commit",
+      "body": "Ek ganda commit har teammate tak ja chuka. Reset se rewrite karne par unke clones toot jaate — isliye hum add karte hain.",
+      "cmd": "git revert 74d3b9f",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "dead: old login",
+              "parents": [
+                2
+              ]
+            },
+            {
+              "id": "e1b5a09",
+              "msg": "feature A",
+              "parents": [
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 4
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "The target: a bad commit buried in history"
+        }
+      }
+    },
+    {
+      "title": "Correction, erasure nahi",
+      "body": "git revert reverse diff ko ek brand-new commit ke roop me top par apply karta hai. Ganda commit history me rehta hai — sach me.",
+      "cmd": "git commit",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "dead: old login",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e1b5a09",
+              "msg": "feature A",
+              "parents": [
+                2
+              ]
+            },
+            {
+              "id": "8c4f2e9",
+              "msg": "revert old login",
+              "parents": [
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 4
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "merge",
+          "highlight": 4,
+          "caption": "The inverse commit neutralizes the damage"
+        }
+      }
+    }
+  ],
+  "git-stash": [
+    {
+      "title": "Feature beech me ruk gaya",
+      "body": "Aadha-finished changes aapke worktree me hain, lekin abhi branch switch karni hai.",
+      "cmd": "git stash",
+      "visual": {
+        "kind": "staging",
+        "staged": [
+          "src/wip.ts",
+          "docs/notes.md"
+        ],
+        "dirty": [],
+        "mode": "add",
+        "caption": "Uncommitted work you don't want to lose"
+      }
+    },
+    {
+      "title": "Ek box me park kiya",
+      "body": "Aapke changes stash stack par special commits ke roop me record hote hain, aur worktree clean HEAD par reset hota hai.",
+      "visual": {
+        "kind": "stash",
+        "caption": "stash@{0} holds the WIP — the worktree is clean"
+      }
+    },
+    {
+      "title": "Baad me wapas aana",
+      "body": "Koi branch, kabhi bhi: git stash pop stack ka top reapply karta hai aur use remove kar deta hai.",
+      "cmd": "git stash pop",
+      "visual": {
+        "kind": "stash",
+        "caption": "pop = apply + drop · apply = keep it on the stack"
+      }
+    }
+  ],
+  "git-cherry-pick": [
+    {
+      "title": "Ek fix, doosri branch me bhi",
+      "body": "Ek hotfix main par aa gaya, lekin release branch ko abhi chahiye — main ka poora merge kiye bina.",
+      "cmd": "git cherry-pick c1d8e2f",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "base",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c1d8e2f",
+              "msg": "fix: hotfix #42",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e5f6a7b",
+              "msg": "release v1",
+              "parents": [
+                1
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "release",
+              "node": 3
+            },
+            {
+              "name": "hotfix",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 2,
+          "caption": "The fix commit — about to travel"
+        }
+      }
+    },
+    {
+      "title": "Release par replay",
+      "body": "Release par ek naya commit aata hai — same change, lekin brand-new hash aur parent ke saath.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "base",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c1d8e2f",
+              "msg": "fix: hotfix #42",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e5f6a7b",
+              "msg": "release v1",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "0a9b8c7",
+              "msg": "fix: hotfix #42'",
+              "parents": [
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "release",
+              "node": 4
+            },
+            {
+              "name": "hotfix",
+              "node": 2
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "merge",
+          "highlight": 4,
+          "caption": "The fix now exists on both branches"
+        }
+      }
+    }
+  ],
+  "git-clean": [
+    {
+      "title": "Idhar-udhar files",
+      "body": "Untracked files aur build ka kachra worktree me pada hai. Pehle preview karo ki clean kya hatayega.",
+      "cmd": "git clean -n",
+      "visual": {
+        "kind": "status",
+        "caption": "??? = untracked · clean only touches these"
+      }
+    },
+    {
+      "title": "Full sweep",
+      "body": "clean -fd untracked files AUR directories delete karta hai; -x ignored files bhi remove karta hai. Permanent — isliye pehle preview.",
+      "cmd": "git clean -fd",
+      "visual": {
+        "kind": "status",
+        "caption": "clean -fd: files + dirs · clean -fdx: plus ignored"
+      }
+    }
+  ],
+  "git-clone": [
+    {
+      "title": "Pura project pakad lo",
+      "body": "Aap ek remote URL par point karte ho. Sab kuch — har commit, branch, tag — neeche flow hone wala hai.",
+      "cmd": "git clone git@github.com:user/repo.git",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "clone",
+        "caption": "The object database streams down"
+      }
+    },
+    {
+      "title": "Fetch + checkout ek me",
+      "body": "Clone literally ek fetch (saare objects download) hai uske baad ek checkout (default branch materialize karna).",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "pull",
+        "caption": "Objects land, then the working tree is built"
+      }
+    },
+    {
+      "title": "Origin aapke liye wired hai",
+      "body": "refs/remotes/origin/main ban jaati hai aur aapki main use track karna seekh jaati hai — isi se day one par git pull kaam karta hai.",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "fetch",
+        "caption": "origin remote is bookmarked in your config"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-remote": [
+    {
+      "title": "Doosri repo bookmark karo",
+      "body": "Remote sirf name → URL ka note hai. Fetch ya push tak koi network nahi hota.",
+      "cmd": "git remote add origin git@github.com:user/repo.git",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "clone",
+        "caption": "git remote add links a name to a URL"
+      }
+    },
+    {
+      "title": "Fork workflow",
+      "body": "origin aapka hai, upstream original. Dono bookmarks rakho aur kahin se bhi sync kar sakte ho.",
+      "cmd": "git remote -v",
+      "visual": {
+        "kind": "remote",
+        "remote": "upstream",
+        "branch": "main",
+        "mo": "fetch",
+        "caption": "Two bookmarks, one project"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-fetch": [
+    {
+      "title": "Badle bina dekho",
+      "body": "Aap remote ke naye commits par peek karna chahte ho bina apne kaam ko disturb kiye.",
+      "cmd": "git fetch",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "fetch",
+        "caption": "Objects download; your branch and files stay put"
+      }
+    },
+    {
+      "title": "Remote refs update hoti hain, aap nahi",
+      "body": "refs/remotes/origin/main aage slide hoti hai. Aapki apni main, index aur worktree untouched rehte hain.",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "fetch",
+        "caption": "Only the remote-tracking ref moved"
+      }
+    },
+    {
+      "title": "Future preview karo",
+      "body": "git diff HEAD..origin/main dikhata hai ki ek pull kya laayega — usse commit karne se pehle.",
+      "cmd": "git log HEAD..origin/main",
+      "visual": {
+        "kind": "diff",
+        "caption": "HEAD..origin/main = 'what's coming'"
+      },
+      "min": "junior"
+    }
+  ],
+  "git-pull": [
+    {
+      "title": "Team ke saath sync",
+      "body": "git pull remote ka naya kaam fetch karta hai, phir use aapki current branch me merge karta hai.",
+      "cmd": "git pull",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "pull",
+        "caption": "Objects come down…"
+      }
+    },
+    {
+      "title": "…phir merge fold karta hai",
+      "body": "Agar aapne koi local commit nahi kiya, main bas fast-forward hoti hai. Kiya hai to merge commit (ya rebase) unhe jodta hai.",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "74d3b9f",
+              "msg": "main: upstream work",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e5f6a7b",
+              "msg": "your local edit",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "0f9e8d7",
+              "msg": "merge",
+              "parents": [
+                2,
+                3
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 4
+            },
+            {
+              "name": "HEAD",
+              "node": 4,
+              "active": true
+            }
+          ],
+          "animation": "merge",
+          "highlight": 4,
+          "caption": "Both histories now belong to your branch"
+        }
+      }
+    },
+    {
+      "title": "Merge ki jagah rebase",
+      "body": "git pull --rebase aapke local edits ko merge ki jagah top par replay karta hai — ek clean, seedhi line.",
+      "visual": {
+        "kind": "rebased",
+        "spec": {
+          "action": "git pull --rebase",
+          "before": {
+            "animation": "log",
+            "nodes": [
+              {
+                "id": "a1b2c3d",
+                "msg": "init",
+                "parents": []
+              },
+              {
+                "id": "e4f5a6b",
+                "msg": "upstream main",
+                "parents": [
+                  0
+                ]
+              },
+              {
+                "id": "c7d8e9f",
+                "msg": "your edit",
+                "parents": [
+                  0
+                ]
+              }
+            ],
+            "refs": [
+              {
+                "name": "main",
+                "node": 1
+              },
+              {
+                "name": "HEAD",
+                "node": 2,
+                "active": true
+              }
+            ]
+          },
+          "after": {
+            "animation": "log",
+            "nodes": [
+              {
+                "id": "a1b2c3d",
+                "msg": "init",
+                "parents": []
+              },
+              {
+                "id": "e4f5a6b",
+                "msg": "upstream main",
+                "parents": [
+                  0
+                ]
+              },
+              {
+                "id": "f1a2b3c",
+                "msg": "your edit'",
+                "parents": [
+                  1
+                ]
+              }
+            ],
+            "refs": [
+              {
+                "name": "main",
+                "node": 2
+              },
+              {
+                "name": "HEAD",
+                "node": 2,
+                "active": true
+              }
+            ]
+          }
+        }
+      },
+      "min": "junior"
+    }
+  ],
+  "git-push": [
+    {
+      "title": "Apne commits share karo",
+      "body": "Aapne locally commit kiya. Remote ke paas wo objects abhi nahi hain — wo upar travel karne wale hain.",
+      "cmd": "git push",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "push",
+        "caption": "Your branch is ahead — the upload starts"
+      }
+    },
+    {
+      "title": "Upload + advance",
+      "body": "Aapke naye objects remote par stream hote hain, aur origin/main aapki branch se match karne ke liye advance hota hai.",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "push",
+        "caption": "Remote branch ref slides to your tip"
+      }
+    },
+    {
+      "title": "Rejected? Aap peeche ho",
+      "body": "Remote history khona mana karta hai. Pehle pull --rebase, phir push — shared branches ki daily rhythm.",
+      "cmd": "git pull --rebase",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "pull",
+        "caption": "'non-fast-forward' = the remote moved first"
+      },
+      "min": "junior"
+    },
+    {
+      "title": "Force-push, safely",
+      "body": "Remote branch rewrite karni hai? Sirf --force-with-lease: ye tabhi force karta hai jab remote waisa hi ho jaisa aapne aakhri baar dekha.",
+      "cmd": "git push --force-with-lease",
+      "visual": {
+        "kind": "remote",
+        "remote": "origin",
+        "branch": "main",
+        "mo": "push",
+        "caption": "--force-with-lease: forced, but never blind"
+      },
+      "min": "developer"
+    }
+  ],
+  "git-tag": [
+    {
+      "title": "Milestone freeze karo",
+      "body": "Aapne v1.0.0 ship kiya. Branch drift karti hai — aapko ek aisa naam chahiye jo kabhi move na ho.",
+      "cmd": "git tag -a v1.0.0 -m \"production release\"",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e1b5a09",
+              "msg": "ship it",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            }
+          ],
+          "animation": "log",
+          "highlight": 3,
+          "caption": "Time to pin this moment"
+        }
+      }
+    },
+    {
+      "title": "Pin drop hota hai",
+      "body": "Ek tag ref us commit ko hamesha ke liye point karta hai — chahe main aage race kare, v1.0.0 wahi point karta rehta hai.",
+      "cmd": "git push origin --tags",
+      "visual": {
+        "kind": "graph",
+        "spec": {
+          "nodes": [
+            {
+              "id": "9a2f1c0",
+              "msg": "init project",
+              "parents": []
+            },
+            {
+              "id": "4b7c2a5",
+              "msg": "add components",
+              "parents": [
+                0
+              ]
+            },
+            {
+              "id": "c86d9ee",
+              "msg": "style layout",
+              "parents": [
+                1
+              ]
+            },
+            {
+              "id": "e1b5a09",
+              "msg": "ship it",
+              "parents": [
+                2
+              ]
+            }
+          ],
+          "refs": [
+            {
+              "name": "main",
+              "node": 3
+            },
+            {
+              "name": "HEAD",
+              "node": 3,
+              "active": true
+            },
+            {
+              "name": "v1.0.0",
+              "node": 3
+            }
+          ],
+          "animation": "tag",
+          "highlight": 3,
+          "caption": "A permanent landmark on the commit"
+        }
+      }
+    }
+  ]
+}

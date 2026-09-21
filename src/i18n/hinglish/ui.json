@@ -1,0 +1,207 @@
+{
+"nav": {
+    "home": "Home",
+    "map": "Command Map",
+    "learn": "Sikhna Shuru Karein",
+    "scenario": "Kaam ka ek din",
+    "learnerPrompt": "Main seekh raha hoon\u2026",
+    "themeAria": "Dark mode on/off karein",
+    "menuAria": "Navigation on/off karein"
+  },
+  "footer": {
+    "tagline": "Git ko andar se samjhein. Sirf commands nahi, pura model.",
+    "explore": "Explore",
+    "map": "Command Map",
+    "firstCommand": "Pehli Command",
+    "readHistory": "History Padhein",
+    "commands": "Commands",
+    "builtBy": "Banaaya",
+    "credit": "Next.js, Tailwind & Motion se banaya",
+    "madeFor": "Jo insaan Git ko sach me samajhna chahta hai.",
+    "gh": "GitHub",
+    "x": "X / Twitter",
+    "linkedin": "LinkedIn",
+    "mail": "Email",
+    "web": "Website"
+  },
+  "tip": {
+    "body": "Tip: animated diagrams aur code bade screen par sabse clearly dikhte hain — phone ko sideways karein ya desktop par kholen, poori experience milegi.",
+    "dismissAria": "Tip band karein"
+  },
+  "lang": {
+    "label": "Language",
+    "english": "English",
+    "hinglish": "Hinglish",
+    "englishNote": "Perfect English",
+    "hinglishNote": "Hindi mix — Indian readers ke liye"
+  },
+  "home": {
+    "badge": "Git ko aise seekhein jaise woh sach me kaam karta hai",
+    "titleStart": "Har git command,",
+    "titleAccent": "andar se",
+    "titleEnd": " khol ke dekho.",
+    "subtitle": "Bas yaad karne ko nahi. Har command ka simple explain, objects/refs aur HEAD ke andar kya hota hai uska animated view — aur wo real aliases jo pros roz type karte hain.",
+    "ctaStart": "Shuru karein",
+    "ctaMap": "Command map kholen",
+    "statCommands": "{n} commands decoded",
+    "statWorkflows": "6 workflows",
+    "statAnimated": "har chapter animated",
+    "graphLabel": "live",
+    "mentalEyebrow": "Mental model",
+    "mentalTitle": "Chaar cheezein. Poore engine ka raaz.",
+    "mentalSubtitle": "Git ki har harkat objects, refs, index aur HEAD ke beech ka khel hai. Ye chaar samajh lo, neeche ki har command aasaan lagne lagegi.",
+    "fundamentals": [
+      {
+        "title": "Objects",
+        "desc": "Har blob, tree, commit aur tag ek immutable, content-addressed object hai jo .git/objects me stored hai. Kabhi edit nahi hota — history sirf badhti hai.",
+        "points": ["blob = file ka content", "tree = directory ka map", "commit = waqt ka snapshot"]
+      },
+      {
+        "title": "Refs",
+        "desc": "Ref ek file hai jisme ek commit ka hash hota hai — history me ek position ka naam. Branches aur tags same cheez, bas move hone ke rules alag.",
+        "points": ["har commit par branch move hoti hai", "tags kabhi move nahi hote", "remote-tracking refs remote ka mirror"]
+      },
+      {
+        "title": "The Index",
+        "desc": "Staging area bhi kehte hain. .git/index me aapka agla commit hota hai: path \u2192 blob-hash pairs. Snapshot lene se pehle usse bana sakte ho.",
+        "points": ["preview ki tarah kaam karta hai", "working files se alag", "status isi se compare karta hai"]
+      },
+      {
+        "title": "HEAD",
+        "desc": "Ek file jo batati hai ki aap kis branch par ho. Jab commit, reset ya switch karte ho, HEAD (aur jo branch usse point karti hai) wahi move hota hai.",
+        "points": ["aam taur par \u2192 refs/heads/main", "detached = seedha commit", "wo 'you are here' wala marker"]
+      }
+    ],
+    "mapBannerTitle": "Command map me ye sab kaise judta hai dekho",
+    "mapBannerDesc": "Har command ko uski jagah par dikhaya hai — working tree, index, repository aur remote.",
+    "mapBannerCta": "Map kholen",
+    "libraryEyebrow": "Library",
+    "libraryTitle": "Har command, uske kaam ke hisaab se.",
+    "commandsCount": "{n} commands",
+    "ctaTitleStart": "Guess karna band karo. Commits ko",
+    "ctaTitleAccent": "seeing",
+    "ctaTitleEnd": " shuru karo.",
+    "ctaSubtitle": "Koi ek command page kholo aur dekho uske objects, refs aur pointers aapki aankhon ke saamne move ho rahe hain — phir alias se hamesha ke liye yaad karo.",
+    "ctaBegin": "\u2014 andar se start karein",
+    "ctaFinal": "Command map",
+    "scenarioTitle": "Saaf-suthra, insaan wala git ka din dekho",
+    "scenarioDesc": "Solah guided steps: repo kharada karo, gandhi session ko chore / feat / style prefixes ke saath atomic commits me baanto, aur feature ko branch par ship karo \u2014 50/72 rule se, na ki 50 files ek commit me.",
+    "scenarioCta": "Din chalo"
+  },
+  "categories": {
+    "setup": { "label": "Setup", "blurb": "Repository ko zinda karein." },
+    "snapshotting": { "label": "Snapshotting", "blurb": "Badlaav ko history banaayein." },
+    "branching": { "label": "Branching & Merging", "blurb": "Parallel timelines explore karein." },
+    "inspecting": { "label": "Inspecting & History", "blurb": "Project ki kahani padhein." },
+    "undoing": { "label": "Undoing & Rewriting", "blurb": "Commits aur galtiyon ko theek karein." },
+    "sharing": { "label": "Sharing & Sync", "blurb": "Machines ke beech history move karein." }
+  },
+  "command": {
+    "backAll": "Sab commands",
+    "mapCta": "Command map me ye kahaan fit hota hai",
+    "what": "Ye kya karta hai",
+    "watch": "Dekho \u2014 play dabao",
+    "watchDesc": "Ek narrated, step-by-step walkthrough jo dikhata hai kaise karna hai — sirf theory nahi. Ye us learner mode ke hisaab se adjust hota hai jo aapne upar select kiya.",
+    "hood": "Under the hood",
+    "aliases": "Pros ke chhote shortcuts",
+    "aliasIntro": "{cmd} ka concept yaad rakho, phir in shortcuts me se koi ek instant bana do. Aliases asli git config keys hain \u2014 aise banate hain:",
+    "aliasAlias": "Alias",
+    "aliasExpands": "Kya kholta hai",
+    "aliasWhy": "Log kyun use karte hain",
+    "anatomy": "Command ka structure",
+    "uses": "Kab use karein",
+    "proTip": "Pro tip",
+    "deeper": "Aur gahraai me",
+    "prev": "Pichhla",
+    "next": "Aagla",
+    "facts": "Quick facts",
+    "cheat": "Alias cheat-sheet",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "syntax": "Syntax",
+    "step": "Step {n}"
+  },
+  "map": {
+    "badge": "Poora command map",
+    "title": "Ek badlaav ka safar follow karein.",
+    "subtitle": "Har command wahin rehta hai jahan woh kaam karta hai. File working tree me paida hoti hai, index me copy hoti hai, commit me seal hoti hai, phir remote tak jaati hai. Kisi bhi command par tap karke under the hood dekho.",
+    "legendStaged": { "title": "Staged", "desc": "Index me copy ho gaya — agle commit ka content." },
+    "legendModified": { "title": "Modified", "desc": "Index se alag hai, abhi staged nahi." },
+    "legendUntracked": { "title": "Untracked", "desc": "Git ne kabhi na dekha — nayi ya ignore-worthy file." },
+    "stages": {
+      "setup": { "title": "Setup", "sub": "repo ka janam" },
+      "work": { "title": "Working Tree", "sub": "files disk par" },
+      "index": { "title": "Index · Staging", "sub": "aapka next commit" },
+      "repo": { "title": "Repository", "sub": "objects + refs · history" },
+      "remote": { "title": "Remote", "sub": "origin · doosri machine" }
+    },
+    "placements": {
+      "git-init": "banata hai .git + HEAD",
+      "git-config": "identity aur aliases",
+      "git-status": "kya badla?",
+      "git-diff": "changes dikhao",
+      "git-clean": "untracked delete karo",
+      "git-add": "snapshots stage karo →",
+      "git-commit": "snapshot likho",
+      "git-branch": "naya pointer",
+      "git-checkout": "jump + rebuild",
+      "git-switch": "branches badlo",
+      "git-merge": "histories jodo",
+      "git-rebase": "replay + linearize",
+      "git-reset": "refs rewind karo",
+      "git-revert": "inverse commit",
+      "git-restore": "files wapas lao",
+      "git-stash": "changes park karo ✱",
+      "git-cherry-pick": "commit copy karo",
+      "git-tag": "milestone pin karo",
+      "git-log": "history padho",
+      "git-show": "object kholo",
+      "git-blame": "har line kisne banayi",
+      "git-reflog": "HEAD ka journal",
+      "git-gc": "dead objects saaf karo",
+      "git-clone": "fetch + checkout",
+      "git-remote": "URLs bookmark karo",
+      "git-fetch": "download, touch mat karo",
+      "git-pull": "fetch + merge ↓",
+      "git-push": "upload + advance ↑"
+    }
+  },
+  "player": {
+    "pauseAria": "Roko",
+    "playAria": "Chalao",
+    "prevAria": "Pichhla step",
+    "nextAria": "Aagla step",
+    "replayAria": "Ye step dubara dekho",
+    "stepOf": "{current} / {total}",
+    "goToStep": "Step {n} par jao: {title}",
+    "done": "Aap end tak pahunch gaye!",
+    "replayAll": "Dobara chalao",
+    "noVisual": "Iske liye koi diagram nahi hai — ye ek golden rule hai jo agle step se pehle yaad rakhna chahiye."
+  },
+  "notFound": {
+    "badge": "HEAD yahaan detach ho jaata hai",
+    "title": "Ye commit exist nahi karta.",
+    "body": "Koi bhatki hui ref, force-push, ya typo — kuch yahaan point karke rewound ho gaya. Zindagi ke reflog me is page ka koi record nahi.",
+    "cta": "Wapas shuruaat par"
+  },
+  "scenario": {
+    "badge": "The guided day",
+    "title": "Ek asli git ka din. Insaan jaisa.",
+    "subtitle": "Realistic session ka work/play walkthrough — chhote atomic commits, conventional prefixes, aur ek saaf kahani. Koi 50-file blob nahi, koi aalsi \"update\" message nahi.",
+    "actsLabel": "Din ek nazar me",
+    "ruleTitle": "50 / 72 rule",
+    "ruleBody": "Subject 50 characters se chhota, detail 72 par wrap. Agar ek change ko ek se zyada paragraph chahiye, toh uski apni commit banti hai.",
+    "whyTitle": "Atomic kyun zaroori hai",
+    "whyBody": "Atomic commit matlab ek logical change — review aasaan, revert aasaan, cherry-pick aasaan. 50-file mega-commit ek black box hai jise chhedne ki himmat kisi me nahi.",
+    "backAll": "Sab commands"
+  },
+  "common": {
+    "open": "Kholen",
+    "commands": "commands",
+    "levels": {
+      "beginner": "beginner",
+      "intermediate": "intermediate",
+      "advanced": "advanced"
+    }
+  }
+}

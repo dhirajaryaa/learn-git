@@ -1,0 +1,207 @@
+{
+  "nav": {
+    "home": "Home",
+    "map": "Command Map",
+    "learn": "Start Learning",
+    "scenario": "A day of work",
+    "learnerPrompt": "I'm learning as a\u2026",
+    "themeAria": "Toggle dark mode",
+    "menuAria": "Toggle navigation"
+  },
+  "footer": {
+    "tagline": "A from-the-inside-out guide to Git. Understand the model, not just the commands.",
+    "explore": "Explore",
+    "map": "Command Map",
+    "firstCommand": "First Command",
+    "readHistory": "Read History",
+    "commands": "Commands",
+    "builtBy": "Built by",
+    "credit": "Built with Next.js, Tailwind & Motion by",
+    "madeFor": "Made for humans who want to truly get Git.",
+    "gh": "GitHub",
+    "x": "X / Twitter",
+    "linkedin": "LinkedIn",
+    "mail": "Email",
+    "web": "Website"
+  },
+  "tip": {
+    "body": "Tip: the animated diagrams and code read best on a larger screen \u2014 turn your phone sideways or open on desktop for the full experience.",
+    "dismissAria": "Dismiss tip"
+  },
+  "lang": {
+    "label": "Language",
+    "english": "English",
+    "hinglish": "Hinglish",
+    "englishNote": "Perfect English",
+    "hinglishNote": "Hindi mix \u2014 for Indian readers"
+  },
+  "home": {
+    "badge": "Learn git the way it actually works",
+    "titleStart": "Every git command,",
+    "titleAccent": "opened up",
+    "titleEnd": " from the inside.",
+    "subtitle": "No more memorizing incantations. Each command gets a plain-English explanation, an animated look at what happens to objects, refs and HEAD under the hood \u2014 and the real-world aliases the pros type every day.",
+    "ctaStart": "Start with",
+    "ctaMap": "Open the command map",
+    "statCommands": "{n} commands decoded",
+    "statWorkflows": "6 workflows",
+    "statAnimated": "every chapter animated",
+    "graphLabel": "live",
+    "mentalEyebrow": "The mental model",
+    "mentalTitle": "Four things. That's the whole engine.",
+    "mentalSubtitle": "Everything git does is a dance between objects, refs, the index and HEAD. Commit to these four and every command below becomes obvious.",
+    "fundamentals": [
+      {
+        "title": "Objects",
+        "desc": "Every blob, tree, commit and tag is an immutable, content-addressed object stored in .git/objects. Nothing is ever edited \u2014 history only grows.",
+        "points": ["blob = file content", "tree = directory map", "commit = a snapshot of time"]
+      },
+      {
+        "title": "Refs",
+        "desc": "A ref is just a file holding one commit hash \u2014 a name for a position in history. Branches and tags are the same thing with different rules for moving.",
+        "points": ["branches move on every commit", "tags never move", "remote-tracking refs mirror remotes"]
+      },
+      {
+        "title": "The Index",
+        "desc": "Also called the staging area, .git/index holds your next commit: path \u2192 blob-hash pairs. It lets you build a snapshot before you take it.",
+        "points": ["works like a preview", "independent of working files", "what status compares against"]
+      },
+      {
+        "title": "HEAD",
+        "desc": "A file that says which branch you're on. When you commit, reset, or switch, HEAD (and the branch it points to) is what moves.",
+        "points": ["usually \u2192 refs/heads/main", "detached = raw commit", "the worn 'you are here' marker"]
+      }
+    ],
+    "mapBannerTitle": "See how they connect in the command map",
+    "mapBannerDesc": "Every command plotted against the places it touches \u2014 working tree, index, repository and remote.",
+    "mapBannerCta": "Open map",
+    "libraryEyebrow": "The library",
+    "libraryTitle": "Every command, grouped by the job it does.",
+    "commandsCount": "{n} commands",
+    "ctaTitleStart": "Stop guessing. Start",
+    "ctaTitleAccent": "seeing",
+    "ctaTitleEnd": " commits.",
+    "ctaSubtitle": "Open one command page and watch its objects, refs and pointers move right in front of you \u2014 then memorize it forever with an alias.",
+    "ctaBegin": "\u2014 begin inside out",
+    "ctaFinal": "Command map",
+    "scenarioTitle": "Watch a real, human day of git",
+    "scenarioDesc": "Sixteen guided steps: scaffold the repo, split a messy session into atomic commits with chore / feat / style prefixes, and ship a feature on a branch \u2014 the 50/72 way, not the 50-files-in-one-commit way.",
+    "scenarioCta": "Walk the day"
+  },
+  "categories": {
+    "setup": { "label": "Setup", "blurb": "Bring a repository to life." },
+    "snapshotting": { "label": "Snapshotting", "blurb": "Turn changes into history." },
+    "branching": { "label": "Branching & Merging", "blurb": "Explore parallel timelines." },
+    "inspecting": { "label": "Inspecting & History", "blurb": "Read the story of a project." },
+    "undoing": { "label": "Undoing & Rewriting", "blurb": "Repair commits and mistakes." },
+    "sharing": { "label": "Sharing & Sync", "blurb": "Move history across machines." }
+  },
+  "command": {
+    "backAll": "All commands",
+    "mapCta": "Where this fits in the command map",
+    "what": "What it does",
+    "watch": "Watch it \u2014 press play",
+    "watchDesc": "A narrated, step-by-step walkthrough that shows how to do it \u2014 not just theory. It adapts to the learner mode you picked in the top bar.",
+    "hood": "Under the hood",
+    "aliases": "Aliases the pros type",
+    "aliasIntro": "Memorize the {cmd} concept, then let one of these shortcuts make it instant. Aliases are real git config keys \u2014 add one with:",
+    "aliasAlias": "Alias",
+    "aliasExpands": "Expands to",
+    "aliasWhy": "Why people use it",
+    "anatomy": "Command anatomy",
+    "uses": "When to reach for it",
+    "proTip": "Pro tip",
+    "deeper": "Go deeper with",
+    "prev": "Previous",
+    "next": "Next",
+    "facts": "The quick facts",
+    "cheat": "Alias cheat-sheet",
+    "category": "Category",
+    "difficulty": "Difficulty",
+    "syntax": "Syntax",
+    "step": "Step {n}"
+  },
+  "map": {
+    "badge": "The full command map",
+    "title": "Follow the life of a change.",
+    "subtitle": "Every command lives where it acts. A file is born in the working tree, gets copied into the index, sealed into a commit, then travels to a remote. Tap any command to watch it work under the hood.",
+    "legendStaged": { "title": "Staged", "desc": "Copied into the index \u2014 next commit's content." },
+    "legendModified": { "title": "Modified", "desc": "Differs from the index, not yet staged." },
+    "legendUntracked": { "title": "Untracked", "desc": "Never seen by git \u2014 new or ignored-worthy." },
+    "stages": {
+      "setup": { "title": "Setup", "sub": "birth of a repo" },
+      "work": { "title": "Working Tree", "sub": "files on disk" },
+      "index": { "title": "Index \u00b7 Staging", "sub": "your next commit" },
+      "repo": { "title": "Repository", "sub": "objects + refs \u00b7 history" },
+      "remote": { "title": "Remote", "sub": "origin \u00b7 another machine" }
+    },
+    "placements": {
+      "git-init": "creates .git + HEAD",
+      "git-config": "identity & aliases",
+      "git-status": "what changed?",
+      "git-diff": "show the changes",
+      "git-clean": "delete untracked",
+      "git-add": "stage snapshots \u2192",
+      "git-commit": "write the snapshot",
+      "git-branch": "new pointer",
+      "git-checkout": "jump + rebuild",
+      "git-switch": "change branches",
+      "git-merge": "join histories",
+      "git-rebase": "replay + linearize",
+      "git-reset": "rewind refs",
+      "git-revert": "inverse commit",
+      "git-restore": "bring files back",
+      "git-stash": "park changes \u2731",
+      "git-cherry-pick": "copy a commit",
+      "git-tag": "pin a milestone",
+      "git-log": "read history",
+      "git-show": "open an object",
+      "git-blame": "who made each line",
+      "git-reflog": "journal of HEAD",
+      "git-gc": "sweep dead objects",
+      "git-clone": "fetch + checkout",
+      "git-remote": "bookmark URLs",
+      "git-fetch": "download, don't touch",
+      "git-pull": "fetch + merge \u2193",
+      "git-push": "upload + advance \u2191"
+    }
+  },
+  "player": {
+    "pauseAria": "Pause",
+    "playAria": "Play",
+    "prevAria": "Previous step",
+    "nextAria": "Next step",
+    "replayAria": "Replay this step",
+    "stepOf": "{current} / {total}",
+    "goToStep": "Go to step {n}: {title}",
+    "done": "You made it to the end!",
+    "replayAll": "Replay all",
+    "noVisual": "There's no diagram for this one \u2014 it's a golden rule worth remembering before the next step."
+  },
+  "notFound": {
+    "badge": "HEAD detaches here",
+    "title": "This commit doesn't exist.",
+    "body": "A stray ref, a force-push, a typo \u2014 something pointed here and got rewound. The reflog of life keeps no record of this page.",
+    "cta": "Back to the start"
+  },
+  "scenario": {
+    "badge": "The guided day",
+    "title": "One real day of git. Done like a human.",
+    "subtitle": "A work/play walkthrough of a realistic session \u2014 small atomic commits, conventional prefixes, and a clean story. No 50-file blobs, no lazy \"update\" messages.",
+    "actsLabel": "The day at a glance",
+    "ruleTitle": "The 50 / 72 rule",
+    "ruleBody": "Subject under 50 characters, detail wrapped at 72. If a change needs more than one paragraph, it deserves its own commit.",
+    "whyTitle": "Why atomic matters",
+    "whyBody": "An atomic commit is one logical change \u2014 easy to review, easy to revert, easy to cherry-pick. A 50-file mega-commit is a black box nobody dares to touch.",
+    "backAll": "All commands"
+  },
+  "common": {
+    "open": "Open",
+    "commands": "commands",
+    "levels": {
+      "beginner": "beginner",
+      "intermediate": "intermediate",
+      "advanced": "advanced"
+    }
+  }
+}

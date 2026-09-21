@@ -1,0 +1,5 @@
+{
+  "child": { "label": "Child", "note": "Magic words" },
+  "junior": { "label": "Junior", "note": "Solid dev" },
+  "developer": { "label": "Developer", "note": "Internals" }
+}
