@@ -233,6 +233,22 @@ export function CommandView({
             )}
           </section>
 
+          {/* practice */}
+          <section>
+            <SectionLabel>{ui.practice.title}</SectionLabel>
+            <div className="mt-5 flex flex-col items-start gap-4 rounded-2xl border border-line bg-zinc-50/70 p-6 sm:flex-row sm:items-center sm:justify-between dark:bg-zinc-900/60">
+              <p className="max-w-2xl text-pretty text-[14px] leading-relaxed text-muted">
+                {ui.practice.openDesc}
+              </p>
+              <Link
+                href={`/practice?cmd=${command.slug}`}
+                className="inline-flex shrink-0 items-center gap-2 rounded-xl bg-accent px-4 py-2.5 text-[13px] font-semibold text-white shadow-sm transition-opacity hover:opacity-90"
+              >
+                {ui.practice.openPractice} <IconArrowUpRight size={15} />
+              </Link>
+            </div>
+          </section>
+
           {/* related */}
           {related.length > 0 && (
             <section>

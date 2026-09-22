@@ -29,6 +29,36 @@ export interface UiText {
     backToTop: string;
     menuAria: string;
   };
+  practice: {
+    title: string;
+    subtitle: string;
+    openPractice: string;
+    openDesc: string;
+    back: string;
+    footnote: string;
+    unlinkedHint: string;
+    nowPracticing: string;
+    reviewLesson: string;
+    fullEditor: string;
+    closeEditor: string;
+    suggested: string;
+    booting: string;
+    hint: string;
+    run: string;
+    files: string;
+    save: string;
+    cancel: string;
+    reset: string;
+    resetConfirm: string;
+    diff: string;
+    added: string;
+    removed: string;
+    statusNew: string;
+    statusModified: string;
+    statusStaged: string;
+    statusDeleted: string;
+    statusConflict: string;
+  };
   footer: {
     tagline: string;
     explore: string;

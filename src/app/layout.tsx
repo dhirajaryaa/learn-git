@@ -8,6 +8,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { SmallScreenTip } from "@/components/SmallScreenTip";
 import { BackToTop } from "@/components/BackToTop";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { ThemeProvider, LevelProvider } from "@/components/providers";
 import { LanguageProvider } from "@/components/i18n/LanguageProvider";
 import { SITE_URL, SITE_NAME, SITE_TITLE, SITE_DESCRIPTION, SITE_AUTHOR } from "@/lib/site";
@@ -147,7 +148,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <LanguageProvider>
               <Navbar />
               <SmallScreenTip />
-              <main className="flex-1">{children}</main>
+              <main className="flex-1">
+                <ErrorBoundary>{children}</ErrorBoundary>
+              </main>
               <Footer />
               <BackToTop />
             </LanguageProvider>
