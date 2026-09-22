@@ -42,10 +42,18 @@ export function PracticeTerminal({
   seed = "starter",
   suggestions = [],
   onReset,
+  onEngineReady,
+  onRevChange,
+  refreshTrigger = 0,
+  children,
 }: {
   seed?: Seed;
   suggestions?: string[];
   onReset?: () => void;
+  onEngineReady?: (engine: GitEngine) => void;
+  onRevChange?: () => void;
+  refreshTrigger?: number;
+  children?: React.ReactNode;
 }) {
   const { ui } = useI18n();
   const [engine] = useState(() => new GitEngine(seed));
@@ -96,6 +104,7 @@ export function PracticeTerminal({
       .then(async () => {
         if (!alive) return;
         setReady(true);
+        onEngineReady?.(engine);
         await refresh();
       })
       .catch((err) => {
@@ -129,6 +138,13 @@ export function PracticeTerminal({
     if (activeFile && editorFull) textareaRef.current?.focus();
   }, [activeFile, editorFull]);
 
+  /* re-sync terminal when parent bumps refreshTrigger (e.g. after exercise setup) */
+  useEffect(() => {
+    if (!ready || refreshTrigger === 0) return;
+    void refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refreshTrigger]);
+
   const runCmd = async (raw: string) => {
     if (!ready) return;
     const trimmed = raw.trim().slice(0, 2000);
@@ -143,6 +159,7 @@ export function PracticeTerminal({
     setHistIdx(-1);
     setCmd("");
     setRev((r) => r + 1);
+    onRevChange?.();
     await refresh(prev);
   };
 
@@ -159,6 +176,7 @@ export function PracticeTerminal({
     await engine.setWorkFile(activeFile, draft);
     setActiveFile(null);
     setRev((r) => r + 1);
+    onRevChange?.();
     await refresh();
   };
 
@@ -363,6 +381,8 @@ export function PracticeTerminal({
               </div>
             ))}
           </div>
+
+          {children}
 
           {suggestions.length > 0 && (
             <div className="flex flex-wrap items-center gap-1.5 border-t border-white/10 px-3 py-2">

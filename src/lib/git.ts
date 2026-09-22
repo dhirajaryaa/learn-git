@@ -147,6 +147,10 @@ export class GitEngine {
 
   // ---- public API (terminal + introspection) ----
 
+  clearTerminal() {
+    this.terminal = [];
+  }
+
   snapshotLines(): Line[] {
     return [...this.terminal];
   }
@@ -602,59 +606,65 @@ export class GitEngine {
     let any = false;
     const targets = args.filter((a) => !a.startsWith("-"));
     const all = targets.length === 0 || targets.includes(".");
-    const keywords = await this.statusMatrix();
+    const matrix = await this.statusMatrix();
     const workSet = new Set((await this.listWorkFiles()).map((f) => f.path));
-    const existingPaths = new Set();
-    for (const [p, , ,] of keywords) existingPaths.add(p);
-    for (const p of workSet) existingPaths.add(p);
-    let list: { path: string; conflict: boolean }[] = [];
-    if (all) list = await this.listWorkFiles();
-    else {
+    const trackedSet = new Set<string>();
+    for (const [p, h, , ,] of matrix) if (h === 1) trackedSet.add(p);
+    let list: string[] = [];
+    if (all) {
+      list = [...new Set([...workSet, ...trackedSet])];
+    } else {
       for (const p of targets) {
-        if (!existingPaths.has(p)) {
+        if (!workSet.has(p) && !trackedSet.has(p)) {
           out.push({ s: `fatal: pathspec '${p}' did not match any files`, c: "danger" });
           continue;
         }
-        if (all === false && !workSet.has(p)) out.push({ s: `note: '${p}' is deleted — git add will stage its removal.`, c: "dim" });
-        list.push({ path: p, conflict: false });
+        list.push(p);
       }
     }
-    const matrix = await this.statusMatrix();
+    list.sort();
     const stateOf = (p: string): FileState => {
       const row = matrix.find((m) => m[0] === p);
       return row ? this.classify(row[1], row[2], row[3], p) : "unchanged";
     };
     const stagedLines: Line[] = [];
     let stagedCount = 0;
-    for (const f of list) {
-      const content = await this.readWorkFile(f.path);
-      const wasConflict = this.conflicts.has(f.path);
+    for (const path of list) {
+      const wasConflict = this.conflicts.has(path);
+      const workdirExists = workSet.has(path);
       if (wasConflict) {
+        const content = await this.readWorkFile(path);
         if (MARKED.test(content)) {
-          out.push({ s: `${f.path} still contains conflict markers — remove <<<<<<< / ======= / >>>>>>> first`, c: "warn" });
+          out.push({ s: `${path} still contains conflict markers — remove <<<<<<< / ======= / >>>>>>> first`, c: "warn" });
           continue;
         }
-        this.conflicts.delete(f.path);
-        out.push({ s: `Resolved: git add ${f.path}`, c: "ok" });
+        this.conflicts.delete(path);
+        out.push({ s: `Resolved: git add ${path}`, c: "ok" });
       }
-      const before = stateOf(f.path);
-      if (before === "unchanged" && !wasConflict) continue;
-      if (before === "staged" && list.length === 1 && !wasConflict) {
-        out.push({ s: `'${f.path}' is already staged — nothing to add.`, c: "dim" });
+      const before = stateOf(path);
+      if (before === "staged" && list.length === 1 && !wasConflict && workdirExists) {
+        out.push({ s: `'${path}' is already staged — nothing to add.`, c: "dim" });
         continue;
       }
-      await Git.add({ fs: this.fs!, cache: this.cache, dir: this.dir, filepath: f.path });
+      if (!workdirExists && !wasConflict && before !== "staged") {
+        await Git.remove({ fs: this.fs!, cache: this.cache, dir: this.dir, filepath: path });
+        any = true;
+        stagedCount++;
+        stagedLines.push({ s: `  deleted:     ${path}`, c: "warn" });
+        continue;
+      }
+      if (before === "unchanged" && !wasConflict) continue;
+      await Git.add({ fs: this.fs!, cache: this.cache, dir: this.dir, filepath: path });
       any = true;
       stagedCount++;
-      if (wasConflict) stagedLines.push({ s: `  resolved:    ${f.path}`, c: "ok" });
-      else if (before === "new") stagedLines.push({ s: `  new file:    ${f.path}`, c: "ok" });
-      else if (before === "deleted") stagedLines.push({ s: `  deleted:     ${f.path}`, c: "warn" });
-      else stagedLines.push({ s: `  modified:    ${f.path}`, c: "warn" });
+      if (wasConflict) stagedLines.push({ s: `  resolved:    ${path}`, c: "ok" });
+      else if (before === "new") stagedLines.push({ s: `  new file:    ${path}`, c: "ok" });
+      else stagedLines.push({ s: `  modified:    ${path}`, c: "warn" });
     }
     if (!any && !out.length) return [{ s: "Nothing to add.", c: "dim" }];
     if (stagedLines.length) {
       out.push({ s: `Staged ${stagedCount} file${stagedCount === 1 ? "" : "s"}:`, c: "accent" });
-      out.push(...stagedLines.map((l) => ({ ...l, c: l.c })));
+      out.push(...stagedLines);
     } else if (!out.length) {
       out.push({ s: "Staged.", c: "ok" });
     }
@@ -1177,24 +1187,31 @@ export class GitEngine {
       } catch {}
       return out.length ? out : [{ s: "No config set yet. Try: git config user.name \"You\"", c: "dim" }];
     }
-    const flag = args[0];
+
+    // filter out --global or --local since isomorphic-git only writes to the local sandbox
+    const cleanArgs = args.filter(a => a !== "--global" && a !== "--local" && a !== "--system");
+
+    const flag = cleanArgs[0];
     if (flag === "--unset" || flag === "-u") {
-      const path = args[1];
+      const path = cleanArgs[1];
       if (!path) return [{ s: "usage: git config --unset <key>", c: "warn" }];
       await Git.setConfig({ fs: this.fs, dir: this.dir, path, value: undefined });
-      return [{ s: "", c: "plain" }];
+      return [];
     }
+
     const key = flag;
-    const value = args[1];
+    const value = cleanArgs[1];
     if (!key) return [{ s: "usage: git config <key> <value>  |  git config <key>  |  --list | --unset <key>", c: "warn" }];
+
     if (value === undefined) {
       try {
         const v = await Git.getConfig({ fs: this.fs, dir: this.dir, path: key });
-        return v ? [{ s: String(v), c: "plain" }] : [{ s: "", c: "dim" }];
+        return v ? [{ s: String(v), c: "plain" }] : [];
       } catch {
         return [];
       }
     }
+
     await Git.setConfig({ fs: this.fs, dir: this.dir, path: key, value });
     return [];
   }

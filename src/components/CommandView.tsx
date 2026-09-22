@@ -139,43 +139,6 @@ export function CommandView({
             </section>
           </ShowAt>
 
-          {/* aliases */}
-          <section>
-            <SectionLabel>{ui.command.aliases}</SectionLabel>
-            <p className="mt-3 max-w-2xl text-[14px] leading-relaxed text-muted">
-              {tpl(ui.command.aliasIntro, { cmd: local.command })}
-            </p>
-            <div className="mt-5 rounded-xl border border-line bg-zinc-50/70 p-4 dark:bg-zinc-900/60">
-              <code className="font-mono text-[12.5px] text-zinc-700 dark:text-zinc-300">
-                git config --global alias.st{" "}
-                <span className="text-zinc-400"># → {local.aliases[0]?.full ?? "git status"}</span>
-              </code>
-            </div>
-            <div className="mt-5 overflow-hidden rounded-2xl border border-line">
-              <div className="grid grid-cols-[150px_1fr_1.2fr] gap-0 bg-zinc-50 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-zinc-400 dark:bg-zinc-800/60">
-                <span>{ui.command.aliasAlias}</span>
-                <span className="hidden md:block">{ui.command.aliasExpands}</span>
-                <span>{ui.command.aliasWhy}</span>
-              </div>
-              {local.aliases.map((a, i) => (
-                <div
-                  key={i}
-                  className="grid grid-cols-2 gap-x-4 border-t border-line px-5 py-3.5 md:grid-cols-[150px_1fr_1.2fr]"
-                >
-                  <code className="font-mono text-[12.5px] font-semibold text-accent">
-                    {a.short}
-                  </code>
-                  <code className="hidden font-mono text-[12px] text-zinc-600 md:block dark:text-zinc-300">
-                    {a.full}
-                  </code>
-                  <p className="col-span-2 mt-1 text-[12.5px] leading-relaxed text-muted md:col-span-1 md:mt-0">
-                    {a.note}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-
           {/* anatomy */}
           <section>
             <SectionLabel>{ui.command.anatomy}</SectionLabel>
@@ -219,18 +182,6 @@ export function CommandView({
                 </div>
               ))}
             </div>
-            {local.proTip && (
-              <ShowAt at="developer">
-                <div className="mt-8 rounded-2xl border border-accent/25 bg-accent-soft p-6">
-                  <p className="text-[12px] font-semibold uppercase tracking-wider text-accent">
-                    {ui.command.proTip}
-                  </p>
-                  <p className="mt-2 text-pretty text-[14px] leading-relaxed text-foreground">
-                    {local.proTip}
-                  </p>
-                </div>
-              </ShowAt>
-            )}
           </section>
 
           {/* practice */}
@@ -335,19 +286,16 @@ export function CommandView({
               </dl>
             </div>
 
-            <div className="rounded-2xl border border-line bg-white p-5 dark:bg-zinc-900">
-              <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
-                {ui.command.cheat}
-              </p>
-              <div className="mt-3 space-y-2">
-                {local.aliases.slice(0, 4).map((a) => (
-                  <div key={a.short} className="flex items-center justify-between gap-2">
-                    <code className="font-mono text-[12px] font-semibold text-accent">{a.short}</code>
-                    <code className="truncate font-mono text-[11.5px] text-zinc-500 dark:text-zinc-400">{a.full}</code>
-                  </div>
-                ))}
+            {local.proTip && (
+              <div className="rounded-2xl border border-accent/25 bg-accent-soft p-5">
+                <p className="text-[11px] font-semibold uppercase tracking-wider text-accent">
+                  {ui.command.proTip}
+                </p>
+                <p className="mt-3 text-[13px] leading-relaxed text-foreground">
+                  {local.proTip}
+                </p>
               </div>
-            </div>
+            )}
           </div>
         </aside>
       </div>
